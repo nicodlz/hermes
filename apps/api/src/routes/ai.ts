@@ -1,14 +1,28 @@
+/**
+ * AI Agent API Routes
+ *
+ * Endpoints specifically designed for OpenClaw AI agent integration.
+ * These provide optimized access patterns for:
+ * - Daily digests and action summaries
+ * - Lead qualification with scoring
+ * - Outreach message generation
+ * - Response tracking
+ *
+ * @example
+ * // Get what needs attention
+ * GET /api/ai/next-actions
+ *
+ * // Qualify a lead
+ * POST /api/ai/qualify/:id { score, reasons, analysis }
+ *
+ * // Generate outreach
+ * POST /api/ai/outreach/:id { templateId, variables, channel }
+ */
+
 import { Hono } from "hono";
 import { zValidator } from "@hono/zod-validator";
 import { z } from "zod";
 import { db } from "@hermes/db";
-
-/**
- * AI Agent API - Endpoints optimized for OpenClaw integration
- * 
- * These endpoints are designed to be called by the AI agent
- * for automated lead processing, qualification, and outreach.
- */
 
 export const aiRouter = new Hono()
   // Get next actions for AI agent

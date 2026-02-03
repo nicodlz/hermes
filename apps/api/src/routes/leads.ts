@@ -1,3 +1,14 @@
+/**
+ * Lead Management API Routes
+ *
+ * Provides CRUD operations for leads including:
+ * - Listing with filters (status, score, source, search)
+ * - Bulk creation for scrapers
+ * - Status updates with automatic timestamp tracking
+ * - Notes management
+ * - Pipeline statistics
+ */
+
 import { Hono } from "hono";
 import { zValidator } from "@hono/zod-validator";
 import { z } from "zod";
