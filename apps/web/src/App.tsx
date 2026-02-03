@@ -44,7 +44,7 @@ function MainLayout() {
       <div className="fixed top-0 left-0 right-0 z-40 flex items-center justify-between px-4 h-14 bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 lg:hidden">
         <div className="flex items-center gap-2">
           <Zap className="w-6 h-6 text-amber-500" />
-          <span className="text-lg font-bold">Hermes</span>
+          <span className="text-lg font-bold text-slate-900 dark:text-white">Hermes</span>
         </div>
         <button
           onClick={() => setSidebarOpen(!sidebarOpen)}
