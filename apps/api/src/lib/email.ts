@@ -1,27 +1,15 @@
 /**
  * Email Service
  * 
- * Sends emails via Proton Mail Bridge SMTP
+ * Sends emails via Resend API
  */
 
-import nodemailer from "nodemailer";
+import { Resend } from "resend";
 
-// Proton Mail Bridge SMTP configuration
-const transporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOST || "127.0.0.1",
-  port: Number(process.env.SMTP_PORT) || 1026,
-  secure: false, // Proton Bridge uses STARTTLS
-  auth: process.env.SMTP_USER ? {
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASS,
-  } : undefined,
-  tls: {
-    rejectUnauthorized: false, // Allow self-signed certs from Bridge
-  },
-});
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 const FROM_EMAIL = process.env.FROM_EMAIL || "hermes@ndlz.net";
-const APP_URL = process.env.APP_URL || "http://localhost:5173";
+const APP_URL = process.env.APP_URL || "https://hermes.ndlz.net";
 
 export interface MagicLinkEmailOptions {
   to: string;
@@ -92,23 +80,30 @@ ${magicLink}
 This link expires in 15 minutes. If you didn't request this, you can safely ignore this email.
   `.trim();
 
-  await transporter.sendMail({
+  // In development without API key, just log the link
+  if (!process.env.RESEND_API_KEY) {
+    console.log(`[DEV] Magic link for ${to}: ${magicLink}`);
+    console.log(`[DEV] Token: ${token}`);
+    return;
+  }
+
+  const { error } = await resend.emails.send({
     from: FROM_EMAIL,
     to,
     subject,
-    text,
     html,
+    text,
   });
+
+  if (error) {
+    console.error("Failed to send email:", error);
+    throw new Error(`Failed to send email: ${error.message}`);
+  }
 }
 
 /**
- * Verify SMTP connection (useful for health checks)
+ * Verify email service is configured
  */
 export async function verifyEmailConnection(): Promise<boolean> {
-  try {
-    await transporter.verify();
-    return true;
-  } catch {
-    return false;
-  }
+  return !!process.env.RESEND_API_KEY;
 }
