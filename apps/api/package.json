@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "tsx watch src/server.ts",
-    "build": "tsc && esbuild src/server.ts --bundle --platform=node --outfile=dist/server.js --packages=external",
+    "build": "tsc && esbuild src/server.ts --bundle --platform=node --format=esm --outfile=dist/server.js --packages=external --banner:js=\"import { createRequire } from 'module'; const require = createRequire(import.meta.url);\"",
     "start": "node dist/server.js",
     "typecheck": "tsc --noEmit"
   },
