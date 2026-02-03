@@ -9,7 +9,8 @@ import {
   Settings,
   Zap,
   Menu,
-  X
+  X,
+  LogOut
 } from "lucide-react";
 import { Dashboard } from "./pages/Dashboard";
 import { Leads } from "./pages/Leads";
@@ -17,6 +18,9 @@ import { LeadDetail } from "./pages/LeadDetail";
 import { Tasks } from "./pages/Tasks";
 import { Templates } from "./pages/Templates";
 import { Stats } from "./pages/Stats";
+import { Login } from "./pages/Login";
+import { Register } from "./pages/Register";
+import { AuthProvider, useAuth, RequireAuth } from "./lib/auth";
 import { cn } from "./lib/utils";
 
 const navItems = [
@@ -27,8 +31,9 @@ const navItems = [
   { path: "/stats", label: "Analytics", icon: BarChart3 },
 ];
 
-export function App() {
+function MainLayout() {
   const location = useLocation();
+  const { user, logout } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const closeSidebar = () => setSidebarOpen(false);
@@ -98,6 +103,12 @@ export function App() {
         </nav>
 
         <div className="absolute bottom-0 left-0 w-64 p-4 border-t border-slate-200 dark:border-slate-700">
+          {user && (
+            <div className="mb-2 px-3 py-2">
+              <p className="text-xs text-slate-500 dark:text-slate-400 truncate">{user.email}</p>
+              <p className="text-xs text-slate-400 dark:text-slate-500 truncate">{user.orgName}</p>
+            </div>
+          )}
           <Link
             to="/settings"
             onClick={closeSidebar}
@@ -106,6 +117,13 @@ export function App() {
             <Settings className="w-5 h-5" />
             Settings
           </Link>
+          <button
+            onClick={logout}
+            className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700"
+          >
+            <LogOut className="w-5 h-5" />
+            Sign out
+          </button>
         </div>
       </aside>
 
@@ -121,5 +139,27 @@ export function App() {
         </Routes>
       </main>
     </div>
+  );
+}
+
+export function App() {
+  return (
+    <AuthProvider>
+      <Routes>
+        {/* Public routes */}
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        
+        {/* Protected routes */}
+        <Route
+          path="/*"
+          element={
+            <RequireAuth>
+              <MainLayout />
+            </RequireAuth>
+          }
+        />
+      </Routes>
+    </AuthProvider>
   );
 }

@@ -3,6 +3,7 @@ const API_URL = import.meta.env.VITE_API_URL || "";
 async function fetcher<T>(path: string, options?: RequestInit): Promise<T> {
   const res = await fetch(`${API_URL}${path}`, {
     ...options,
+    credentials: "include", // Include cookies for session auth
     headers: {
       "Content-Type": "application/json",
       ...options?.headers,
@@ -10,6 +11,11 @@ async function fetcher<T>(path: string, options?: RequestInit): Promise<T> {
   });
 
   if (!res.ok) {
+    // If unauthorized, redirect to login
+    if (res.status === 401) {
+      window.location.href = "/login";
+      throw new Error("Unauthorized");
+    }
     const error = await res.json().catch(() => ({ error: "Unknown error" }));
     throw new Error(error.error || `HTTP ${res.status}`);
   }

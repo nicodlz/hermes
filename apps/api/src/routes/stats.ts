@@ -1,9 +1,18 @@
+/**
+ * Statistics API Routes
+ * 
+ * All stats are filtered by the user's organization.
+ */
+
 import { Hono } from "hono";
 import { db } from "@hermes/db";
+import type { AuthContext } from "../middleware/auth.js";
 
-export const statsRouter = new Hono()
+export const statsRouter = new Hono<AuthContext>()
   // Dashboard stats
   .get("/dashboard", async (c) => {
+    const orgId = c.get("orgId");
+    
     const [
       totalLeads,
       qualifiedLeads,
@@ -15,21 +24,23 @@ export const statsRouter = new Hono()
       overdueTasks,
       pipeline,
     ] = await Promise.all([
-      db.lead.count(),
-      db.lead.count({ where: { status: "QUALIFIED" } }),
-      db.lead.count({ where: { contactedAt: { not: null } } }),
-      db.lead.count({ where: { respondedAt: { not: null } } }),
-      db.lead.count({ where: { status: "WON" } }),
-      db.lead.count({ where: { status: "LOST" } }),
-      db.task.count({ where: { status: "PENDING" } }),
+      db.lead.count({ where: { orgId } }),
+      db.lead.count({ where: { orgId, status: "QUALIFIED" } }),
+      db.lead.count({ where: { orgId, contactedAt: { not: null } } }),
+      db.lead.count({ where: { orgId, respondedAt: { not: null } } }),
+      db.lead.count({ where: { orgId, status: "WON" } }),
+      db.lead.count({ where: { orgId, status: "LOST" } }),
+      db.task.count({ where: { status: "PENDING", lead: { orgId } } }),
       db.task.count({
         where: {
           status: { in: ["PENDING", "IN_PROGRESS"] },
           dueAt: { lt: new Date() },
+          lead: { orgId },
         },
       }),
       db.lead.groupBy({
         by: ["status"],
+        where: { orgId },
         _count: true,
       }),
     ]);
@@ -130,6 +141,8 @@ export const statsRouter = new Hono()
 
   // Conversion funnel
   .get("/funnel", async (c) => {
+    const orgId = c.get("orgId");
+    
     const [
       total,
       qualified,
@@ -139,13 +152,13 @@ export const statsRouter = new Hono()
       proposals,
       won,
     ] = await Promise.all([
-      db.lead.count(),
-      db.lead.count({ where: { qualifiedAt: { not: null } } }),
-      db.lead.count({ where: { contactedAt: { not: null } } }),
-      db.lead.count({ where: { respondedAt: { not: null } } }),
-      db.lead.count({ where: { callAt: { not: null } } }),
-      db.lead.count({ where: { proposalAt: { not: null } } }),
-      db.lead.count({ where: { status: "WON" } }),
+      db.lead.count({ where: { orgId } }),
+      db.lead.count({ where: { orgId, qualifiedAt: { not: null } } }),
+      db.lead.count({ where: { orgId, contactedAt: { not: null } } }),
+      db.lead.count({ where: { orgId, respondedAt: { not: null } } }),
+      db.lead.count({ where: { orgId, callAt: { not: null } } }),
+      db.lead.count({ where: { orgId, proposalAt: { not: null } } }),
+      db.lead.count({ where: { orgId, status: "WON" } }),
     ]);
 
     const funnel = [

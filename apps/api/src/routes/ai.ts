@@ -8,6 +8,8 @@
  * - Outreach message generation
  * - Response tracking
  *
+ * All queries are filtered by the user's organization.
+ *
  * @example
  * // Get what needs attention
  * GET /api/ai/next-actions
@@ -23,38 +25,42 @@ import { Hono } from "hono";
 import { zValidator } from "@hono/zod-validator";
 import { z } from "zod";
 import { db } from "@hermes/db";
+import type { AuthContext } from "../middleware/auth.js";
 
-export const aiRouter = new Hono()
+export const aiRouter = new Hono<AuthContext>()
   // Get next actions for AI agent
   .get("/next-actions", async (c) => {
+    const orgId = c.get("orgId");
+    
     const [
       pendingTasks,
       leadsToQualify,
       leadsToContact,
       leadsToFollowUp,
     ] = await Promise.all([
-      // Pending tasks with high priority
+      // Pending tasks with high priority (filtered by org through lead)
       db.task.findMany({
-        where: { status: "PENDING" },
+        where: { status: "PENDING", lead: { orgId } },
         include: { lead: { select: { id: true, title: true, author: true } } },
         orderBy: [{ priority: "desc" }, { dueAt: "asc" }],
         take: 5,
       }),
       // New leads that need qualification
       db.lead.findMany({
-        where: { status: "NEW", score: 0 },
+        where: { orgId, status: "NEW", score: 0 },
         orderBy: { scrapedAt: "desc" },
         take: 10,
       }),
       // Qualified leads not yet contacted
       db.lead.findMany({
-        where: { status: "QUALIFIED", contactedAt: null },
+        where: { orgId, status: "QUALIFIED", contactedAt: null },
         orderBy: { score: "desc" },
         take: 5,
       }),
       // Leads needing follow-up (contacted 2+ days ago, no response)
       db.lead.findMany({
         where: {
+          orgId,
           status: { in: ["CONTACTED", "FOLLOWUP_1"] },
           contactedAt: { lt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000) },
           respondedAt: null,
@@ -85,8 +91,15 @@ export const aiRouter = new Hono()
     analysis: z.string().optional(),
     aiModel: z.string().optional(),
   })), async (c) => {
+    const orgId = c.get("orgId");
     const id = c.req.param("id");
     const { score, reasons, analysis, aiModel } = c.req.valid("json");
+
+    // Verify lead belongs to org
+    const existing = await db.lead.findFirst({ where: { id, orgId } });
+    if (!existing) {
+      return c.json({ error: "Lead not found" }, 404);
+    }
 
     const lead = await db.lead.update({
       where: { id },
@@ -119,8 +132,15 @@ export const aiRouter = new Hono()
     variables: z.record(z.string()),
     channel: z.enum(["REDDIT_DM", "TWITTER_DM", "EMAIL", "LINKEDIN", "DISCORD", "OTHER"]),
   })), async (c) => {
+    const orgId = c.get("orgId");
     const leadId = c.req.param("id");
     const { templateId, variables, channel } = c.req.valid("json");
+
+    // Verify lead belongs to org
+    const lead = await db.lead.findFirst({ where: { id: leadId, orgId } });
+    if (!lead) {
+      return c.json({ error: "Lead not found" }, 404);
+    }
 
     // Get template and render
     const template = await db.template.findUnique({ where: { id: templateId } });
@@ -163,8 +183,17 @@ export const aiRouter = new Hono()
     externalId: z.string().optional(),
     threadId: z.string().optional(),
   }).optional()), async (c) => {
+    const orgId = c.get("orgId");
     const id = c.req.param("id");
     const data = c.req.valid("json") || {};
+
+    // Verify message belongs to org (through lead)
+    const existing = await db.message.findFirst({
+      where: { id, lead: { orgId } },
+    });
+    if (!existing) {
+      return c.json({ error: "Message not found" }, 404);
+    }
 
     const message = await db.message.update({
       where: { id },
@@ -195,8 +224,15 @@ export const aiRouter = new Hono()
     externalId: z.string().optional(),
     sentiment: z.enum(["positive", "neutral", "negative"]).optional(),
   })), async (c) => {
+    const orgId = c.get("orgId");
     const leadId = c.req.param("id");
     const { content, channel, externalId, sentiment } = c.req.valid("json");
+
+    // Verify lead belongs to org
+    const lead = await db.lead.findFirst({ where: { id: leadId, orgId } });
+    if (!lead) {
+      return c.json({ error: "Lead not found" }, 404);
+    }
 
     // Create inbound message
     const message = await db.message.create({
@@ -235,6 +271,7 @@ export const aiRouter = new Hono()
 
   // Daily digest for AI
   .get("/digest", async (c) => {
+    const orgId = c.get("orgId");
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
@@ -246,11 +283,12 @@ export const aiRouter = new Hono()
       upcomingCalls,
       stats,
     ] = await Promise.all([
-      db.lead.count({ where: { scrapedAt: { gte: today } } }),
-      db.lead.count({ where: { qualifiedAt: { gte: today } } }),
-      db.lead.count({ where: { respondedAt: { gte: today } } }),
+      db.lead.count({ where: { orgId, scrapedAt: { gte: today } } }),
+      db.lead.count({ where: { orgId, qualifiedAt: { gte: today } } }),
+      db.lead.count({ where: { orgId, respondedAt: { gte: today } } }),
       db.lead.count({
         where: {
+          orgId,
           status: { in: ["CONTACTED", "FOLLOWUP_1", "FOLLOWUP_2"] },
           contactedAt: { lt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000) },
           respondedAt: null,
@@ -258,12 +296,14 @@ export const aiRouter = new Hono()
       }),
       db.lead.count({
         where: {
+          orgId,
           status: "CALL_SCHEDULED",
           callAt: { gte: today },
         },
       }),
       db.lead.groupBy({
         by: ["status"],
+        where: { orgId },
         _count: true,
       }),
     ]);

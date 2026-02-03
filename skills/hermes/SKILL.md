@@ -9,16 +9,27 @@ Use when the user asks about:
 - "Follow up", "send outreach", "contact leads"
 - "Sales stats", "conversion rate", "deals"
 - "Qualify leads", "score leads"
+- "CRM", "pipeline", "prospects"
 - Any sales development / SDR related tasks
+
+## Quick Commands
+
+```bash
+# CLI wrapper (recommended)
+./scripts/hermes-cli.sh digest      # Daily digest
+./scripts/hermes-cli.sh actions     # What needs attention now
+./scripts/hermes-cli.sh leads       # List all leads
+./scripts/hermes-cli.sh leads NEW   # Filter by status
+./scripts/hermes-cli.sh stats       # Dashboard stats
+./scripts/hermes-cli.sh funnel      # Conversion funnel
+./scripts/hermes-cli.sh tasks       # Pending tasks
+```
 
 ## Configuration
 
-Set the Hermes API URL in your environment:
-
+API URL (default: https://hermes.ndlz.net):
 ```bash
 export HERMES_API_URL="https://hermes.ndlz.net"
-# or for local dev:
-export HERMES_API_URL="http://localhost:3001"
 ```
 
 ## API Endpoints

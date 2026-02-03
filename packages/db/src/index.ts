@@ -18,4 +18,18 @@ if (process.env.NODE_ENV !== "production") {
 }
 
 export * from "@prisma/client";
-export type { Lead, Note, Task, Message, Template, Proposal, Source, DailyStats, Setting } from "@prisma/client";
+export type { 
+  Organization, 
+  User, 
+  Session, 
+  ApiKey, 
+  Lead, 
+  Note, 
+  Task, 
+  Message, 
+  Template, 
+  Proposal, 
+  Source, 
+  DailyStats, 
+  Setting 
+} from "@prisma/client";

@@ -10,11 +10,80 @@ datasource db {
 }
 
 // ============================================
+// ORGANIZATIONS
+// ============================================
+
+model Organization {
+  id        String   @id @default(cuid())
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  users     User[]
+  leads     Lead[]
+}
+
+// ============================================
+// AUTHENTICATION
+// ============================================
+
+model User {
+  id             String   @id @default(cuid())
+  email          String   @unique
+  passwordHash   String
+  name           String?
+  
+  // Organization
+  orgId          String
+  org            Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  
+  // Timestamps
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  
+  // Relations
+  sessions       Session[]
+  apiKeys        ApiKey[]
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  
+  @@index([userId])
+}
+
+model ApiKey {
+  id          String    @id @default(cuid())
+  name        String
+  keyHash     String    @unique  // SHA-256 hash of the key
+  
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  lastUsedAt  DateTime?
+  expiresAt   DateTime?
+  
+  createdAt   DateTime  @default(now())
+  
+  @@index([userId])
+  @@index([keyHash])
+}
+
+// ============================================
 // LEADS
 // ============================================
 
 model Lead {
   id          String   @id @default(cuid())
+  
+  // Organization
+  orgId       String
+  org         Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
   
   // Source info
   source      String   // reddit-hiring, twitter, indiehackers, etc.
@@ -65,6 +134,8 @@ model Lead {
   tasks       Task[]
   messages    Message[]
   proposals   Proposal[]
+  
+  @@index([orgId])
 }
 
 enum LeadStatus {

@@ -7,12 +7,15 @@
  * - Status updates with automatic timestamp tracking
  * - Notes management
  * - Pipeline statistics
+ * 
+ * All queries are filtered by the user's organization.
  */
 
 import { Hono } from "hono";
 import { zValidator } from "@hono/zod-validator";
 import { z } from "zod";
 import { db, LeadStatus } from "@hermes/db";
+import type { AuthContext } from "../middleware/auth.js";
 
 const createLeadSchema = z.object({
   source: z.string(),
@@ -51,12 +54,14 @@ const querySchema = z.object({
   offset: z.coerce.number().default(0),
 });
 
-export const leadsRouter = new Hono()
+export const leadsRouter = new Hono<AuthContext>()
   // List leads with filters
   .get("/", zValidator("query", querySchema), async (c) => {
+    const orgId = c.get("orgId");
     const { status, minScore, source, search, limit, offset } = c.req.valid("query");
 
     const where = {
+      orgId, // Filter by organization
       ...(status && { status }),
       ...(minScore && { score: { gte: minScore } }),
       ...(source && { source }),
@@ -87,9 +92,10 @@ export const leadsRouter = new Hono()
 
   // Get single lead with all relations
   .get("/:id", async (c) => {
+    const orgId = c.get("orgId");
     const id = c.req.param("id");
-    const lead = await db.lead.findUnique({
-      where: { id },
+    const lead = await db.lead.findFirst({
+      where: { id, orgId }, // Filter by organization
       include: {
         notes: { orderBy: { createdAt: "desc" } },
         tasks: { orderBy: { dueAt: "asc" } },
@@ -107,33 +113,35 @@ export const leadsRouter = new Hono()
 
   // Create lead
   .post("/", zValidator("json", createLeadSchema), async (c) => {
+    const orgId = c.get("orgId");
     const data = c.req.valid("json");
 
-    // Check if lead already exists
-    const existing = await db.lead.findUnique({
-      where: { sourceUrl: data.sourceUrl },
+    // Check if lead already exists in this organization
+    const existing = await db.lead.findFirst({
+      where: { sourceUrl: data.sourceUrl, orgId },
     });
 
     if (existing) {
       return c.json({ error: "Lead already exists", lead: existing }, 409);
     }
 
-    const lead = await db.lead.create({ data });
+    const lead = await db.lead.create({ data: { ...data, orgId } });
     return c.json(lead, 201);
   })
 
   // Bulk create leads (for scraping)
   .post("/bulk", zValidator("json", z.array(createLeadSchema)), async (c) => {
+    const orgId = c.get("orgId");
     const leads = c.req.valid("json");
     
     const results = await Promise.allSettled(
       leads.map(async (lead) => {
-        const existing = await db.lead.findUnique({
-          where: { sourceUrl: lead.sourceUrl },
+        const existing = await db.lead.findFirst({
+          where: { sourceUrl: lead.sourceUrl, orgId },
         });
         if (existing) return { status: "exists", lead: existing };
         
-        const created = await db.lead.create({ data: lead });
+        const created = await db.lead.create({ data: { ...lead, orgId } });
         return { status: "created", lead: created };
       })
     );
@@ -151,8 +159,15 @@ export const leadsRouter = new Hono()
 
   // Update lead
   .patch("/:id", zValidator("json", updateLeadSchema), async (c) => {
+    const orgId = c.get("orgId");
     const id = c.req.param("id");
     const data = c.req.valid("json");
+
+    // Verify lead belongs to organization
+    const existing = await db.lead.findFirst({ where: { id, orgId } });
+    if (!existing) {
+      return c.json({ error: "Lead not found" }, 404);
+    }
 
     // Auto-set timestamps based on status changes
     const updates: Record<string, unknown> = { ...data };
@@ -184,8 +199,15 @@ export const leadsRouter = new Hono()
     type: z.enum(["MANUAL", "AI_ANALYSIS", "AI_RESEARCH", "SYSTEM"]).default("MANUAL"),
     aiModel: z.string().optional(),
   })), async (c) => {
+    const orgId = c.get("orgId");
     const leadId = c.req.param("id");
     const data = c.req.valid("json");
+
+    // Verify lead belongs to organization
+    const lead = await db.lead.findFirst({ where: { id: leadId, orgId } });
+    if (!lead) {
+      return c.json({ error: "Lead not found" }, 404);
+    }
 
     const note = await db.note.create({
       data: { ...data, leadId },
@@ -196,15 +218,25 @@ export const leadsRouter = new Hono()
 
   // Delete lead
   .delete("/:id", async (c) => {
+    const orgId = c.get("orgId");
     const id = c.req.param("id");
+    
+    // Verify lead belongs to organization
+    const lead = await db.lead.findFirst({ where: { id, orgId } });
+    if (!lead) {
+      return c.json({ error: "Lead not found" }, 404);
+    }
+    
     await db.lead.delete({ where: { id } });
     return c.json({ success: true });
   })
 
   // Pipeline stats
   .get("/stats/pipeline", async (c) => {
+    const orgId = c.get("orgId");
     const pipeline = await db.lead.groupBy({
       by: ["status"],
+      where: { orgId },
       _count: true,
     });
 
