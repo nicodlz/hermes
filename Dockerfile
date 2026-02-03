@@ -24,6 +24,9 @@ RUN pnpm db:generate
 # Build
 RUN pnpm build
 
+# Build migration script
+RUN cd packages/db && npx tsc src/migrate-auth.ts --outDir dist --esModuleInterop --module commonjs --skipLibCheck || true
+
 # Production stage
 FROM node:22-alpine AS runner
 
@@ -36,7 +39,11 @@ RUN corepack enable && corepack prepare pnpm@9.15.0 --activate
 COPY --from=builder /app/package.json ./
 COPY --from=builder /app/pnpm-workspace.yaml ./
 COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/packages/db ./packages/db
+COPY --from=builder /app/packages/db/package.json ./packages/db/
+COPY --from=builder /app/packages/db/prisma ./packages/db/prisma
+COPY --from=builder /app/packages/db/node_modules ./packages/db/node_modules
+COPY --from=builder /app/packages/db/dist ./packages/db/dist
+COPY --from=builder /app/packages/db/src ./packages/db/src
 COPY --from=builder /app/apps/api/dist ./apps/api/dist
 COPY --from=builder /app/apps/api/package.json ./apps/api/
 COPY --from=builder /app/apps/api/node_modules ./apps/api/node_modules
@@ -56,5 +63,5 @@ WORKDIR /app
 # Copy startup script
 COPY --from=builder /app/packages/db/prisma ./packages/db/prisma
 
-# Startup: run migrations then start server
-CMD ["sh", "-c", "cd /app/packages/db && npx prisma db push --skip-generate && cd /app/apps/api && node dist/server.js"]
+# Startup: run db push, auth migration, then start server
+CMD ["sh", "-c", "cd /app/packages/db && npx prisma db push --skip-generate && node dist/migrate-auth.js 2>/dev/null || true && cd /app/apps/api && node dist/server.js"]
