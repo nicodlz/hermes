@@ -1,0 +1,17 @@
+version: "3.8"
+
+services:
+  hermes:
+    build: .
+    ports:
+      - "3001:3001"
+    volumes:
+      - hermes-data:/app/data
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=file:/app/data/hermes.db
+      - PORT=3001
+    restart: unless-stopped
+
+volumes:
+  hermes-data:

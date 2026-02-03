@@ -51,5 +51,7 @@ ENV PORT=3001
 
 EXPOSE 3001
 
+WORKDIR /app/apps/api
+
 # Serve both API and static files
-CMD ["node", "apps/api/dist/server.js"]
+CMD ["node", "dist/server.js"]
