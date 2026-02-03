@@ -35,8 +35,8 @@ export function Templates() {
     <div className="p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-xl sm:text-2xl font-bold">Templates</h1>
-          <p className="text-gray-500 text-sm sm:text-base">Message and proposal templates</p>
+          <h1 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white">Templates</h1>
+          <p className="text-slate-500 dark:text-slate-400 text-sm sm:text-base">Message and proposal templates</p>
         </div>
         <button className="flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 w-full sm:w-auto">
           <Plus className="w-4 h-4" />
@@ -48,11 +48,11 @@ export function Templates() {
         {/* Template List */}
         <div className="space-y-6">
           {isLoading ? (
-            <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800 p-8 text-center text-gray-500">
+            <div className="bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 p-8 text-center text-slate-500 dark:text-slate-400 shadow-sm">
               Loading...
             </div>
           ) : Object.keys(groupedTemplates).length === 0 ? (
-            <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800 p-8 text-center text-gray-500">
+            <div className="bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 p-8 text-center text-slate-500 dark:text-slate-400 shadow-sm">
               No templates yet
             </div>
           ) : (
@@ -61,32 +61,32 @@ export function Templates() {
               return (
                 <div
                   key={type}
-                  className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800"
+                  className="bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 shadow-sm"
                 >
-                  <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-800 flex items-center gap-2">
-                    <Icon className="w-5 h-5 text-gray-400" />
-                    <span className="font-semibold">{type.replace(/_/g, " ")}</span>
-                    <span className="text-sm text-gray-500">({temps.length})</span>
+                  <div className="px-4 py-3 border-b border-slate-200 dark:border-slate-700 flex items-center gap-2">
+                    <Icon className="w-5 h-5 text-slate-400 dark:text-slate-500" />
+                    <span className="font-semibold text-slate-900 dark:text-white">{type.replace(/_/g, " ")}</span>
+                    <span className="text-sm text-slate-500 dark:text-slate-400">({temps.length})</span>
                   </div>
-                  <div className="divide-y divide-gray-100 dark:divide-gray-800">
+                  <div className="divide-y divide-slate-100 dark:divide-slate-700">
                     {temps.map((template) => (
                       <button
                         key={template.id}
                         onClick={() => setSelectedTemplate(template)}
                         className={cn(
-                          "w-full px-4 py-3 text-left hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors",
-                          selectedTemplate?.id === template.id && "bg-blue-50 dark:bg-blue-900/20"
+                          "w-full px-4 py-3 text-left hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors",
+                          selectedTemplate?.id === template.id && "bg-blue-50 dark:bg-blue-900/30"
                         )}
                       >
-                        <div className="font-medium">{template.name}</div>
+                        <div className="font-medium text-slate-900 dark:text-white">{template.name}</div>
                         {template.description && (
-                          <div className="text-sm text-gray-500 line-clamp-1">
+                          <div className="text-sm text-slate-500 dark:text-slate-400 line-clamp-1">
                             {template.description}
                           </div>
                         )}
-                        <div className="flex items-center gap-3 mt-2 text-xs text-gray-400">
+                        <div className="flex items-center gap-3 mt-2 text-xs text-slate-400 dark:text-slate-500">
                           {template.channel && (
-                            <span className="px-2 py-0.5 bg-gray-100 dark:bg-gray-800 rounded">
+                            <span className="px-2 py-0.5 bg-slate-100 dark:bg-slate-700 rounded text-slate-600 dark:text-slate-300">
                               {template.channel}
                             </span>
                           )}
@@ -107,19 +107,19 @@ export function Templates() {
         {/* Template Preview */}
         <div className="lg:sticky lg:top-8 space-y-4">
           {selectedTemplate ? (
-            <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800">
-              <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-800 flex items-center justify-between">
+            <div className="bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 shadow-sm">
+              <div className="px-4 py-3 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <Eye className="w-5 h-5 text-gray-400" />
-                  <span className="font-semibold">Preview</span>
+                  <Eye className="w-5 h-5 text-slate-400 dark:text-slate-500" />
+                  <span className="font-semibold text-slate-900 dark:text-white">Preview</span>
                 </div>
-                <span className="text-sm text-gray-500">{selectedTemplate.name}</span>
+                <span className="text-sm text-slate-500 dark:text-slate-400">{selectedTemplate.name}</span>
               </div>
               
               {/* Variables */}
               {selectedTemplate.variables && (
-                <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-800/50">
-                  <p className="text-xs text-gray-500 mb-2">Variables:</p>
+                <div className="px-4 py-3 border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-700/50">
+                  <p className="text-xs text-slate-500 dark:text-slate-400 mb-2">Variables:</p>
                   <div className="flex flex-wrap gap-2">
                     {JSON.parse(selectedTemplate.variables).map((v: string) => (
                       <input
@@ -130,7 +130,7 @@ export function Templates() {
                         onChange={(e) =>
                           setPreviewVars({ ...previewVars, [v]: e.target.value })
                         }
-                        className="px-2 py-1 text-sm rounded border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900"
+                        className="px-2 py-1 text-sm rounded border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white placeholder-slate-400"
                       />
                     ))}
                   </div>
@@ -141,21 +141,21 @@ export function Templates() {
               <div className="p-4">
                 {selectedTemplate.subject && (
                   <div className="mb-4">
-                    <p className="text-xs text-gray-500 mb-1">Subject:</p>
-                    <p className="font-medium">
+                    <p className="text-xs text-slate-500 dark:text-slate-400 mb-1">Subject:</p>
+                    <p className="font-medium text-slate-900 dark:text-white">
                       {renderWithVariables(selectedTemplate.subject, previewVars)}
                     </p>
                   </div>
                 )}
                 <div className="prose prose-sm dark:prose-invert max-w-none">
-                  <pre className="whitespace-pre-wrap font-sans text-sm bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
+                  <pre className="whitespace-pre-wrap font-sans text-sm bg-slate-50 dark:bg-slate-700 text-slate-800 dark:text-slate-200 p-4 rounded-lg">
                     {renderWithVariables(selectedTemplate.content, previewVars)}
                   </pre>
                 </div>
               </div>
             </div>
           ) : (
-            <div className="bg-gray-50 dark:bg-gray-800/50 rounded-lg border border-dashed border-gray-300 dark:border-gray-700 p-8 text-center text-gray-500">
+            <div className="bg-slate-50 dark:bg-slate-700/50 rounded-lg border border-dashed border-slate-300 dark:border-slate-600 p-8 text-center text-slate-500 dark:text-slate-400">
               <Eye className="w-8 h-8 mx-auto mb-2 opacity-50" />
               <p>Select a template to preview</p>
             </div>

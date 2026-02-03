@@ -45,24 +45,24 @@ export function Leads() {
     <div className="p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-xl sm:text-2xl font-bold">Leads</h1>
-          <p className="text-gray-500 text-sm sm:text-base">
+          <h1 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white">Leads</h1>
+          <p className="text-slate-500 dark:text-slate-400 text-sm sm:text-base">
             {data?.total || 0} leads total
           </p>
         </div>
       </div>
 
       {/* Filters */}
-      <div className="flex flex-wrap gap-4 bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800 p-4">
+      <div className="flex flex-wrap gap-4 bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 p-4 shadow-sm">
         <div className="flex-1 min-w-[200px]">
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
             <input
               type="text"
               placeholder="Search leads..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-transparent focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full pl-10 pr-4 py-2 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
         </div>
@@ -70,7 +70,7 @@ export function Leads() {
         <select
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value as LeadStatus | "")}
-          className="px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-transparent focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="px-4 py-2 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
         >
           <option value="">All statuses</option>
           {STATUS_OPTIONS.map((s) => (
@@ -81,7 +81,7 @@ export function Leads() {
         <select
           value={minScore}
           onChange={(e) => setMinScore(e.target.value)}
-          className="px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-transparent focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="px-4 py-2 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
         >
           <option value="">Any score</option>
           <option value="15">Score ≥ 15</option>
@@ -91,25 +91,25 @@ export function Leads() {
       </div>
 
       {/* Leads Table */}
-      <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800 overflow-hidden">
+      <div className="bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 overflow-hidden shadow-sm">
         {isLoading ? (
-          <div className="p-8 text-center text-gray-500">Loading...</div>
+          <div className="p-8 text-center text-slate-500 dark:text-slate-400">Loading...</div>
         ) : !data?.leads.length ? (
-          <div className="p-8 text-center text-gray-500">No leads found</div>
+          <div className="p-8 text-center text-slate-500 dark:text-slate-400">No leads found</div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full min-w-[640px]">
-              <thead className="bg-gray-50 dark:bg-gray-800/50 text-left">
+              <thead className="bg-slate-50 dark:bg-slate-700/50 text-left">
                 <tr>
-                  <th className="px-4 py-3 text-sm font-medium text-gray-500">Lead</th>
-                  <th className="px-4 py-3 text-sm font-medium text-gray-500">Source</th>
-                  <th className="px-4 py-3 text-sm font-medium text-gray-500">Score</th>
-                  <th className="px-4 py-3 text-sm font-medium text-gray-500">Status</th>
-                  <th className="px-4 py-3 text-sm font-medium text-gray-500">Date</th>
-                  <th className="px-4 py-3 text-sm font-medium text-gray-500"></th>
+                  <th className="px-4 py-3 text-sm font-medium text-slate-500 dark:text-slate-400">Lead</th>
+                  <th className="px-4 py-3 text-sm font-medium text-slate-500 dark:text-slate-400">Source</th>
+                  <th className="px-4 py-3 text-sm font-medium text-slate-500 dark:text-slate-400">Score</th>
+                  <th className="px-4 py-3 text-sm font-medium text-slate-500 dark:text-slate-400">Status</th>
+                  <th className="px-4 py-3 text-sm font-medium text-slate-500 dark:text-slate-400">Date</th>
+                  <th className="px-4 py-3 text-sm font-medium text-slate-500 dark:text-slate-400"></th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
+              <tbody className="divide-y divide-slate-100 dark:divide-slate-700">
                 {data.leads.map((lead) => (
                   <LeadRow
                     key={lead.id}
@@ -138,28 +138,28 @@ function LeadRow({
   const [showStatusMenu, setShowStatusMenu] = useState(false);
 
   return (
-    <tr className="hover:bg-gray-50 dark:hover:bg-gray-800/50">
+    <tr className="hover:bg-slate-50 dark:hover:bg-slate-700/50">
       <td className="px-4 py-3">
         <Link
           to={`/leads/${lead.id}`}
           className="block group"
         >
-          <div className="font-medium group-hover:text-blue-600 line-clamp-1">
+          <div className="font-medium text-slate-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 line-clamp-1">
             {lead.title}
           </div>
           {lead.author && (
-            <div className="text-sm text-gray-500">{lead.author}</div>
+            <div className="text-sm text-slate-500 dark:text-slate-400">{lead.author}</div>
           )}
         </Link>
       </td>
       <td className="px-4 py-3">
         <div className="flex items-center gap-2">
-          <span className="text-sm text-gray-600">{lead.source}</span>
+          <span className="text-sm text-slate-600 dark:text-slate-300">{lead.source}</span>
           <a
             href={lead.sourceUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-gray-400 hover:text-blue-500"
+            className="text-slate-400 dark:text-slate-500 hover:text-blue-500"
           >
             <ExternalLink className="w-4 h-4" />
           </a>
@@ -170,12 +170,12 @@ function LeadRow({
           <Star className={cn(
             "w-4 h-4",
             lead.score >= 30 ? "text-yellow-500 fill-yellow-500" :
-            lead.score >= 15 ? "text-yellow-500" : "text-gray-300"
+            lead.score >= 15 ? "text-yellow-500" : "text-slate-300 dark:text-slate-600"
           )} />
           <span className={cn(
             "font-medium",
-            lead.score >= 30 ? "text-green-600" :
-            lead.score >= 15 ? "text-blue-600" : "text-gray-500"
+            lead.score >= 30 ? "text-emerald-600 dark:text-emerald-400" :
+            lead.score >= 15 ? "text-blue-600 dark:text-blue-400" : "text-slate-500 dark:text-slate-400"
           )}>
             {lead.score}
           </span>
@@ -198,7 +198,7 @@ function LeadRow({
               className="fixed inset-0 z-10"
               onClick={() => setShowStatusMenu(false)}
             />
-            <div className="absolute top-full left-0 mt-1 z-20 bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700 shadow-lg py-1 min-w-[140px]">
+            <div className="absolute top-full left-0 mt-1 z-20 bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-600 shadow-lg py-1 min-w-[140px]">
               {STATUS_OPTIONS.map((status) => (
                 <button
                   key={status}
@@ -207,8 +207,8 @@ function LeadRow({
                     setShowStatusMenu(false);
                   }}
                   className={cn(
-                    "w-full px-3 py-1.5 text-left text-sm hover:bg-gray-100 dark:hover:bg-gray-800",
-                    lead.status === status && "font-medium bg-gray-50 dark:bg-gray-800"
+                    "w-full px-3 py-1.5 text-left text-sm text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700",
+                    lead.status === status && "font-medium bg-slate-50 dark:bg-slate-700"
                   )}
                 >
                   {status.replace(/_/g, " ")}
@@ -218,15 +218,15 @@ function LeadRow({
           </>
         )}
       </td>
-      <td className="px-4 py-3 text-sm text-gray-500">
+      <td className="px-4 py-3 text-sm text-slate-500 dark:text-slate-400">
         {new Date(lead.scrapedAt).toLocaleDateString()}
       </td>
       <td className="px-4 py-3">
         <Link
           to={`/leads/${lead.id}`}
-          className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800"
+          className="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700"
         >
-          <MoreHorizontal className="w-4 h-4 text-gray-400" />
+          <MoreHorizontal className="w-4 h-4 text-slate-400 dark:text-slate-500" />
         </Link>
       </td>
     </tr>
@@ -235,19 +235,19 @@ function LeadRow({
 
 function getStatusColor(status: string) {
   const colors: Record<string, string> = {
-    NEW: "bg-gray-100 text-gray-700",
-    QUALIFIED: "bg-blue-100 text-blue-700",
-    CONTACTED: "bg-purple-100 text-purple-700",
-    FOLLOWUP_1: "bg-orange-100 text-orange-700",
-    FOLLOWUP_2: "bg-orange-100 text-orange-700",
-    RESPONDED: "bg-green-100 text-green-700",
-    CALL_SCHEDULED: "bg-cyan-100 text-cyan-700",
-    CALL_DONE: "bg-cyan-100 text-cyan-700",
-    PROPOSAL_SENT: "bg-indigo-100 text-indigo-700",
-    NEGOTIATING: "bg-yellow-100 text-yellow-700",
-    WON: "bg-emerald-100 text-emerald-700",
-    LOST: "bg-red-100 text-red-700",
-    ARCHIVED: "bg-gray-100 text-gray-500",
+    NEW: "bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300",
+    QUALIFIED: "bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300",
+    CONTACTED: "bg-purple-100 dark:bg-purple-900/40 text-purple-700 dark:text-purple-300",
+    FOLLOWUP_1: "bg-orange-100 dark:bg-orange-900/40 text-orange-700 dark:text-orange-300",
+    FOLLOWUP_2: "bg-orange-100 dark:bg-orange-900/40 text-orange-700 dark:text-orange-300",
+    RESPONDED: "bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-300",
+    CALL_SCHEDULED: "bg-cyan-100 dark:bg-cyan-900/40 text-cyan-700 dark:text-cyan-300",
+    CALL_DONE: "bg-cyan-100 dark:bg-cyan-900/40 text-cyan-700 dark:text-cyan-300",
+    PROPOSAL_SENT: "bg-indigo-100 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300",
+    NEGOTIATING: "bg-yellow-100 dark:bg-yellow-900/40 text-yellow-700 dark:text-yellow-300",
+    WON: "bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300",
+    LOST: "bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-300",
+    ARCHIVED: "bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400",
   };
-  return colors[status] || "bg-gray-100 text-gray-700";
+  return colors[status] || "bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300";
 }

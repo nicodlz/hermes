@@ -75,19 +75,19 @@ export function LeadDetail() {
       <div className="flex flex-col sm:flex-row sm:items-start gap-4">
         <Link
           to="/leads"
-          className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 self-start"
+          className="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 self-start"
         >
-          <ArrowLeft className="w-5 h-5" />
+          <ArrowLeft className="w-5 h-5 text-slate-600 dark:text-slate-300" />
         </Link>
         <div className="flex-1 min-w-0">
-          <h1 className="text-xl sm:text-2xl font-bold break-words">{lead.title}</h1>
-          <div className="flex flex-wrap items-center gap-2 sm:gap-4 mt-2 text-sm text-gray-500">
+          <h1 className="text-xl sm:text-2xl font-bold break-words text-slate-900 dark:text-white">{lead.title}</h1>
+          <div className="flex flex-wrap items-center gap-2 sm:gap-4 mt-2 text-sm text-slate-500 dark:text-slate-400">
             <span>{lead.source}</span>
             <a
               href={lead.sourceUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-1 text-blue-600 hover:underline"
+              className="flex items-center gap-1 text-blue-600 dark:text-blue-400 hover:underline"
             >
               View source <ExternalLink className="w-3 h-3" />
             </a>
@@ -97,12 +97,12 @@ export function LeadDetail() {
           </div>
         </div>
         <div className="flex items-center gap-2 flex-wrap">
-          <div className="flex items-center gap-1 px-3 py-1 bg-gray-100 dark:bg-gray-800 rounded-full">
+          <div className="flex items-center gap-1 px-3 py-1 bg-slate-100 dark:bg-slate-700 rounded-full">
             <Star className={cn(
               "w-4 h-4",
-              lead.score >= 30 ? "text-yellow-500 fill-yellow-500" : "text-gray-400"
+              lead.score >= 30 ? "text-yellow-500 fill-yellow-500" : "text-slate-400 dark:text-slate-500"
             )} />
-            <span className="font-bold">{lead.score}</span>
+            <span className="font-bold text-slate-900 dark:text-white">{lead.score}</span>
           </div>
           <select
             value={lead.status}

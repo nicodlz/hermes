@@ -1,7 +1,7 @@
 #!/bin/bash
 # Hermes CRM CLI - Wrapper for common operations
 
-HERMES_API_URL="${HERMES_API_URL:-http://localhost:3001}"
+HERMES_API_URL="${HERMES_API_URL:-https://hermes.ndlz.net}"
 
 usage() {
     echo "Usage: hermes-cli.sh <command> [options]"
