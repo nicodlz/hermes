@@ -1,0 +1,376 @@
+// Hermes CRM - SDR Agent Database Schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================
+// LEADS
+// ============================================
+
+model Lead {
+  id          String   @id @default(cuid())
+  
+  // Source info
+  source      String   // reddit-hiring, twitter, indiehackers, etc.
+  sourceUrl   String   @unique
+  sourceId    String?  // Original ID from source
+  
+  // Lead info
+  title       String
+  description String?
+  author      String?
+  authorUrl   String?
+  
+  // Qualification
+  score       Int      @default(0)
+  scoreReasons String? // JSON array of reasons
+  
+  // Status pipeline
+  status      LeadStatus @default(NEW)
+  
+  // Contact info (discovered later)
+  email       String?
+  phone       String?
+  company     String?
+  website     String?
+  
+  // Budget & timeline
+  budgetMin   Int?
+  budgetMax   Int?
+  currency    String   @default("USD")
+  deadline    DateTime?
+  
+  // Tags
+  tags        String?  // JSON array
+  
+  // Timestamps
+  scrapedAt   DateTime @default(now())
+  qualifiedAt DateTime?
+  contactedAt DateTime?
+  respondedAt DateTime?
+  callAt      DateTime?
+  proposalAt  DateTime?
+  closedAt    DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  // Relations
+  notes       Note[]
+  tasks       Task[]
+  messages    Message[]
+  proposals   Proposal[]
+}
+
+enum LeadStatus {
+  NEW
+  QUALIFIED
+  CONTACTED
+  FOLLOWUP_1
+  FOLLOWUP_2
+  RESPONDED
+  CALL_SCHEDULED
+  CALL_DONE
+  PROPOSAL_SENT
+  NEGOTIATING
+  WON
+  LOST
+  ARCHIVED
+}
+
+// ============================================
+// NOTES & ACTIVITY
+// ============================================
+
+model Note {
+  id        String   @id @default(cuid())
+  leadId    String
+  lead      Lead     @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  
+  content   String
+  type      NoteType @default(MANUAL)
+  
+  // For AI-generated notes
+  aiModel   String?
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum NoteType {
+  MANUAL      // Human-written
+  AI_ANALYSIS // AI qualification analysis
+  AI_RESEARCH // AI research on company/person
+  SYSTEM      // Automated system note
+}
+
+// ============================================
+// TASKS
+// ============================================
+
+model Task {
+  id          String     @id @default(cuid())
+  leadId      String?
+  lead        Lead?      @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  
+  title       String
+  description String?
+  type        TaskType   @default(OTHER)
+  priority    Priority   @default(MEDIUM)
+  status      TaskStatus @default(PENDING)
+  
+  dueAt       DateTime?
+  completedAt DateTime?
+  
+  // For AI-executed tasks
+  aiExecuted  Boolean    @default(false)
+  aiResult    String?    // JSON result
+  
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+}
+
+enum TaskType {
+  FOLLOWUP
+  CALL
+  EMAIL
+  RESEARCH
+  PROPOSAL
+  OTHER
+}
+
+enum Priority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+enum TaskStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+// ============================================
+// MESSAGES (outreach)
+// ============================================
+
+model Message {
+  id        String        @id @default(cuid())
+  leadId    String
+  lead      Lead          @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  
+  channel   MessageChannel
+  direction MessageDirection
+  
+  subject   String?
+  content   String
+  
+  // External refs
+  externalId String?      // Message ID from platform
+  threadId   String?      // Thread ID for conversations
+  
+  // Status
+  status    MessageStatus @default(DRAFT)
+  sentAt    DateTime?
+  readAt    DateTime?
+  repliedAt DateTime?
+  
+  // Template used
+  templateId String?
+  template   Template?    @relation(fields: [templateId], references: [id])
+  
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+}
+
+enum MessageChannel {
+  REDDIT_DM
+  TWITTER_DM
+  EMAIL
+  LINKEDIN
+  DISCORD
+  OTHER
+}
+
+enum MessageDirection {
+  OUTBOUND
+  INBOUND
+}
+
+enum MessageStatus {
+  DRAFT
+  SCHEDULED
+  SENT
+  DELIVERED
+  READ
+  REPLIED
+  BOUNCED
+  FAILED
+}
+
+// ============================================
+// TEMPLATES
+// ============================================
+
+model Template {
+  id          String       @id @default(cuid())
+  name        String
+  description String?
+  type        TemplateType
+  channel     MessageChannel?
+  
+  subject     String?
+  content     String
+  
+  // Variables like {{lead.title}}, {{lead.author}}
+  variables   String?      // JSON array of variable names
+  
+  // Usage stats
+  usageCount  Int          @default(0)
+  replyRate   Float?       // Percentage of replies
+  
+  isActive    Boolean      @default(true)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  
+  messages    Message[]
+}
+
+enum TemplateType {
+  INITIAL_OUTREACH
+  FOLLOWUP_1
+  FOLLOWUP_2
+  FOLLOWUP_3
+  PROPOSAL
+  CLOSING
+  REJECTION
+  CUSTOM
+}
+
+// ============================================
+// PROPOSALS
+// ============================================
+
+model Proposal {
+  id           String         @id @default(cuid())
+  leadId       String
+  lead         Lead           @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  
+  title        String
+  content      String         // Markdown content
+  
+  // Pricing
+  amount       Int
+  currency     String         @default("USD")
+  paymentTerms String?        // "50% upfront, 50% on delivery"
+  
+  // Timeline
+  estimatedDays Int?
+  startDate    DateTime?
+  endDate      DateTime?
+  
+  // Status
+  status       ProposalStatus @default(DRAFT)
+  sentAt       DateTime?
+  viewedAt     DateTime?
+  acceptedAt   DateTime?
+  rejectedAt   DateTime?
+  
+  // Versioning
+  version      Int            @default(1)
+  
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+}
+
+enum ProposalStatus {
+  DRAFT
+  SENT
+  VIEWED
+  ACCEPTED
+  REJECTED
+  EXPIRED
+}
+
+// ============================================
+// SCRAPING SOURCES
+// ============================================
+
+model Source {
+  id           String      @id @default(cuid())
+  name         String
+  type         SourceType
+  
+  // Configuration
+  config       String      // JSON config (keywords, subreddits, etc.)
+  
+  // Schedule
+  schedule     String?     // Cron expression
+  lastRunAt    DateTime?
+  nextRunAt    DateTime?
+  
+  // Stats
+  totalScraped Int         @default(0)
+  lastError    String?
+  
+  isActive     Boolean     @default(true)
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+}
+
+enum SourceType {
+  REDDIT
+  TWITTER
+  HACKERNEWS
+  INDIEHACKERS
+  LINKEDIN
+  UPWORK
+  FREELANCE_BOARD
+  CUSTOM
+}
+
+// ============================================
+// ANALYTICS
+// ============================================
+
+model DailyStats {
+  id            String   @id @default(cuid())
+  date          DateTime @unique
+  
+  // Lead funnel
+  leadsScraped  Int      @default(0)
+  leadsQualified Int     @default(0)
+  leadsContacted Int     @default(0)
+  leadsResponded Int     @default(0)
+  callsScheduled Int     @default(0)
+  proposalsSent  Int     @default(0)
+  dealsWon       Int     @default(0)
+  dealsLost      Int     @default(0)
+  
+  // Revenue
+  revenue       Int      @default(0)
+  currency      String   @default("USD")
+  
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+// ============================================
+// SETTINGS
+// ============================================
+
+model Setting {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  value     String   // JSON value
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
