@@ -51,7 +51,10 @@ ENV PORT=3001
 
 EXPOSE 3001
 
-WORKDIR /app/apps/api
+WORKDIR /app
 
-# Serve both API and static files
-CMD ["node", "dist/server.js"]
+# Copy startup script
+COPY --from=builder /app/packages/db/prisma ./packages/db/prisma
+
+# Startup: run migrations then start server
+CMD ["sh", "-c", "cd /app/packages/db && npx prisma db push --skip-generate && cd /app/apps/api && node dist/server.js"]
