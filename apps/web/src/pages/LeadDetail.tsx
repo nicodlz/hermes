@@ -48,8 +48,8 @@ export function LeadDetail() {
     return (
       <div className="p-4 sm:p-6 lg:p-8">
         <div className="animate-pulse space-y-4">
-          <div className="h-8 w-48 bg-gray-200 rounded" />
-          <div className="h-64 bg-gray-200 rounded-lg" />
+          <div className="h-8 w-48 bg-slate-200 dark:bg-slate-700 rounded" />
+          <div className="h-64 bg-slate-200 dark:bg-slate-700 rounded-lg" />
         </div>
       </div>
     );
@@ -58,8 +58,8 @@ export function LeadDetail() {
   if (!lead) {
     return (
       <div className="p-4 sm:p-6 lg:p-8 text-center">
-        <p className="text-gray-500">Lead not found</p>
-        <Link to="/leads" className="text-blue-600 hover:underline mt-2 inline-block">
+        <p className="text-slate-500 dark:text-slate-400">Lead not found</p>
+        <Link to="/leads" className="text-blue-600 dark:text-blue-400 hover:underline mt-2 inline-block">
           ← Back to leads
         </Link>
       </div>
@@ -126,9 +126,9 @@ export function LeadDetail() {
         <div className="lg:col-span-2 space-y-6">
           {/* Description */}
           {lead.description && (
-            <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800 p-6">
-              <h2 className="font-semibold mb-3">Description</h2>
-              <p className="text-gray-600 dark:text-gray-400 whitespace-pre-wrap">
+            <div className="bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 p-6 shadow-sm">
+              <h2 className="font-semibold mb-3 text-slate-900 dark:text-white">Description</h2>
+              <p className="text-slate-600 dark:text-slate-300 whitespace-pre-wrap">
                 {lead.description}
               </p>
             </div>
@@ -136,8 +136,8 @@ export function LeadDetail() {
 
           {/* Score Reasons */}
           {scoreReasons.length > 0 && (
-            <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800 p-6">
-              <h2 className="font-semibold mb-3">Qualification Reasons</h2>
+            <div className="bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 p-6 shadow-sm">
+              <h2 className="font-semibold mb-3 text-slate-900 dark:text-white">Qualification Reasons</h2>
               <div className="flex flex-wrap gap-2">
                 {scoreReasons.map((reason: string, i: number) => (
                   <span
@@ -145,8 +145,8 @@ export function LeadDetail() {
                     className={cn(
                       "px-3 py-1 rounded-full text-sm",
                       reason.startsWith("+")
-                        ? "bg-green-100 text-green-700"
-                        : "bg-red-100 text-red-700"
+                        ? "bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-300"
+                        : "bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-300"
                     )}
                   >
                     {reason}
@@ -157,8 +157,8 @@ export function LeadDetail() {
           )}
 
           {/* Notes */}
-          <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800 p-6">
-            <h2 className="font-semibold mb-4">Notes</h2>
+          <div className="bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 p-6 shadow-sm">
+            <h2 className="font-semibold mb-4 text-slate-900 dark:text-white">Notes</h2>
             
             {/* Add note form */}
             <div className="mb-4">
@@ -167,7 +167,7 @@ export function LeadDetail() {
                 onChange={(e) => setNewNote(e.target.value)}
                 placeholder="Add a note..."
                 rows={3}
-                className="w-full px-3 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-transparent focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
               <button
                 onClick={() => addNoteMutation.mutate(newNote)}
@@ -186,11 +186,11 @@ export function LeadDetail() {
                   className={cn(
                     "p-4 rounded-lg",
                     note.type === "AI_ANALYSIS"
-                      ? "bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-800"
-                      : "bg-gray-50 dark:bg-gray-800"
+                      ? "bg-purple-50 dark:bg-purple-900/30 border border-purple-200 dark:border-purple-700"
+                      : "bg-slate-50 dark:bg-slate-700"
                   )}
                 >
-                  <div className="flex items-center gap-2 mb-2 text-xs text-gray-500">
+                  <div className="flex items-center gap-2 mb-2 text-xs text-slate-500 dark:text-slate-400">
                     <span className="font-medium">
                       {note.type === "AI_ANALYSIS" ? "🤖 AI Analysis" :
                        note.type === "AI_RESEARCH" ? "🔬 AI Research" :
@@ -205,20 +205,20 @@ export function LeadDetail() {
                       </>
                     )}
                   </div>
-                  <p className="text-sm whitespace-pre-wrap">{note.content}</p>
+                  <p className="text-sm whitespace-pre-wrap text-slate-700 dark:text-slate-200">{note.content}</p>
                 </div>
               ))}
               {!lead.notes.length && (
-                <p className="text-gray-500 text-sm">No notes yet</p>
+                <p className="text-slate-500 dark:text-slate-400 text-sm">No notes yet</p>
               )}
             </div>
           </div>
 
           {/* Messages */}
           {lead.messages.length > 0 && (
-            <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800 p-6">
-              <h2 className="font-semibold mb-4 flex items-center gap-2">
-                <MessageSquare className="w-5 h-5" />
+            <div className="bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 p-6 shadow-sm">
+              <h2 className="font-semibold mb-4 flex items-center gap-2 text-slate-900 dark:text-white">
+                <MessageSquare className="w-5 h-5 text-blue-500" />
                 Messages ({lead.messages.length})
               </h2>
               <div className="space-y-3">
@@ -228,11 +228,11 @@ export function LeadDetail() {
                     className={cn(
                       "p-4 rounded-lg",
                       msg.direction === "OUTBOUND"
-                        ? "bg-blue-50 dark:bg-blue-900/20 ml-8"
-                        : "bg-gray-50 dark:bg-gray-800 mr-8"
+                        ? "bg-blue-50 dark:bg-blue-900/30 ml-8"
+                        : "bg-slate-50 dark:bg-slate-700 mr-8"
                     )}
                   >
-                    <div className="flex items-center gap-2 mb-2 text-xs text-gray-500">
+                    <div className="flex items-center gap-2 mb-2 text-xs text-slate-500 dark:text-slate-400">
                       <span>{msg.direction === "OUTBOUND" ? "→ Sent" : "← Received"}</span>
                       <span>•</span>
                       <span>{msg.channel}</span>
@@ -240,9 +240,9 @@ export function LeadDetail() {
                       <span>{msg.sentAt ? new Date(msg.sentAt).toLocaleString() : "Draft"}</span>
                     </div>
                     {msg.subject && (
-                      <p className="font-medium mb-1">{msg.subject}</p>
+                      <p className="font-medium mb-1 text-slate-900 dark:text-white">{msg.subject}</p>
                     )}
-                    <p className="text-sm whitespace-pre-wrap">{msg.content}</p>
+                    <p className="text-sm whitespace-pre-wrap text-slate-700 dark:text-slate-200">{msg.content}</p>
                   </div>
                 ))}
               </div>
@@ -253,8 +253,8 @@ export function LeadDetail() {
         {/* Sidebar */}
         <div className="space-y-6">
           {/* Contact Info */}
-          <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800 p-6">
-            <h2 className="font-semibold mb-4">Contact Info</h2>
+          <div className="bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 p-6 shadow-sm">
+            <h2 className="font-semibold mb-4 text-slate-900 dark:text-white">Contact Info</h2>
             <div className="space-y-3">
               <ContactField
                 icon={Mail}
@@ -281,20 +281,20 @@ export function LeadDetail() {
           </div>
 
           {/* Budget */}
-          <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800 p-6">
-            <h2 className="font-semibold mb-4">Budget</h2>
+          <div className="bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 p-6 shadow-sm">
+            <h2 className="font-semibold mb-4 text-slate-900 dark:text-white">Budget</h2>
             {lead.budgetMin || lead.budgetMax ? (
-              <p className="text-2xl font-bold">
+              <p className="text-2xl font-bold text-slate-900 dark:text-white">
                 ${lead.budgetMin?.toLocaleString() || "?"} - ${lead.budgetMax?.toLocaleString() || "?"}
               </p>
             ) : (
-              <p className="text-gray-500">Not specified</p>
+              <p className="text-slate-500 dark:text-slate-400">Not specified</p>
             )}
           </div>
 
           {/* Timeline */}
-          <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800 p-6">
-            <h2 className="font-semibold mb-4">Timeline</h2>
+          <div className="bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 p-6 shadow-sm">
+            <h2 className="font-semibold mb-4 text-slate-900 dark:text-white">Timeline</h2>
             <div className="space-y-2 text-sm">
               <TimelineItem label="Scraped" date={lead.scrapedAt} />
               <TimelineItem label="Qualified" date={lead.qualifiedAt} />
@@ -306,13 +306,13 @@ export function LeadDetail() {
 
           {/* Tags */}
           {tags.length > 0 && (
-            <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800 p-6">
-              <h2 className="font-semibold mb-4">Tags</h2>
+            <div className="bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 p-6 shadow-sm">
+              <h2 className="font-semibold mb-4 text-slate-900 dark:text-white">Tags</h2>
               <div className="flex flex-wrap gap-2">
                 {tags.map((tag: string) => (
                   <span
                     key={tag}
-                    className="px-3 py-1 bg-gray-100 dark:bg-gray-800 rounded-full text-sm"
+                    className="px-3 py-1 bg-slate-100 dark:bg-slate-700 rounded-full text-sm text-slate-700 dark:text-slate-300"
                   >
                     {tag}
                   </span>
@@ -323,8 +323,8 @@ export function LeadDetail() {
 
           {/* Tasks */}
           {lead.tasks.length > 0 && (
-            <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800 p-6">
-              <h2 className="font-semibold mb-4">Tasks ({lead.tasks.length})</h2>
+            <div className="bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 p-6 shadow-sm">
+              <h2 className="font-semibold mb-4 text-slate-900 dark:text-white">Tasks ({lead.tasks.length})</h2>
               <div className="space-y-2">
                 {lead.tasks.map((task) => (
                   <div
@@ -332,12 +332,12 @@ export function LeadDetail() {
                     className={cn(
                       "p-3 rounded-lg text-sm",
                       task.status === "COMPLETED"
-                        ? "bg-green-50 dark:bg-green-900/20"
-                        : "bg-gray-50 dark:bg-gray-800"
+                        ? "bg-emerald-50 dark:bg-emerald-900/30"
+                        : "bg-slate-50 dark:bg-slate-700"
                     )}
                   >
-                    <div className="font-medium">{task.title}</div>
-                    <div className="text-xs text-gray-500 mt-1">
+                    <div className="font-medium text-slate-900 dark:text-white">{task.title}</div>
+                    <div className="text-xs text-slate-500 dark:text-slate-400 mt-1">
                       {task.type} • {task.status}
                     </div>
                   </div>
@@ -370,7 +370,7 @@ function ContactField({
   if (editing && editable) {
     return (
       <div className="flex items-center gap-2">
-        <Icon className="w-4 h-4 text-gray-400" />
+        <Icon className="w-4 h-4 text-slate-400 dark:text-slate-500" />
         <input
           type="text"
           value={editValue}
@@ -387,7 +387,7 @@ function ContactField({
             if (e.key === "Escape") setEditing(false);
           }}
           autoFocus
-          className="flex-1 px-2 py-1 border rounded"
+          className="flex-1 px-2 py-1 border border-slate-200 dark:border-slate-600 rounded bg-white dark:bg-slate-700 text-slate-900 dark:text-white"
         />
       </div>
     );
@@ -397,13 +397,13 @@ function ContactField({
     <div
       className={cn(
         "flex items-center gap-2",
-        editable && "cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 -mx-2 px-2 py-1 rounded"
+        editable && "cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700 -mx-2 px-2 py-1 rounded"
       )}
       onClick={() => editable && setEditing(true)}
     >
-      <Icon className="w-4 h-4 text-gray-400" />
-      <span className="text-sm text-gray-500">{label}:</span>
-      <span className={cn("text-sm", !value && "text-gray-400 italic")}>
+      <Icon className="w-4 h-4 text-slate-400 dark:text-slate-500" />
+      <span className="text-sm text-slate-500 dark:text-slate-400">{label}:</span>
+      <span className={cn("text-sm text-slate-700 dark:text-slate-200", !value && "text-slate-400 dark:text-slate-500 italic")}>
         {value || (editable ? "Click to add" : "—")}
       </span>
     </div>
@@ -416,12 +416,12 @@ function TimelineItem({ label, date }: { label: string; date?: string | null }) 
       <div
         className={cn(
           "w-2 h-2 rounded-full",
-          date ? "bg-green-500" : "bg-gray-300"
+          date ? "bg-emerald-500" : "bg-slate-300 dark:bg-slate-600"
         )}
       />
-      <span className="text-gray-500">{label}</span>
+      <span className="text-slate-500 dark:text-slate-400">{label}</span>
       {date && (
-        <span className="ml-auto text-gray-400">
+        <span className="ml-auto text-slate-400 dark:text-slate-500">
           {new Date(date).toLocaleDateString()}
         </span>
       )}
@@ -431,12 +431,12 @@ function TimelineItem({ label, date }: { label: string; date?: string | null }) 
 
 function getStatusColor(status: string) {
   const colors: Record<string, string> = {
-    NEW: "bg-gray-100 text-gray-700",
-    QUALIFIED: "bg-blue-100 text-blue-700",
-    CONTACTED: "bg-purple-100 text-purple-700",
-    RESPONDED: "bg-green-100 text-green-700",
-    WON: "bg-emerald-100 text-emerald-700",
-    LOST: "bg-red-100 text-red-700",
+    NEW: "bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300",
+    QUALIFIED: "bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300",
+    CONTACTED: "bg-purple-100 dark:bg-purple-900/40 text-purple-700 dark:text-purple-300",
+    RESPONDED: "bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-300",
+    WON: "bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300",
+    LOST: "bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-300",
   };
-  return colors[status] || "bg-gray-100 text-gray-700";
+  return colors[status] || "bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300";
 }
