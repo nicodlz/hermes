@@ -29,10 +29,10 @@ export function Stats() {
   const overview = dashboard?.overview;
 
   return (
-    <div className="p-8 space-y-8">
+    <div className="p-4 sm:p-6 lg:p-8 space-y-6 sm:space-y-8">
       <div>
-        <h1 className="text-2xl font-bold">Analytics</h1>
-        <p className="text-gray-500">Performance metrics and conversion data</p>
+        <h1 className="text-xl sm:text-2xl font-bold">Analytics</h1>
+        <p className="text-gray-500 text-sm sm:text-base">Performance metrics and conversion data</p>
       </div>
 
       {/* Key Metrics */}
@@ -69,15 +69,15 @@ export function Stats() {
       </div>
 
       {/* Conversion Funnel */}
-      <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800 p-6">
-        <h2 className="font-semibold mb-6 flex items-center gap-2">
+      <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800 p-4 sm:p-6">
+        <h2 className="font-semibold mb-4 sm:mb-6 flex items-center gap-2">
           <TrendingUp className="w-5 h-5" />
           Conversion Funnel
         </h2>
-        <div className="space-y-4">
+        <div className="space-y-3 sm:space-y-4">
           {funnel?.map((step, i) => (
-            <div key={step.stage} className="flex items-center gap-4">
-              <div className="w-28 text-sm font-medium text-gray-600">
+            <div key={step.stage} className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
+              <div className="w-full sm:w-28 text-sm font-medium text-gray-600">
                 {step.stage}
               </div>
               <div className="flex-1">
@@ -103,7 +103,7 @@ export function Stats() {
                   </div>
                 </div>
               </div>
-              <div className="w-20 text-right">
+              <div className="hidden sm:block w-20 text-right">
                 {i > 0 && (
                   <div className={cn(
                     "flex items-center justify-end gap-1 text-sm",
@@ -126,10 +126,10 @@ export function Stats() {
       </div>
 
       {/* Daily Activity */}
-      <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800 p-6">
-        <h2 className="font-semibold mb-6">Daily Activity (Last 30 Days)</h2>
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
+      <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800 p-4 sm:p-6">
+        <h2 className="font-semibold mb-4 sm:mb-6">Daily Activity (Last 30 Days)</h2>
+        <div className="overflow-x-auto -mx-4 sm:mx-0 px-4 sm:px-0">
+          <table className="w-full text-sm min-w-[500px]">
             <thead>
               <tr className="text-left text-gray-500">
                 <th className="pb-3">Date</th>
@@ -181,9 +181,9 @@ export function Stats() {
       </div>
 
       {/* Pipeline Breakdown */}
-      <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800 p-6">
+      <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800 p-4 sm:p-6">
         <h2 className="font-semibold mb-4">Pipeline Breakdown</h2>
-        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 sm:gap-4">
           {Object.entries(dashboard?.pipeline || {}).map(([status, count]) => (
             <div
               key={status}

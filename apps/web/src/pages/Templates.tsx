@@ -32,13 +32,13 @@ export function Templates() {
   }, {} as Record<string, Template[]>) || {};
 
   return (
-    <div className="p-8 space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold">Templates</h1>
-          <p className="text-gray-500">Message and proposal templates</p>
+          <h1 className="text-xl sm:text-2xl font-bold">Templates</h1>
+          <p className="text-gray-500 text-sm sm:text-base">Message and proposal templates</p>
         </div>
-        <button className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+        <button className="flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 w-full sm:w-auto">
           <Plus className="w-4 h-4" />
           New Template
         </button>

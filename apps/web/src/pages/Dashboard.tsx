@@ -45,10 +45,10 @@ export function Dashboard() {
   const overview = stats?.overview;
 
   return (
-    <div className="p-8 space-y-8">
+    <div className="p-4 sm:p-6 lg:p-8 space-y-6 sm:space-y-8">
       <div>
-        <h1 className="text-2xl font-bold">Dashboard</h1>
-        <p className="text-gray-500">SDR performance overview</p>
+        <h1 className="text-xl sm:text-2xl font-bold">Dashboard</h1>
+        <p className="text-gray-500 text-sm sm:text-base">SDR performance overview</p>
       </div>
 
       {/* KPI Cards */}

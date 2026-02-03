@@ -46,7 +46,7 @@ export function LeadDetail() {
 
   if (isLoading) {
     return (
-      <div className="p-8">
+      <div className="p-4 sm:p-6 lg:p-8">
         <div className="animate-pulse space-y-4">
           <div className="h-8 w-48 bg-gray-200 rounded" />
           <div className="h-64 bg-gray-200 rounded-lg" />
@@ -57,7 +57,7 @@ export function LeadDetail() {
 
   if (!lead) {
     return (
-      <div className="p-8 text-center">
+      <div className="p-4 sm:p-6 lg:p-8 text-center">
         <p className="text-gray-500">Lead not found</p>
         <Link to="/leads" className="text-blue-600 hover:underline mt-2 inline-block">
           ← Back to leads
@@ -70,18 +70,18 @@ export function LeadDetail() {
   const tags = lead.tags ? JSON.parse(lead.tags) : [];
 
   return (
-    <div className="p-8 space-y-6">
+    <div className="p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6">
       {/* Header */}
-      <div className="flex items-start gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-start gap-4">
         <Link
           to="/leads"
-          className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800"
+          className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 self-start"
         >
           <ArrowLeft className="w-5 h-5" />
         </Link>
-        <div className="flex-1">
-          <h1 className="text-2xl font-bold">{lead.title}</h1>
-          <div className="flex items-center gap-4 mt-2 text-sm text-gray-500">
+        <div className="flex-1 min-w-0">
+          <h1 className="text-xl sm:text-2xl font-bold break-words">{lead.title}</h1>
+          <div className="flex flex-wrap items-center gap-2 sm:gap-4 mt-2 text-sm text-gray-500">
             <span>{lead.source}</span>
             <a
               href={lead.sourceUrl}
@@ -96,7 +96,7 @@ export function LeadDetail() {
             )}
           </div>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap">
           <div className="flex items-center gap-1 px-3 py-1 bg-gray-100 dark:bg-gray-800 rounded-full">
             <Star className={cn(
               "w-4 h-4",

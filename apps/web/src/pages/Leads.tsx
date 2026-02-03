@@ -42,11 +42,11 @@ export function Leads() {
   });
 
   return (
-    <div className="p-8 space-y-6">
+    <div className="p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold">Leads</h1>
-          <p className="text-gray-500">
+          <h1 className="text-xl sm:text-2xl font-bold">Leads</h1>
+          <p className="text-gray-500 text-sm sm:text-base">
             {data?.total || 0} leads total
           </p>
         </div>
@@ -97,29 +97,31 @@ export function Leads() {
         ) : !data?.leads.length ? (
           <div className="p-8 text-center text-gray-500">No leads found</div>
         ) : (
-          <table className="w-full">
-            <thead className="bg-gray-50 dark:bg-gray-800/50 text-left">
-              <tr>
-                <th className="px-4 py-3 text-sm font-medium text-gray-500">Lead</th>
-                <th className="px-4 py-3 text-sm font-medium text-gray-500">Source</th>
-                <th className="px-4 py-3 text-sm font-medium text-gray-500">Score</th>
-                <th className="px-4 py-3 text-sm font-medium text-gray-500">Status</th>
-                <th className="px-4 py-3 text-sm font-medium text-gray-500">Date</th>
-                <th className="px-4 py-3 text-sm font-medium text-gray-500"></th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
-              {data.leads.map((lead) => (
-                <LeadRow
-                  key={lead.id}
-                  lead={lead}
-                  onStatusChange={(status) =>
-                    updateMutation.mutate({ id: lead.id, data: { status } })
-                  }
-                />
-              ))}
-            </tbody>
-          </table>
+          <div className="overflow-x-auto">
+            <table className="w-full min-w-[640px]">
+              <thead className="bg-gray-50 dark:bg-gray-800/50 text-left">
+                <tr>
+                  <th className="px-4 py-3 text-sm font-medium text-gray-500">Lead</th>
+                  <th className="px-4 py-3 text-sm font-medium text-gray-500">Source</th>
+                  <th className="px-4 py-3 text-sm font-medium text-gray-500">Score</th>
+                  <th className="px-4 py-3 text-sm font-medium text-gray-500">Status</th>
+                  <th className="px-4 py-3 text-sm font-medium text-gray-500">Date</th>
+                  <th className="px-4 py-3 text-sm font-medium text-gray-500"></th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
+                {data.leads.map((lead) => (
+                  <LeadRow
+                    key={lead.id}
+                    lead={lead}
+                    onStatusChange={(status) =>
+                      updateMutation.mutate({ id: lead.id, data: { status } })
+                    }
+                  />
+                ))}
+              </tbody>
+            </table>
+          </div>
         )}
       </div>
     </div>
