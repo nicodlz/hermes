@@ -30,7 +30,6 @@ model Organization {
 model User {
   id             String   @id @default(cuid())
   email          String   @unique
-  passwordHash   String
   name           String?
   
   // Organization
@@ -44,6 +43,29 @@ model User {
   // Relations
   sessions       Session[]
   apiKeys        ApiKey[]
+  magicLinks     MagicLink[]
+}
+
+model MagicLink {
+  id        String    @id @default(cuid())
+  token     String    @unique
+  email     String
+  
+  // Optional: link to existing user (null for new signups)
+  userId    String?
+  user      User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  // For new signups
+  orgName   String?
+  userName  String?
+  
+  expiresAt DateTime
+  usedAt    DateTime?
+  
+  createdAt DateTime  @default(now())
+  
+  @@index([token])
+  @@index([email])
 }
 
 model Session {

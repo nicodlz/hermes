@@ -23,6 +23,7 @@ export type {
   User, 
   Session, 
   ApiKey, 
+  MagicLink,
   Lead, 
   Note, 
   Task, 

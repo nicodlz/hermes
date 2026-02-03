@@ -2,7 +2,7 @@
  * Authentication API Routes
  * 
  * Handles:
- * - User registration and login
+ * - Magic link authentication (request link, verify token)
  * - Session management (logout)
  * - API key management (create, list, revoke)
  * - Current user info
@@ -11,8 +11,9 @@
 import { Hono } from "hono";
 import { zValidator } from "@hono/zod-validator";
 import { z } from "zod";
-import bcrypt from "bcrypt";
+import crypto from "crypto";
 import { db } from "@hermes/db";
+import { sendMagicLinkEmail } from "../lib/email.js";
 import {
   AuthContext,
   requireAuth,
@@ -24,19 +25,25 @@ import {
   hashApiKey,
 } from "../middleware/auth.js";
 
-const BCRYPT_ROUNDS = 12;
+const MAGIC_LINK_EXPIRY = 15 * 60 * 1000; // 15 minutes
+
+/**
+ * Generate a secure random token for magic links
+ */
+function generateMagicToken(): string {
+  return crypto.randomBytes(32).toString("hex");
+}
 
 // Schemas
-const registerSchema = z.object({
+const requestMagicLinkSchema = z.object({
   email: z.string().email(),
-  password: z.string().min(8, "Password must be at least 8 characters"),
+  // For new user registration
   name: z.string().optional(),
-  orgName: z.string().min(1, "Organization name is required"),
+  orgName: z.string().optional(),
 });
 
-const loginSchema = z.object({
-  email: z.string().email(),
-  password: z.string(),
+const verifyMagicLinkSchema = z.object({
+  token: z.string().min(1),
 });
 
 const createApiKeySchema = z.object({
@@ -51,86 +58,148 @@ export const authRouter = new Hono<AuthContext>()
   // ==========================================
 
   /**
-   * Register a new user and organization
+   * Request a magic link
+   * - If user exists: sends login link
+   * - If user doesn't exist + orgName provided: sends signup link
+   * - If user doesn't exist + no orgName: returns error
    */
-  .post("/register", zValidator("json", registerSchema), async (c) => {
-    const { email, password, name, orgName } = c.req.valid("json");
+  .post("/magic-link", zValidator("json", requestMagicLinkSchema), async (c) => {
+    const { email, name, orgName } = c.req.valid("json");
 
-    // Check if user already exists
+    // Check if user exists
     const existingUser = await db.user.findUnique({ where: { email } });
-    if (existingUser) {
-      return c.json({ error: "Email already registered" }, 409);
+    
+    if (!existingUser && !orgName) {
+      // New user trying to login without registering
+      return c.json({ 
+        error: "No account found with this email. Please provide an organization name to sign up.",
+        needsSignup: true,
+      }, 400);
     }
 
-    // Hash password
-    const passwordHash = await bcrypt.hash(password, BCRYPT_ROUNDS);
+    // Generate magic link token
+    const token = generateMagicToken();
+    const expiresAt = new Date(Date.now() + MAGIC_LINK_EXPIRY);
 
-    // Create organization and user in a transaction
-    const result = await db.$transaction(async (tx) => {
-      const org = await tx.organization.create({
-        data: { name: orgName },
-      });
-
-      const user = await tx.user.create({
-        data: {
-          email,
-          passwordHash,
-          name,
-          orgId: org.id,
-        },
-      });
-
-      return { user, org };
+    // Delete any existing unused magic links for this email
+    await db.magicLink.deleteMany({
+      where: { email, usedAt: null },
     });
 
-    // Create session
-    const sessionId = await createSession(result.user.id);
-    setSessionCookie(c, sessionId);
-
-    return c.json({
-      user: {
-        id: result.user.id,
-        email: result.user.email,
-        name: result.user.name,
-        orgId: result.org.id,
-        orgName: result.org.name,
+    // Create new magic link
+    await db.magicLink.create({
+      data: {
+        token,
+        email,
+        userId: existingUser?.id,
+        orgName: existingUser ? null : orgName,
+        userName: existingUser ? null : name,
+        expiresAt,
       },
-    }, 201);
+    });
+
+    // Send email
+    try {
+      await sendMagicLinkEmail({
+        to: email,
+        token,
+        isNewUser: !existingUser,
+      });
+    } catch (err) {
+      console.error("Failed to send magic link email:", err);
+      // In development, log the link for testing
+      if (process.env.NODE_ENV === "development") {
+        console.log(`[DEV] Magic link for ${email}: /auth/verify?token=${token}`);
+      }
+      return c.json({ 
+        error: "Failed to send email. Please try again.",
+        // In dev mode, include the token for testing
+        ...(process.env.NODE_ENV === "development" && { devToken: token }),
+      }, 500);
+    }
+
+    return c.json({ 
+      success: true,
+      message: `Magic link sent to ${email}`,
+    });
   })
 
   /**
-   * Login with email and password
+   * Verify magic link token and create session
    */
-  .post("/login", zValidator("json", loginSchema), async (c) => {
-    const { email, password } = c.req.valid("json");
+  .get("/verify", zValidator("query", verifyMagicLinkSchema), async (c) => {
+    const { token } = c.req.valid("query");
 
-    // Find user
-    const user = await db.user.findUnique({
-      where: { email },
-      include: { org: true },
+    // Find the magic link
+    const magicLink = await db.magicLink.findUnique({
+      where: { token },
+      include: { user: true },
     });
 
-    if (!user) {
-      return c.json({ error: "Invalid email or password" }, 401);
+    if (!magicLink) {
+      return c.json({ error: "Invalid or expired link" }, 400);
     }
 
-    // Verify password
-    const validPassword = await bcrypt.compare(password, user.passwordHash);
-    if (!validPassword) {
-      return c.json({ error: "Invalid email or password" }, 401);
+    if (magicLink.usedAt) {
+      return c.json({ error: "This link has already been used" }, 400);
     }
+
+    if (magicLink.expiresAt < new Date()) {
+      return c.json({ error: "This link has expired" }, 400);
+    }
+
+    let user = magicLink.user;
+
+    // If no user linked, this is a new signup
+    if (!user) {
+      if (!magicLink.orgName) {
+        return c.json({ error: "Invalid signup link" }, 400);
+      }
+
+      // Create organization and user
+      const result = await db.$transaction(async (tx) => {
+        const org = await tx.organization.create({
+          data: { name: magicLink.orgName! },
+        });
+
+        const newUser = await tx.user.create({
+          data: {
+            email: magicLink.email,
+            name: magicLink.userName,
+            orgId: org.id,
+          },
+        });
+
+        return { user: newUser, org };
+      });
+
+      user = result.user;
+    }
+
+    // Mark magic link as used
+    await db.magicLink.update({
+      where: { id: magicLink.id },
+      data: { usedAt: new Date() },
+    });
 
     // Create session
     const sessionId = await createSession(user.id);
     setSessionCookie(c, sessionId);
 
+    // Get org info for response
+    const userWithOrg = await db.user.findUnique({
+      where: { id: user.id },
+      include: { org: true },
+    });
+
     return c.json({
+      success: true,
       user: {
         id: user.id,
         email: user.email,
         name: user.name,
-        orgId: user.orgId,
-        orgName: user.org.name,
+        orgId: userWithOrg!.orgId,
+        orgName: userWithOrg!.org.name,
       },
     });
   })

@@ -2,7 +2,7 @@
  * Authentication Context
  * 
  * Provides auth state and methods throughout the app.
- * Handles login, logout, registration, and session management.
+ * Uses Magic Link authentication - no passwords needed.
  */
 
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
@@ -20,8 +20,8 @@ export interface User {
 interface AuthContextType {
   user: User | null;
   loading: boolean;
-  login: (email: string, password: string) => Promise<void>;
-  register: (email: string, password: string, name: string, orgName: string) => Promise<void>;
+  requestMagicLink: (email: string, name?: string, orgName?: string) => Promise<{ needsSignup?: boolean }>;
+  verifyMagicLink: (token: string) => Promise<void>;
   logout: () => Promise<void>;
 }
 
@@ -52,34 +52,34 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }
 
-  async function login(email: string, password: string) {
-    const res = await fetch(`${API_URL}/api/auth/login`, {
+  async function requestMagicLink(email: string, name?: string, orgName?: string): Promise<{ needsSignup?: boolean }> {
+    const res = await fetch(`${API_URL}/api/auth/magic-link`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
-      body: JSON.stringify({ email, password }),
+      body: JSON.stringify({ email, name, orgName }),
     });
-
-    if (!res.ok) {
-      const error = await res.json();
-      throw new Error(error.error || "Login failed");
-    }
 
     const data = await res.json();
-    setUser(data.user);
+    
+    if (!res.ok) {
+      if (data.needsSignup) {
+        return { needsSignup: true };
+      }
+      throw new Error(data.error || "Failed to send magic link");
+    }
+
+    return {};
   }
 
-  async function register(email: string, password: string, name: string, orgName: string) {
-    const res = await fetch(`${API_URL}/api/auth/register`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
+  async function verifyMagicLink(token: string): Promise<void> {
+    const res = await fetch(`${API_URL}/api/auth/verify?token=${encodeURIComponent(token)}`, {
       credentials: "include",
-      body: JSON.stringify({ email, password, name, orgName }),
     });
 
     if (!res.ok) {
-      const error = await res.json();
-      throw new Error(error.error || "Registration failed");
+      const data = await res.json();
+      throw new Error(data.error || "Invalid or expired link");
     }
 
     const data = await res.json();
@@ -95,7 +95,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, register, logout }}>
+    <AuthContext.Provider value={{ user, loading, requestMagicLink, verifyMagicLink, logout }}>
       {children}
     </AuthContext.Provider>
   );

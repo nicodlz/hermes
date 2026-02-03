@@ -12,11 +12,9 @@
     "migrate-auth": "tsx src/migrate-auth.ts"
   },
   "dependencies": {
-    "@prisma/client": "^6.4.1",
-    "bcrypt": "^5.1.1"
+    "@prisma/client": "^6.4.1"
   },
   "devDependencies": {
-    "@types/bcrypt": "^5.0.2",
     "prisma": "^6.4.1",
     "tsx": "^4.19.2"
   }

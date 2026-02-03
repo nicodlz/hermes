@@ -20,6 +20,7 @@ import { Templates } from "./pages/Templates";
 import { Stats } from "./pages/Stats";
 import { Login } from "./pages/Login";
 import { Register } from "./pages/Register";
+import { VerifyMagicLink } from "./pages/VerifyMagicLink";
 import { AuthProvider, useAuth, RequireAuth } from "./lib/auth";
 import { cn } from "./lib/utils";
 
@@ -149,6 +150,7 @@ export function App() {
         {/* Public routes */}
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/auth/verify" element={<VerifyMagicLink />} />
         
         {/* Protected routes */}
         <Route

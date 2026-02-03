@@ -3,18 +3,16 @@
  * 
  * This script:
  * 1. Creates a default organization
- * 2. Creates a default admin user
+ * 2. Creates a default admin user (magic link auth - no password)
  * 3. Updates existing leads to belong to the default org
  */
 
 import { PrismaClient } from "@prisma/client";
-import bcrypt from "bcrypt";
 
 const prisma = new PrismaClient();
 
 const DEFAULT_ORG_NAME = "Default Organization";
 const DEFAULT_USER_EMAIL = "admin@hermes.local";
-const DEFAULT_USER_PASSWORD = "changeme123"; // Should be changed after first login
 
 async function main() {
   console.log("Starting authentication migration...");
@@ -33,11 +31,9 @@ async function main() {
   console.log(`Created organization: ${org.id}`);
 
   console.log("Creating default admin user...");
-  const passwordHash = await bcrypt.hash(DEFAULT_USER_PASSWORD, 12);
   const user = await prisma.user.create({
     data: {
       email: DEFAULT_USER_EMAIL,
-      passwordHash,
       name: "Admin",
       orgId: org.id,
     },
@@ -52,10 +48,8 @@ async function main() {
   console.log(`Updated ${result.count} leads`);
 
   console.log("\n✅ Migration complete!");
-  console.log(`\nDefault credentials:`);
-  console.log(`  Email: ${DEFAULT_USER_EMAIL}`);
-  console.log(`  Password: ${DEFAULT_USER_PASSWORD}`);
-  console.log(`\n⚠️  Please change the password after first login!`);
+  console.log(`\nDefault user: ${DEFAULT_USER_EMAIL}`);
+  console.log(`To sign in, request a magic link for this email.`);
 }
 
 main()
