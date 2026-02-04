@@ -6,7 +6,7 @@ import {
   CheckSquare, 
   FileText, 
   BarChart3, 
-  Settings,
+  Settings as SettingsIcon,
   Zap,
   Menu,
   X,
@@ -18,6 +18,7 @@ import { LeadDetail } from "./pages/LeadDetail";
 import { Tasks } from "./pages/Tasks";
 import { Templates } from "./pages/Templates";
 import { Stats } from "./pages/Stats";
+import { Settings as SettingsPage } from "./pages/Settings";
 import { Login } from "./pages/Login";
 import { Register } from "./pages/Register";
 import { VerifyMagicLink } from "./pages/VerifyMagicLink";
@@ -115,7 +116,7 @@ function MainLayout() {
             onClick={closeSidebar}
             className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700"
           >
-            <Settings className="w-5 h-5" />
+            <SettingsIcon className="w-5 h-5" />
             Settings
           </Link>
           <button
@@ -137,6 +138,7 @@ function MainLayout() {
           <Route path="/tasks" element={<Tasks />} />
           <Route path="/templates" element={<Templates />} />
           <Route path="/stats" element={<Stats />} />
+          <Route path="/settings" element={<SettingsPage />} />
         </Routes>
       </main>
     </div>

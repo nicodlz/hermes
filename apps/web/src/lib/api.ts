@@ -81,6 +81,16 @@ export const api = {
     qualify: (id: string, data: QualifyData) => 
       fetcher(`/api/ai/qualify/${id}`, { method: "POST", body: JSON.stringify(data) }),
   },
+
+  // Settings
+  settings: {
+    listApiKeys: () => fetcher<ApiKey[]>("/api/auth/api-keys"),
+    createApiKey: (name: string) => fetcher<{ key: string; id: string }>("/api/auth/api-keys", { 
+      method: "POST", 
+      body: JSON.stringify({ name }) 
+    }),
+    deleteApiKey: (id: string) => fetcher(`/api/auth/api-keys/${id}`, { method: "DELETE" }),
+  },
 };
 
 // Types
@@ -271,4 +281,11 @@ export interface QualifyData {
   reasons: string[];
   analysis?: string;
   aiModel?: string;
+}
+
+export interface ApiKey {
+  id: string;
+  name: string;
+  createdAt: string;
+  lastUsedAt?: string;
 }
