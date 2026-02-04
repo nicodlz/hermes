@@ -11,7 +11,16 @@ services:
       - NODE_ENV=production
       - DATABASE_URL=file:/app/data/hermes.db
       - PORT=3001
+      - ADMIN_SECRET=${ADMIN_SECRET}
+      - RESEND_API_KEY=${RESEND_API_KEY}
+      - RESEND_FROM_EMAIL=${RESEND_FROM_EMAIL:-hermes@ndlz.net}
+      - APP_URL=${APP_URL:-https://hermes.ndlz.net}
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:3001/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
 volumes:
   hermes-data:
