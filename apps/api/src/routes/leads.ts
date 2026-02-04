@@ -16,6 +16,7 @@ import { zValidator } from "@hono/zod-validator";
 import { z } from "zod";
 import { db, LeadStatus } from "@hermes/db";
 import type { AuthContext } from "../middleware/auth.js";
+import { findEmailWithHunter, extractDomain, parseName, extractLinkedInUsername } from "../lib/enrichment.js";
 
 const createLeadSchema = z.object({
   source: z.string(),
@@ -245,4 +246,144 @@ export const leadsRouter = new Hono<AuthContext>()
     );
 
     return c.json(stats);
+  })
+
+  // Enrich lead - find email automatically
+  .post("/:id/enrich", async (c) => {
+    const orgId = c.get("orgId");
+    const id = c.req.param("id");
+    
+    // Verify lead belongs to organization
+    const lead = await db.lead.findFirst({ 
+      where: { id, orgId },
+      include: { enrichments: { orderBy: { createdAt: "desc" }, take: 1 } }
+    });
+    
+    if (!lead) {
+      return c.json({ error: "Lead not found" }, 404);
+    }
+
+    // Check if already enriched recently (within last 24h)
+    const lastEnrichment = lead.enrichments[0];
+    if (lastEnrichment && lastEnrichment.status === "success") {
+      const hoursSinceEnrichment = (Date.now() - new Date(lastEnrichment.createdAt).getTime()) / (1000 * 60 * 60);
+      if (hoursSinceEnrichment < 24) {
+        return c.json({ 
+          error: "Lead was already enriched in the last 24 hours",
+          email: lead.email,
+          source: lead.emailSource,
+          enrichedAt: lead.emailEnrichedAt
+        }, 429);
+      }
+    }
+
+    try {
+      // Extract information
+      let domain = lead.company ? extractDomain(lead.company) : null;
+      if (!domain && lead.website) {
+        domain = extractDomain(lead.website);
+      }
+      if (!domain && lead.authorUrl) {
+        // Try to extract domain from author URL
+        const urlDomain = new URL(lead.authorUrl).hostname.replace("www.", "");
+        if (!urlDomain.includes("reddit.com") && !urlDomain.includes("twitter.com")) {
+          domain = urlDomain;
+        }
+      }
+
+      if (!domain) {
+        await db.enrichmentLog.create({
+          data: {
+            leadId: id,
+            provider: "hunter.io",
+            status: "error",
+            result: JSON.stringify({ error: "No domain available" }),
+          },
+        });
+        return c.json({ error: "Cannot enrich: no company domain available" }, 400);
+      }
+
+      // Parse author name if available
+      let firstName = "";
+      let lastName = "";
+      if (lead.author) {
+        const parsed = parseName(lead.author);
+        firstName = parsed.firstName;
+        lastName = parsed.lastName;
+      }
+
+      if (!firstName && !lastName) {
+        await db.enrichmentLog.create({
+          data: {
+            leadId: id,
+            provider: "hunter.io",
+            status: "error",
+            result: JSON.stringify({ error: "No name available" }),
+          },
+        });
+        return c.json({ error: "Cannot enrich: no author name available" }, 400);
+      }
+
+      // Call Hunter.io
+      const result = await findEmailWithHunter({
+        domain,
+        firstName,
+        lastName,
+      });
+
+      // Log the attempt
+      await db.enrichmentLog.create({
+        data: {
+          leadId: id,
+          provider: "hunter.io",
+          status: result.email ? "success" : "not_found",
+          emailFound: result.email,
+          confidence: result.confidence,
+          result: JSON.stringify(result.raw || {}),
+        },
+      });
+
+      // Update lead if email found
+      if (result.email) {
+        await db.lead.update({
+          where: { id },
+          data: {
+            email: result.email,
+            emailSource: "hunter.io",
+            emailEnrichedAt: new Date(),
+          },
+        });
+
+        return c.json({
+          success: true,
+          email: result.email,
+          confidence: result.confidence,
+          source: result.source,
+        });
+      }
+
+      return c.json({
+        success: false,
+        message: "No email found",
+        source: result.source,
+      }, 404);
+
+    } catch (error: any) {
+      // Log error
+      await db.enrichmentLog.create({
+        data: {
+          leadId: id,
+          provider: "hunter.io",
+          status: "error",
+          result: JSON.stringify({ error: error.message }),
+        },
+      });
+
+      // Check if it's a rate limit error
+      if (error.message?.includes("rate") || error.message?.includes("limit")) {
+        return c.json({ error: "Rate limit exceeded. Try again later." }, 429);
+      }
+
+      return c.json({ error: error.message || "Enrichment failed" }, 500);
+    }
   });

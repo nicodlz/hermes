@@ -12,7 +12,9 @@ import {
   MessageSquare,
   FileText,
   Plus,
-  AlertCircle
+  AlertCircle,
+  Search,
+  Loader2
 } from "lucide-react";
 import { api, type LeadStatus } from "../lib/api";
 import { cn } from "../lib/utils";
@@ -55,6 +57,21 @@ export function LeadDetail() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["lead", id] });
       setNewNote("");
+    },
+  });
+
+  const enrichMutation = useMutation({
+    mutationFn: () => api.leads.enrich(id!),
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["lead", id] });
+      if (data.success) {
+        alert(`✅ Email found: ${data.email}\nConfidence: ${data.confidence}%\nSource: ${data.source}`);
+      } else {
+        alert(`❌ ${data.message || "No email found"}`);
+      }
+    },
+    onError: (error: Error) => {
+      alert(`❌ Error: ${error.message}`);
     },
   });
 
@@ -296,15 +313,40 @@ export function LeadDetail() {
 
           {/* Contact Info */}
           <div className="bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 p-6 shadow-sm">
-            <h2 className="font-semibold mb-4 text-slate-900 dark:text-white">Contact Info</h2>
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="font-semibold text-slate-900 dark:text-white">Contact Info</h2>
+              {!lead.email && (
+                <button
+                  onClick={() => enrichMutation.mutate()}
+                  disabled={enrichMutation.isPending}
+                  className="flex items-center gap-2 px-3 py-1.5 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  title="Find email using Hunter.io"
+                >
+                  {enrichMutation.isPending ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <Search className="w-4 h-4" />
+                  )}
+                  Find Email
+                </button>
+              )}
+            </div>
             <div className="space-y-3">
-              <ContactField
-                icon={Mail}
-                label="Email"
-                value={lead.email}
-                editable
-                onSave={(v) => updateMutation.mutate({ email: v })}
-              />
+              <div>
+                <ContactField
+                  icon={Mail}
+                  label="Email"
+                  value={lead.email}
+                  editable
+                  onSave={(v) => updateMutation.mutate({ email: v })}
+                />
+                {lead.emailSource && (
+                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 ml-6">
+                    Source: {lead.emailSource}
+                    {lead.emailEnrichedAt && ` • ${new Date(lead.emailEnrichedAt).toLocaleDateString()}`}
+                  </p>
+                )}
+              </div>
               <ContactField
                 icon={Phone}
                 label="Phone"

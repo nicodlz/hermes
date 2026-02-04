@@ -127,6 +127,8 @@ model Lead {
   
   // Contact info (discovered later)
   email       String?
+  emailSource String?  // Source of email (e.g., "hunter.io", "manual", "scraped")
+  emailEnrichedAt DateTime?
   phone       String?
   company     String?
   website     String?
@@ -156,6 +158,7 @@ model Lead {
   tasks       Task[]
   messages    Message[]
   proposals   Proposal[]
+  enrichments EnrichmentLog[]
   
   @@index([orgId])
 }
@@ -174,6 +177,27 @@ enum LeadStatus {
   WON
   LOST
   ARCHIVED
+}
+
+// ============================================
+// ENRICHMENT
+// ============================================
+
+model EnrichmentLog {
+  id          String   @id @default(cuid())
+  leadId      String
+  lead        Lead     @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  
+  provider    String   // "hunter.io", "tomba.io", etc.
+  status      String   // "success", "not_found", "rate_limited", "error"
+  emailFound  String?
+  confidence  Int?     // 0-100 score if available
+  result      String?  // Full JSON response
+  
+  createdAt   DateTime @default(now())
+  
+  @@index([leadId])
+  @@index([provider, status])
 }
 
 // ============================================

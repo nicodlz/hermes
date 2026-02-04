@@ -37,6 +37,7 @@ export const api = {
     addNote: (id: string, data: { content: string; type?: string }) => 
       fetcher(`/api/leads/${id}/notes`, { method: "POST", body: JSON.stringify(data) }),
     pipeline: () => fetcher<Record<string, number>>("/api/leads/stats/pipeline"),
+    enrich: (id: string) => fetcher<EnrichmentResult>(`/api/leads/${id}/enrich`, { method: "POST" }),
   },
 
   // Tasks
@@ -71,7 +72,38 @@ export const api = {
   stats: {
     dashboard: () => fetcher<DashboardStats>("/api/stats/dashboard"),
     daily: (days?: number) => fetcher<DailyStats[]>(`/api/stats/daily${days ? `?days=${days}` : ""}`),
-    funnel: () => fetcher<FunnelStep[]>("/api/stats/funnel"),
+    funnel: (params?: { since?: string; until?: string }) => {
+      const qs = params ? `?${new URLSearchParams(params as Record<string, string>)}` : "";
+      return fetcher<FunnelStep[]>(`/api/stats/funnel${qs}`);
+    },
+    timeline: (params?: { days?: number; groupBy?: "day" | "week" }) => {
+      const qs = params ? `?${new URLSearchParams({ 
+        days: params.days?.toString() || "30",
+        groupBy: params.groupBy || "day"
+      })}` : "";
+      return fetcher<TimelineData[]>(`/api/stats/timeline${qs}`);
+    },
+    templates: () => fetcher<TemplateStats[]>("/api/stats/templates"),
+    sources: (params?: { since?: string; until?: string }) => {
+      const qs = params ? `?${new URLSearchParams(params as Record<string, string>)}` : "";
+      return fetcher<SourceStats[]>(`/api/stats/sources${qs}`);
+    },
+    conversionTime: () => fetcher<ConversionTimeStats>("/api/stats/conversion-time"),
+    exportCSV: (type: "leads" | "timeline", params?: Record<string, string>) => {
+      const qs = params ? `?${new URLSearchParams({ type, ...params })}` : `?type=${type}`;
+      return fetch(`${API_URL}/api/stats/export${qs}`, { credentials: "include" })
+        .then(res => res.blob())
+        .then(blob => {
+          const url = window.URL.createObjectURL(blob);
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = `hermes-${type}-${new Date().toISOString().split('T')[0]}.csv`;
+          document.body.appendChild(a);
+          a.click();
+          a.remove();
+          window.URL.revokeObjectURL(url);
+        });
+    },
   },
 
   // AI
@@ -120,6 +152,8 @@ export interface Lead {
   scoreReasons?: string;
   status: LeadStatus;
   email?: string;
+  emailSource?: string;
+  emailEnrichedAt?: string;
   phone?: string;
   company?: string;
   budgetMin?: number;
@@ -271,8 +305,49 @@ export interface DailyStats {
 
 export interface FunnelStep {
   stage: string;
+  label: string;
   count: number;
   rate: number;
+}
+
+export interface TimelineData {
+  date: string;
+  new: number;
+  qualified: number;
+  contacted: number;
+  responded: number;
+  won: number;
+  lost: number;
+}
+
+export interface TemplateStats {
+  id: string;
+  name: string;
+  type: string;
+  usageCount: number;
+  sent: number;
+  replied: number;
+  replyRate: number;
+}
+
+export interface SourceStats {
+  source: string;
+  total: number;
+  avgScore: number;
+  qualified: number;
+  contacted: number;
+  responded: number;
+  won: number;
+  conversionRate: number;
+}
+
+export interface ConversionTimeStats {
+  stages: {
+    stage: string;
+    avgDays: number;
+    count: number;
+  }[];
+  totalAvg: number;
 }
 
 export interface NextActions {
@@ -319,4 +394,13 @@ export interface OutreachTemplate {
   name: string;
   subject: string;
   preview: string;
+}
+
+export interface EnrichmentResult {
+  success?: boolean;
+  email?: string;
+  confidence?: number;
+  source?: string;
+  message?: string;
+  error?: string;
 }
