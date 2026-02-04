@@ -9,6 +9,7 @@ import { templatesRouter } from "./routes/templates.js";
 import { sourcesRouter } from "./routes/sources.js";
 import { statsRouter } from "./routes/stats.js";
 import { aiRouter } from "./routes/ai.js";
+import { adminRouter } from "./routes/admin.js";
 import { requireAuth, type AuthContext } from "./middleware/auth.js";
 
 export const app = new Hono<AuthContext>()
@@ -27,6 +28,9 @@ export const app = new Hono<AuthContext>()
 
   // Auth routes (public + protected)
   .route("/api/auth", authRouter)
+
+  // Admin routes (protected by ADMIN_SECRET)
+  .route("/api/admin", adminRouter)
 
   // Protected API routes (require authentication)
   .use("/api/leads/*", requireAuth)

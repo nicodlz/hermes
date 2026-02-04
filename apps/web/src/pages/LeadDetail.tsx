@@ -11,17 +11,30 @@ import {
   Calendar,
   MessageSquare,
   FileText,
-  Plus
+  Plus,
+  AlertCircle
 } from "lucide-react";
 import { api, type LeadStatus } from "../lib/api";
 import { cn } from "../lib/utils";
+
+/**
+ * Safely parse JSON string, returning default value on error
+ */
+function safeJsonParse<T>(str: string | null | undefined, defaultValue: T): T {
+  if (!str) return defaultValue;
+  try {
+    return JSON.parse(str);
+  } catch {
+    return defaultValue;
+  }
+}
 
 export function LeadDetail() {
   const { id } = useParams<{ id: string }>();
   const queryClient = useQueryClient();
   const [newNote, setNewNote] = useState("");
 
-  const { data: lead, isLoading } = useQuery({
+  const { data: lead, isLoading, error } = useQuery({
     queryKey: ["lead", id],
     queryFn: () => api.leads.get(id!),
     enabled: !!id,
@@ -55,6 +68,21 @@ export function LeadDetail() {
     );
   }
 
+  if (error) {
+    return (
+      <div className="p-4 sm:p-6 lg:p-8 text-center">
+        <div className="flex flex-col items-center gap-4">
+          <AlertCircle className="w-12 h-12 text-red-500" />
+          <p className="text-slate-700 dark:text-slate-300">Error loading lead</p>
+          <p className="text-sm text-slate-500 dark:text-slate-400">{error.message}</p>
+          <Link to="/leads" className="text-blue-600 dark:text-blue-400 hover:underline">
+            ← Back to leads
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
   if (!lead) {
     return (
       <div className="p-4 sm:p-6 lg:p-8 text-center">
@@ -66,8 +94,14 @@ export function LeadDetail() {
     );
   }
 
-  const scoreReasons = lead.scoreReasons ? JSON.parse(lead.scoreReasons) : [];
-  const tags = lead.tags ? JSON.parse(lead.tags) : [];
+  // Safely parse JSON fields
+  const scoreReasons = safeJsonParse<string[]>(lead.scoreReasons, []);
+  const tags = safeJsonParse<string[]>(lead.tags, []);
+  
+  // Ensure arrays exist (defensive coding)
+  const notes = lead.notes ?? [];
+  const tasks = lead.tasks ?? [];
+  const messages = lead.messages ?? [];
 
   return (
     <div className="p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6">
@@ -180,7 +214,7 @@ export function LeadDetail() {
 
             {/* Notes list */}
             <div className="space-y-3">
-              {lead.notes.map((note) => (
+              {notes.map((note) => (
                 <div
                   key={note.id}
                   className={cn(
@@ -208,21 +242,21 @@ export function LeadDetail() {
                   <p className="text-sm whitespace-pre-wrap text-slate-700 dark:text-slate-200">{note.content}</p>
                 </div>
               ))}
-              {!lead.notes.length && (
+              {!notes.length && (
                 <p className="text-slate-500 dark:text-slate-400 text-sm">No notes yet</p>
               )}
             </div>
           </div>
 
           {/* Messages */}
-          {lead.messages.length > 0 && (
+          {messages.length > 0 && (
             <div className="bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 p-6 shadow-sm">
               <h2 className="font-semibold mb-4 flex items-center gap-2 text-slate-900 dark:text-white">
                 <MessageSquare className="w-5 h-5 text-blue-500" />
-                Messages ({lead.messages.length})
+                Messages ({messages.length})
               </h2>
               <div className="space-y-3">
-                {lead.messages.map((msg) => (
+                {messages.map((msg) => (
                   <div
                     key={msg.id}
                     className={cn(
@@ -322,11 +356,11 @@ export function LeadDetail() {
           )}
 
           {/* Tasks */}
-          {lead.tasks.length > 0 && (
+          {tasks.length > 0 && (
             <div className="bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 p-6 shadow-sm">
-              <h2 className="font-semibold mb-4 text-slate-900 dark:text-white">Tasks ({lead.tasks.length})</h2>
+              <h2 className="font-semibold mb-4 text-slate-900 dark:text-white">Tasks ({tasks.length})</h2>
               <div className="space-y-2">
-                {lead.tasks.map((task) => (
+                {tasks.map((task) => (
                   <div
                     key={task.id}
                     className={cn(

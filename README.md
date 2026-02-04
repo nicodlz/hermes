@@ -106,6 +106,43 @@ Scoring rules:
 
 **Qualify threshold: 15+**
 
+## Authentication
+
+Hermes uses **Magic Link** authentication — no passwords required!
+
+### Flow
+
+1. User enters email → receives magic link
+2. Click link → session created (30-day cookie)
+3. API keys for agents/integrations
+
+### API Key Authentication
+
+For agents like Atlas/OpenClaw, use API keys:
+
+```bash
+# Create via UI (Settings → API Keys) or admin endpoint
+curl -X POST https://hermes.ndlz.net/api/admin/api-keys \
+  -H "X-Admin-Secret: $ADMIN_SECRET" \
+  -H "Content-Type: application/json" \
+  -d '{"email":"user@example.com","name":"Atlas Agent"}'
+
+# Use the key
+curl https://hermes.ndlz.net/api/leads \
+  -H "X-API-Key: hms_xxxxxxxxxxxx"
+```
+
+## Environment Variables
+
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `DATABASE_URL` | Yes | SQLite path: `file:/app/data/hermes.db` |
+| `PORT` | No | API port (default: 3001) |
+| `RESEND_API_KEY` | Yes | [Resend](https://resend.com) API key for emails |
+| `FROM_EMAIL` | No | Sender email (default: hermes@ndlz.net) |
+| `APP_URL` | No | App URL for magic links (default: https://hermes.ndlz.net) |
+| `ADMIN_SECRET` | No | Secret for admin API (generate with `openssl rand -hex 32`) |
+
 ## Deployment
 
 ### Docker
