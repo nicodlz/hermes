@@ -23,7 +23,7 @@ export function Stats() {
 
   const { data: funnel } = useQuery({
     queryKey: ["funnel"],
-    queryFn: api.stats.funnel,
+    queryFn: () => api.stats.funnel(),
   });
 
   const overview = dashboard?.overview;
@@ -75,10 +75,10 @@ export function Stats() {
           Conversion Funnel
         </h2>
         <div className="space-y-3 sm:space-y-4">
-          {funnel?.map((step, i) => (
+          {funnel && funnel.map((step, i) => (
             <div key={step.stage} className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
               <div className="w-full sm:w-28 text-sm font-medium text-slate-600 dark:text-slate-300">
-                {step.stage}
+                {step.label}
               </div>
               <div className="flex-1">
                 <div className="h-10 bg-slate-100 dark:bg-slate-700 rounded-lg overflow-hidden relative">

@@ -17,7 +17,7 @@ import { Leads } from "./pages/Leads";
 import { LeadDetail } from "./pages/LeadDetail";
 import { Tasks } from "./pages/Tasks";
 import { Templates } from "./pages/Templates";
-import { Stats } from "./pages/Stats";
+import { Analytics } from "./pages/Analytics";
 import { Settings as SettingsPage } from "./pages/Settings";
 import { Login } from "./pages/Login";
 import { Register } from "./pages/Register";
@@ -137,7 +137,7 @@ function MainLayout() {
           <Route path="/leads/:id" element={<LeadDetail />} />
           <Route path="/tasks" element={<Tasks />} />
           <Route path="/templates" element={<Templates />} />
-          <Route path="/stats" element={<Stats />} />
+          <Route path="/stats" element={<Analytics />} />
           <Route path="/settings" element={<SettingsPage />} />
         </Routes>
       </main>

@@ -24,7 +24,7 @@ export function Dashboard() {
 
   const { data: funnel } = useQuery({
     queryKey: ["funnel"],
-    queryFn: api.stats.funnel,
+    queryFn: () => api.stats.funnel(),
   });
 
   if (isLoading) {
@@ -97,10 +97,10 @@ export function Dashboard() {
             Conversion Funnel
           </h2>
           <div className="space-y-3">
-            {funnel?.map((step, i) => (
+            {funnel && funnel.map((step, i) => (
               <FunnelStep
                 key={step.stage}
-                stage={step.stage}
+                stage={step.label}
                 count={step.count}
                 rate={step.rate}
                 isFirst={i === 0}
