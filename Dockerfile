@@ -32,8 +32,8 @@ FROM node:22-alpine AS runner
 
 WORKDIR /app
 
-# Install pnpm
-RUN corepack enable && corepack prepare pnpm@9.15.0 --activate
+# Install pnpm and wget (for healthcheck)
+RUN apk add --no-cache wget && corepack enable && corepack prepare pnpm@9.15.0 --activate
 
 # Copy built files
 COPY --from=builder /app/package.json ./
