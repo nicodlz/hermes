@@ -1,6 +1,7 @@
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { logger } from "hono/logger";
+import { HTTPException } from "hono/http-exception";
 import { serveStatic } from "@hono/node-server/serve-static";
 import { authRouter } from "./routes/auth.js";
 import { leadsRouter } from "./routes/leads.js";
@@ -12,7 +13,26 @@ import { aiRouter } from "./routes/ai.js";
 import { adminRouter } from "./routes/admin.js";
 import { requireAuth, type AuthContext } from "./middleware/auth.js";
 
+const VERSION = process.env.npm_package_version || "0.1.0";
+const COMMIT = process.env.COMMIT_SHA || "unknown";
+
 export const app = new Hono<AuthContext>()
+  // Global error handler
+  .onError((err, c) => {
+    console.error(`[Error] ${err.message}`, err.stack);
+    
+    if (err instanceof HTTPException) {
+      return c.json({ error: err.message }, err.status);
+    }
+    
+    // Don't expose internal errors in production
+    const message = process.env.NODE_ENV === "production" 
+      ? "Internal server error" 
+      : err.message;
+    
+    return c.json({ error: message }, 500);
+  })
+
   // Global middlewares
   .use("*", logger())
   .use(
@@ -23,8 +43,13 @@ export const app = new Hono<AuthContext>()
     })
   )
 
-  // Health check
-  .get("/health", (c) => c.json({ status: "healthy" }))
+  // Health check with version
+  .get("/health", (c) => c.json({ 
+    status: "healthy",
+    version: VERSION,
+    commit: COMMIT,
+    timestamp: new Date().toISOString(),
+  }))
 
   // Auth routes (public + protected)
   .route("/api/auth", authRouter)
