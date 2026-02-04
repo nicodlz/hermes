@@ -15,56 +15,103 @@ import type { AuthContext } from "../middleware/auth.js";
 
 const outreach = new Hono<AuthContext>();
 
-// Email templates for different scenarios
+// Email templates based on sales best practices
+// Short subjects (< 7 words), personal tone, specific references, single CTA
 const TEMPLATES = {
+  // For generic startup/company leads
   startup: {
-    subject: "{company} - dev React freelance dispo",
+    subject: "Quick question about {company}",
     body: `Hey {firstName},
 
-J'ai vu {observation} — ça a l'air prometteur.
+Saw {observation} — looks like you're building something interesting.
 
-Je suis dev freelance spécialisé React/TypeScript. J'aide des startups à shipper vite sans compromettre la qualité.
+I'm a freelance dev specializing in React/TypeScript. Helped a few startups ship faster without cutting corners.
 
-Si vous cherchez du renfort dev (court ou long terme), je serais dispo pour un quick call de 15 min.
+Worth a quick 15-min chat to see if I can help?
 
 — Nicolas`
   },
+  
+  // For hiring posts (Reddit, HN, etc.)
   hiring_post: {
     subject: "Re: {title}",
     body: `Hey {firstName},
 
-J'ai vu ton post pour {role}.
+Your post caught my eye — especially {observation}.
 
-Je suis dispo et mon stack match: React, TypeScript, Next.js, Web3/Solidity.
+I specialize in exactly that stack: React, TypeScript, Next.js.
 
-Quelques questions rapides:
-- C'est du remote async OK ?
-- Quelle timeline vous visez ?
-- Budget range ?
+Quick questions:
+- Remote async OK?
+- Timeline you're targeting?
 
-Dispo pour un call si plus simple.
+Happy to jump on a quick call if easier.
 
 — Nicolas`
   },
+  
+  // For Web3/blockchain projects
   web3: {
-    subject: "{company} - dev Solidity/React dispo",
+    subject: "Saw {company} — quick question",
     body: `Hey {firstName},
 
-J'ai checké {product} — {observation}.
+Checked out {product} — {observation}.
 
-Je suis dev spécialisé Web3: Solidity, smart contracts, + frontend React/TypeScript.
+I do Web3 full-stack: Solidity smart contracts + React/TypeScript frontend.
 
-Si vous avez besoin de renfort dev (audit, nouvelles features, frontend), je suis dispo pour discuter.
+If you need dev help (audits, new features, frontend), happy to chat.
 
 — Nicolas`
   },
-  followup: {
+  
+  // For technical/specific problem posts
+  problem_solver: {
+    subject: "{problem} → might have a fix",
+    body: `Hey {firstName},
+
+Saw you're dealing with {observation}. Been there.
+
+Built something similar recently — solved it with {solution}. Happy to share what worked.
+
+15 min call if you want to dig in?
+
+— Nicolas`
+  },
+  
+  // First follow-up (3-5 days after)
+  followup_1: {
     subject: "Re: {prevSubject}",
     body: `Hey {firstName},
 
-Je relance juste au cas où mon message serait passé à la trappe.
+Following up in case my last message got buried.
 
-Toujours dispo si vous cherchez du renfort dev React/TypeScript.
+Still around if you need React/TypeScript help. No worries if timing's not right.
+
+— Nicolas`
+  },
+  
+  // Second follow-up / breakup (7-10 days after)
+  followup_2: {
+    subject: "Closing the loop",
+    body: `Hey {firstName},
+
+Last ping from me — I'll assume the timing isn't right.
+
+If things change down the road, feel free to reach out. Good luck with {company}!
+
+— Nicolas`
+  },
+  
+  // Ultra-short for high volume
+  short: {
+    subject: "{role} help?",
+    body: `Hey {firstName},
+
+Saw you need a {stack} dev. That's my specialty.
+
+Recent work: built production React/TypeScript apps for startups.
+
+Open to chat?
 
 — Nicolas`
   }
@@ -74,12 +121,25 @@ Toujours dispo si vous cherchez du renfort dev React/TypeScript.
 function detectTemplateType(lead: any): keyof typeof TEMPLATES {
   const text = `${lead.title || ''} ${lead.description || ''} ${lead.source || ''}`.toLowerCase();
   
-  if (text.includes('web3') || text.includes('solidity') || text.includes('blockchain')) {
+  // Web3/blockchain specific
+  if (text.includes('web3') || text.includes('solidity') || text.includes('blockchain') || 
+      text.includes('smart contract') || text.includes('defi') || text.includes('nft')) {
     return 'web3';
   }
-  if (text.includes('[hiring]') || text.includes('hiring')) {
+  
+  // Problem-solving (bug, issue, stuck, help needed)
+  if (text.includes('stuck') || text.includes('issue') || text.includes('bug') || 
+      text.includes('problem') || text.includes('help needed') || text.includes('struggling')) {
+    return 'problem_solver';
+  }
+  
+  // Hiring posts
+  if (text.includes('[hiring]') || text.includes('hiring') || text.includes('looking for') ||
+      text.includes('need a dev') || text.includes('seeking freelancer')) {
     return 'hiring_post';
   }
+  
+  // Default to startup template
   return 'startup';
 }
 
@@ -93,17 +153,46 @@ function extractFirstName(lead: any): string {
   return 'there';
 }
 
+// Extract key info from description
+function extractObservation(description: string | null, maxLen = 60): string {
+  if (!description) return 'your project';
+  // Try to get the first meaningful sentence
+  const firstSentence = description.split(/[.!?]/)[0]?.trim();
+  if (firstSentence && firstSentence.length <= maxLen) {
+    return firstSentence.toLowerCase();
+  }
+  return description.substring(0, maxLen).trim() + '...';
+}
+
+// Detect stack from description
+function extractStack(description: string | null): string {
+  if (!description) return 'React/TypeScript';
+  const text = description.toLowerCase();
+  const stacks: string[] = [];
+  
+  if (text.includes('react')) stacks.push('React');
+  if (text.includes('typescript') || text.includes('ts')) stacks.push('TypeScript');
+  if (text.includes('next') || text.includes('nextjs')) stacks.push('Next.js');
+  if (text.includes('node')) stacks.push('Node.js');
+  if (text.includes('solidity')) stacks.push('Solidity');
+  if (text.includes('web3')) stacks.push('Web3');
+  
+  return stacks.length > 0 ? stacks.slice(0, 3).join('/') : 'React/TypeScript';
+}
+
 // Generate email draft for a lead
 function generateEmailDraft(lead: any, templateType?: keyof typeof TEMPLATES) {
   const type = templateType || detectTemplateType(lead);
   const template = TEMPLATES[type];
   
   const firstName = extractFirstName(lead);
-  const company = lead.company || lead.title?.split(/[-|]/)[0]?.trim() || 'your company';
-  const observation = lead.description?.substring(0, 80) || 'votre projet';
-  const title = lead.title || 'votre post';
-  const product = lead.company || lead.title?.split(/[-|]/)[0]?.trim() || 'votre produit';
-  const role = lead.title?.replace(/\[Hiring\]/gi, '').trim() || 'le poste';
+  const company = lead.company || lead.title?.split(/[-|:]/)[0]?.trim() || 'your project';
+  const observation = extractObservation(lead.description);
+  const title = lead.title || 'your post';
+  const product = lead.company || lead.title?.split(/[-|:]/)[0]?.trim() || 'your product';
+  const role = lead.title?.replace(/\[Hiring\]/gi, '').replace(/\[.*?\]/g, '').trim() || 'the role';
+  const stack = extractStack(lead.description);
+  const problem = lead.title?.replace(/\[.*?\]/g, '').trim() || 'this challenge';
   
   const replacements: Record<string, string> = {
     '{firstName}': firstName,
@@ -112,6 +201,9 @@ function generateEmailDraft(lead: any, templateType?: keyof typeof TEMPLATES) {
     '{title}': title,
     '{product}': product,
     '{role}': role,
+    '{stack}': stack,
+    '{problem}': problem,
+    '{solution}': 'a custom approach', // Generic, user should personalize
     '{prevSubject}': title
   };
   
