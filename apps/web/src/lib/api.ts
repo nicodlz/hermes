@@ -91,6 +91,20 @@ export const api = {
     }),
     deleteApiKey: (id: string) => fetcher(`/api/auth/api-keys/${id}`, { method: "DELETE" }),
   },
+
+  // Outreach
+  outreach: {
+    getDraft: (leadId: string, template?: string) => {
+      const qs = template ? `?template=${template}` : "";
+      return fetcher<EmailDraft>(`/api/outreach/leads/${leadId}/draft${qs}`);
+    },
+    saveDraft: (leadId: string, data: { subject: string; body: string; recipientEmail?: string }) =>
+      fetcher<Message>(`/api/outreach/leads/${leadId}/draft`, { method: "POST", body: JSON.stringify(data) }),
+    sendEmail: (leadId: string, data: { subject: string; body: string; recipientEmail: string; recipientName?: string }) =>
+      fetcher<{ success: boolean; messageId: string; resendId: string }>(`/api/outreach/leads/${leadId}/send`, { method: "POST", body: JSON.stringify(data) }),
+    getMessages: (leadId: string) => fetcher<Message[]>(`/api/outreach/leads/${leadId}/messages`),
+    getTemplates: () => fetcher<OutreachTemplate[]>("/api/outreach/templates"),
+  },
 };
 
 // Types
@@ -288,4 +302,21 @@ export interface ApiKey {
   name: string;
   createdAt: string;
   lastUsedAt?: string;
+}
+
+export interface EmailDraft {
+  id?: string;
+  subject: string;
+  body: string;
+  templateType: string | null;
+  recipientEmail?: string;
+  recipientName?: string;
+  isExisting: boolean;
+}
+
+export interface OutreachTemplate {
+  id: string;
+  name: string;
+  subject: string;
+  preview: string;
 }

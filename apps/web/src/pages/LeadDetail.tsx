@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { api, type LeadStatus } from "../lib/api";
 import { cn } from "../lib/utils";
+import { OutreachPanel } from "../components/OutreachPanel";
 
 /**
  * Safely parse JSON string, returning default value on error
@@ -286,6 +287,13 @@ export function LeadDetail() {
 
         {/* Sidebar */}
         <div className="space-y-6">
+          {/* Cold Outreach */}
+          <OutreachPanel 
+            leadId={lead.id} 
+            leadEmail={lead.email}
+            onEmailSent={() => queryClient.invalidateQueries({ queryKey: ["lead", id] })}
+          />
+
           {/* Contact Info */}
           <div className="bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 p-6 shadow-sm">
             <h2 className="font-semibold mb-4 text-slate-900 dark:text-white">Contact Info</h2>

@@ -11,6 +11,7 @@ import { sourcesRouter } from "./routes/sources.js";
 import { statsRouter } from "./routes/stats.js";
 import { aiRouter } from "./routes/ai.js";
 import { adminRouter } from "./routes/admin.js";
+import { outreach } from "./routes/outreach.js";
 import { requireAuth, type AuthContext } from "./middleware/auth.js";
 
 const VERSION = process.env.npm_package_version || "0.1.0";
@@ -64,12 +65,14 @@ export const app = new Hono<AuthContext>()
   .use("/api/sources/*", requireAuth)
   .use("/api/stats/*", requireAuth)
   .use("/api/ai/*", requireAuth)
+  .use("/api/outreach/*", requireAuth)
   .route("/api/leads", leadsRouter)
   .route("/api/tasks", tasksRouter)
   .route("/api/templates", templatesRouter)
   .route("/api/sources", sourcesRouter)
   .route("/api/stats", statsRouter)
   .route("/api/ai", aiRouter)
+  .route("/api/outreach", outreach)
 
   // Serve static files in production
   .use("/*", serveStatic({ root: "../web/dist" }))
