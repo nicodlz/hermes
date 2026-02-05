@@ -51,6 +51,8 @@ const querySchema = z.object({
   minScore: z.coerce.number().optional(),
   source: z.string().optional(),
   search: z.string().optional(),
+  dateFrom: z.string().optional(), // ISO date string (YYYY-MM-DD)
+  dateTo: z.string().optional(),   // ISO date string (YYYY-MM-DD)
   limit: z.coerce.number().default(50),
   offset: z.coerce.number().default(0),
 });
@@ -59,18 +61,32 @@ export const leadsRouter = new Hono<AuthContext>()
   // List leads with filters
   .get("/", zValidator("query", querySchema), async (c) => {
     const orgId = c.get("orgId");
-    const { status, minScore, source, search, limit, offset } = c.req.valid("query");
+    const { status, minScore, source, search, dateFrom, dateTo, limit, offset } = c.req.valid("query");
+
+    // Build date filter
+    const dateFilter: any = {};
+    if (dateFrom) {
+      dateFilter.gte = new Date(dateFrom);
+    }
+    if (dateTo) {
+      // Add 1 day to include the entire end date
+      const endDate = new Date(dateTo);
+      endDate.setDate(endDate.getDate() + 1);
+      dateFilter.lt = endDate;
+    }
 
     const where = {
       orgId, // Filter by organization
       ...(status && { status }),
       ...(minScore && { score: { gte: minScore } }),
       ...(source && { source }),
+      ...((dateFrom || dateTo) && { scrapedAt: dateFilter }),
       ...(search && {
         OR: [
-          { title: { contains: search } },
-          { description: { contains: search } },
-          { author: { contains: search } },
+          { title: { contains: search, mode: "insensitive" } },
+          { description: { contains: search, mode: "insensitive" } },
+          { author: { contains: search, mode: "insensitive" } },
+          { company: { contains: search, mode: "insensitive" } },
         ],
       }),
     };
