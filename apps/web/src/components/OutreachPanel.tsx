@@ -237,9 +237,9 @@ export function OutreachPanel({ leadId, leadEmail, onEmailSent }: OutreachPanelP
       )}
 
       {/* Template hint */}
-      {draft?.templateType && (
+      {draft?.templateName && (
         <p className="text-xs text-slate-500 dark:text-slate-400 mt-3">
-          Template: {draft.templateType}
+          Template: {draft.templateName}
         </p>
       )}
     </div>
