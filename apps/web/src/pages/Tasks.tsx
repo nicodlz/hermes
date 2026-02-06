@@ -7,7 +7,7 @@ import { cn } from "../lib/utils";
 export function Tasks() {
   const queryClient = useQueryClient();
 
-  const { data: tasks, isLoading } = useQuery({
+  const { data: tasks, isLoading, error } = useQuery({
     queryKey: ["tasks"],
     queryFn: () => api.tasks.list(),
   });
@@ -36,6 +36,17 @@ export function Tasks() {
           {pending.length} pending • {overdue?.length || 0} overdue
         </p>
       </div>
+
+      {/* Error Alert */}
+      {error && (
+        <div className="bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-700 rounded-lg p-4">
+          <div className="flex items-center gap-2 text-red-700 dark:text-red-300 font-medium mb-2">
+            <AlertTriangle className="w-5 h-5" />
+            Failed to load tasks
+          </div>
+          <p className="text-sm text-red-600 dark:text-red-400">{(error as Error).message}</p>
+        </div>
+      )}
 
       {/* Overdue Alert */}
       {overdue && overdue.length > 0 && (

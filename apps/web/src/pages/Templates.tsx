@@ -8,7 +8,7 @@ export function Templates() {
   const [selectedTemplate, setSelectedTemplate] = useState<Template | null>(null);
   const [previewVars, setPreviewVars] = useState<Record<string, string>>({});
 
-  const { data: templates, isLoading } = useQuery({
+  const { data: templates, isLoading, error } = useQuery({
     queryKey: ["templates"],
     queryFn: () => api.templates.list(),
   });
@@ -51,9 +51,14 @@ export function Templates() {
             <div className="bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 p-8 text-center text-slate-500 dark:text-slate-400 shadow-sm">
               Loading...
             </div>
+          ) : error ? (
+            <div className="bg-red-50 dark:bg-red-900/20 rounded-lg border border-red-200 dark:border-red-800 p-8 text-center shadow-sm">
+              <p className="text-red-600 dark:text-red-400 font-medium mb-2">Failed to load templates</p>
+              <p className="text-sm text-red-500 dark:text-red-400">{(error as Error).message}</p>
+            </div>
           ) : Object.keys(groupedTemplates).length === 0 ? (
             <div className="bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 p-8 text-center text-slate-500 dark:text-slate-400 shadow-sm">
-              No templates yet
+              No templates yet. Click "New Template" to create one.
             </div>
           ) : (
             Object.entries(groupedTemplates).map(([type, temps]) => {
