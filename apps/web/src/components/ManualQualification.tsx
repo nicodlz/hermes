@@ -85,9 +85,9 @@ export function ManualQualification({
     JSON.stringify(scoreReasons) !== JSON.stringify(parseReasons(currentScoreReasons));
 
   return (
-    <div className="bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 p-6 shadow-sm">
+    <div className="bg-card rounded-lg border border-border p-6 shadow-sm">
       <div className="flex items-center justify-between mb-4">
-        <h2 className="font-semibold text-slate-900 dark:text-white">Manual Qualification</h2>
+        <h2 className="font-semibold text-foreground dark:text-primary-foreground">Manual Qualification</h2>
         {qualifiedAt && (
           <span className="text-xs text-green-600 dark:text-green-400 flex items-center gap-1">
             <CheckCircle2 className="w-3 h-3" />
@@ -98,13 +98,13 @@ export function ManualQualification({
 
       {/* Score Editor */}
       <div className="mb-4">
-        <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+        <label className="block text-sm font-medium text-foreground dark:text-slate-300 mb-2">
           Score
         </label>
         <div className="flex items-center gap-3">
           <Star className={cn(
             "w-5 h-5",
-            score >= 30 ? "text-yellow-500 fill-yellow-500" : "text-slate-400 dark:text-slate-500"
+            score >= 30 ? "text-yellow-500 fill-yellow-500" : "text-muted-foreground dark:text-slate-500"
           )} />
           <input
             type="number"
@@ -115,7 +115,7 @@ export function ManualQualification({
               setScore(Number(e.target.value));
               setIsEditing(true);
             }}
-            className="w-20 px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-20 px-3 py-1.5 rounded-lg border border-border bg-card text-foreground dark:text-primary-foreground focus:outline-none focus:ring-2 focus:ring-primary"
           />
           <input
             type="range"
@@ -133,7 +133,7 @@ export function ManualQualification({
 
       {/* Score Reasons */}
       <div className="mb-4">
-        <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+        <label className="block text-sm font-medium text-foreground dark:text-slate-300 mb-2">
           Qualification Reasons
         </label>
         
@@ -145,17 +145,17 @@ export function ManualQualification({
               className={cn(
                 "px-3 py-1 rounded-full text-sm flex items-center gap-1",
                 reason.startsWith("+") || reason === "[Manual]"
-                  ? "bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-300"
+                  ? "bg-green-600/20 dark:bg-green-600/40 text-green-600 dark:text-green-500"
                   : reason.startsWith("-")
-                  ? "bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-300"
-                  : "bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300"
+                  ? "bg-destructive/20 dark:bg-destructive/40 text-destructive dark:text-destructive"
+                  : "bg-primary/20 dark:bg-primary/40 text-primary dark:text-primary"
               )}
             >
               {reason}
               {reason !== "[Manual]" && (
                 <button
                   onClick={() => handleRemoveReason(index)}
-                  className="hover:bg-black/10 dark:hover:bg-white/10 rounded-full p-0.5"
+                  className="hover:bg-black/10 dark:hover:bg-card/10 rounded-full p-0.5"
                 >
                   <X className="w-3 h-3" />
                 </button>
@@ -172,12 +172,12 @@ export function ManualQualification({
             onChange={(e) => setNewReason(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && handleAddReason()}
             placeholder="Add reason (e.g., +High budget, -Too vague)"
-            className="flex-1 px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+            className="flex-1 px-3 py-1.5 rounded-lg border border-border bg-card text-foreground dark:text-primary-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary text-sm"
           />
           <button
             onClick={handleAddReason}
             disabled={!newReason.trim()}
-            className="px-3 py-1.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-3 py-1.5 bg-primary text-primary-foreground rounded-lg hover:bg-primary disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <Plus className="w-4 h-4" />
           </button>
@@ -190,7 +190,7 @@ export function ManualQualification({
           <button
             onClick={handleSaveScore}
             disabled={updateMutation.isPending}
-            className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 font-medium"
+            className="w-full px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary disabled:opacity-50 font-medium"
           >
             {updateMutation.isPending ? "Saving..." : "Save Score"}
           </button>
@@ -200,7 +200,7 @@ export function ManualQualification({
           <button
             onClick={handleMarkQualified}
             disabled={updateMutation.isPending}
-            className="w-full px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 font-medium flex items-center justify-center gap-2"
+            className="w-full px-4 py-2 bg-green-600 text-primary-foreground rounded-lg hover:bg-green-700 disabled:opacity-50 font-medium flex items-center justify-center gap-2"
           >
             <CheckCircle2 className="w-4 h-4" />
             {updateMutation.isPending ? "Updating..." : "Mark as Qualified"}
@@ -209,7 +209,7 @@ export function ManualQualification({
       </div>
 
       {isManuallyScored && (
-        <p className="text-xs text-slate-500 dark:text-slate-400 mt-3 text-center">
+        <p className="text-xs text-slate-500 dark:text-muted-foreground mt-3 text-center">
           This lead has been manually scored
         </p>
       )}

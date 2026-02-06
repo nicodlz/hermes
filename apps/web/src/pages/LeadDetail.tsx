@@ -105,8 +105,8 @@ export function LeadDetail() {
     return (
       <div className="p-4 sm:p-6 lg:p-8">
         <div className="animate-pulse space-y-4">
-          <div className="h-8 w-48 bg-slate-200 dark:bg-slate-700 rounded" />
-          <div className="h-64 bg-slate-200 dark:bg-slate-700 rounded-lg" />
+          <div className="h-8 w-48 bg-muted dark:bg-card rounded" />
+          <div className="h-64 bg-muted dark:bg-card rounded-lg" />
         </div>
       </div>
     );
@@ -117,8 +117,8 @@ export function LeadDetail() {
       <div className="p-4 sm:p-6 lg:p-8 text-center">
         <div className="flex flex-col items-center gap-4">
           <AlertCircle className="w-12 h-12 text-red-500" />
-          <p className="text-slate-700 dark:text-slate-300">Error loading lead</p>
-          <p className="text-sm text-slate-500 dark:text-slate-400">{error.message}</p>
+          <p className="text-foreground dark:text-slate-300">Error loading lead</p>
+          <p className="text-sm text-slate-500 dark:text-muted-foreground">{error.message}</p>
           <Link to="/leads" className="text-blue-600 dark:text-blue-400 hover:underline">
             ← Back to leads
           </Link>
@@ -130,7 +130,7 @@ export function LeadDetail() {
   if (!lead) {
     return (
       <div className="p-4 sm:p-6 lg:p-8 text-center">
-        <p className="text-slate-500 dark:text-slate-400">Lead not found</p>
+        <p className="text-slate-500 dark:text-muted-foreground">Lead not found</p>
         <Link to="/leads" className="text-blue-600 dark:text-blue-400 hover:underline mt-2 inline-block">
           ← Back to leads
         </Link>
@@ -153,13 +153,13 @@ export function LeadDetail() {
       <div className="flex flex-col sm:flex-row sm:items-start gap-4">
         <Link
           to="/leads"
-          className="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 self-start"
+          className="p-2 rounded-lg hover:bg-muted dark:hover:bg-card self-start"
         >
-          <ArrowLeft className="w-5 h-5 text-slate-600 dark:text-slate-300" />
+          <ArrowLeft className="w-5 h-5 text-muted-foreground dark:text-slate-300" />
         </Link>
         <div className="flex-1 min-w-0">
-          <h1 className="text-xl sm:text-2xl font-bold break-words text-slate-900 dark:text-white">{lead.title}</h1>
-          <div className="flex flex-wrap items-center gap-2 sm:gap-4 mt-2 text-sm text-slate-500 dark:text-slate-400">
+          <h1 className="text-xl sm:text-2xl font-bold break-words text-foreground dark:text-primary-foreground">{lead.title}</h1>
+          <div className="flex flex-wrap items-center gap-2 sm:gap-4 mt-2 text-sm text-slate-500 dark:text-muted-foreground">
             <span>{lead.source}</span>
             <a
               href={lead.sourceUrl}
@@ -175,12 +175,12 @@ export function LeadDetail() {
           </div>
         </div>
         <div className="flex items-center gap-2 flex-wrap">
-          <div className="flex items-center gap-1 px-3 py-1 bg-slate-100 dark:bg-slate-700 rounded-full">
+          <div className="flex items-center gap-1 px-3 py-1 bg-muted dark:bg-card rounded-full">
             <Star className={cn(
               "w-4 h-4",
-              lead.score >= 30 ? "text-yellow-500 fill-yellow-500" : "text-slate-400 dark:text-slate-500"
+              lead.score >= 30 ? "text-yellow-500 fill-yellow-500" : "text-muted-foreground dark:text-slate-500"
             )} />
-            <span className="font-bold text-slate-900 dark:text-white">{lead.score}</span>
+            <span className="font-bold text-foreground dark:text-primary-foreground">{lead.score}</span>
           </div>
           <select
             value={lead.status}
@@ -198,7 +198,7 @@ export function LeadDetail() {
           </select>
           <button
             onClick={() => setShowDeleteDialog(true)}
-            className="p-2 rounded-lg text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
+            className="p-2 rounded-lg text-red-600 hover:bg-destructive/10 dark:hover:bg-destructive/20 transition-colors"
             title="Delete lead"
           >
             <Trash2 className="w-5 h-5" />
@@ -211,9 +211,9 @@ export function LeadDetail() {
         <div className="lg:col-span-2 space-y-6">
           {/* Description */}
           {lead.description && (
-            <div className="bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 p-6 shadow-sm">
-              <h2 className="font-semibold mb-3 text-slate-900 dark:text-white">Description</h2>
-              <p className="text-slate-600 dark:text-slate-300 whitespace-pre-wrap">
+            <div className="bg-card rounded-lg border border-border p-6 shadow-sm">
+              <h2 className="font-semibold mb-3 text-foreground dark:text-primary-foreground">Description</h2>
+              <p className="text-muted-foreground dark:text-slate-300 whitespace-pre-wrap">
                 {lead.description}
               </p>
             </div>
@@ -221,8 +221,8 @@ export function LeadDetail() {
 
           {/* Score Reasons */}
           {scoreReasons.length > 0 && (
-            <div className="bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 p-6 shadow-sm">
-              <h2 className="font-semibold mb-3 text-slate-900 dark:text-white">Qualification Reasons</h2>
+            <div className="bg-card rounded-lg border border-border p-6 shadow-sm">
+              <h2 className="font-semibold mb-3 text-foreground dark:text-primary-foreground">Qualification Reasons</h2>
               <div className="flex flex-wrap gap-2">
                 {scoreReasons.map((reason: string, i: number) => (
                   <span
@@ -230,8 +230,8 @@ export function LeadDetail() {
                     className={cn(
                       "px-3 py-1 rounded-full text-sm",
                       reason.startsWith("+")
-                        ? "bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-300"
-                        : "bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-300"
+                        ? "bg-green-600/20 dark:bg-green-600/40 text-green-600 dark:text-green-500"
+                        : "bg-destructive/20 dark:bg-destructive/40 text-destructive dark:text-destructive"
                     )}
                   >
                     {reason}
@@ -242,8 +242,8 @@ export function LeadDetail() {
           )}
 
           {/* Notes */}
-          <div className="bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 p-6 shadow-sm">
-            <h2 className="font-semibold mb-4 text-slate-900 dark:text-white">Notes</h2>
+          <div className="bg-card rounded-lg border border-border p-6 shadow-sm">
+            <h2 className="font-semibold mb-4 text-foreground dark:text-primary-foreground">Notes</h2>
             
             {/* Add note form */}
             <div className="mb-4">
@@ -252,12 +252,12 @@ export function LeadDetail() {
                 onChange={(e) => setNewNote(e.target.value)}
                 placeholder="Add a note..."
                 rows={3}
-                className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 rounded-lg border border-border bg-card text-foreground dark:text-primary-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
               />
               <button
                 onClick={() => addNoteMutation.mutate(newNote)}
                 disabled={!newNote.trim() || addNoteMutation.isPending}
-                className="mt-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
+                className="mt-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary disabled:opacity-50"
               >
                 Add Note
               </button>
@@ -272,10 +272,10 @@ export function LeadDetail() {
                     "p-4 rounded-lg",
                     note.type === "AI_ANALYSIS"
                       ? "bg-purple-50 dark:bg-purple-900/30 border border-purple-200 dark:border-purple-700"
-                      : "bg-slate-50 dark:bg-slate-700"
+                      : "bg-background dark:bg-card"
                   )}
                 >
-                  <div className="flex items-center gap-2 mb-2 text-xs text-slate-500 dark:text-slate-400">
+                  <div className="flex items-center gap-2 mb-2 text-xs text-slate-500 dark:text-muted-foreground">
                     <span className="font-medium">
                       {note.type === "AI_ANALYSIS" ? "🤖 AI Analysis" :
                        note.type === "AI_RESEARCH" ? "🔬 AI Research" :
@@ -290,11 +290,11 @@ export function LeadDetail() {
                       </>
                     )}
                   </div>
-                  <p className="text-sm whitespace-pre-wrap text-slate-700 dark:text-slate-200">{note.content}</p>
+                  <p className="text-sm whitespace-pre-wrap text-foreground dark:text-slate-200">{note.content}</p>
                 </div>
               ))}
               {!notes.length && (
-                <p className="text-slate-500 dark:text-slate-400 text-sm">No notes yet</p>
+                <p className="text-slate-500 dark:text-muted-foreground text-sm">No notes yet</p>
               )}
             </div>
           </div>
@@ -323,14 +323,14 @@ export function LeadDetail() {
           />
 
           {/* Contact Info */}
-          <div className="bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 p-6 shadow-sm">
+          <div className="bg-card rounded-lg border border-border p-6 shadow-sm">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="font-semibold text-slate-900 dark:text-white">Contact Info</h2>
+              <h2 className="font-semibold text-foreground dark:text-primary-foreground">Contact Info</h2>
               {!lead.email && (
                 <button
                   onClick={() => enrichMutation.mutate()}
                   disabled={enrichMutation.isPending}
-                  className="flex items-center gap-2 px-3 py-1.5 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  className="flex items-center gap-2 px-3 py-1.5 text-sm bg-primary text-primary-foreground rounded-lg hover:bg-primary disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                   title="Find email using Hunter.io"
                 >
                   {enrichMutation.isPending ? (
@@ -352,7 +352,7 @@ export function LeadDetail() {
                   onSave={(v) => updateMutation.mutate({ email: v })}
                 />
                 {lead.emailSource && (
-                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 ml-6">
+                  <p className="text-xs text-slate-500 dark:text-muted-foreground mt-1 ml-6">
                     Source: {lead.emailSource}
                     {lead.emailEnrichedAt && ` • ${new Date(lead.emailEnrichedAt).toLocaleDateString()}`}
                   </p>
@@ -376,20 +376,20 @@ export function LeadDetail() {
           </div>
 
           {/* Budget */}
-          <div className="bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 p-6 shadow-sm">
-            <h2 className="font-semibold mb-4 text-slate-900 dark:text-white">Budget</h2>
+          <div className="bg-card rounded-lg border border-border p-6 shadow-sm">
+            <h2 className="font-semibold mb-4 text-foreground dark:text-primary-foreground">Budget</h2>
             {lead.budgetMin || lead.budgetMax ? (
-              <p className="text-2xl font-bold text-slate-900 dark:text-white">
+              <p className="text-2xl font-bold text-foreground dark:text-primary-foreground">
                 ${lead.budgetMin?.toLocaleString() || "?"} - ${lead.budgetMax?.toLocaleString() || "?"}
               </p>
             ) : (
-              <p className="text-slate-500 dark:text-slate-400">Not specified</p>
+              <p className="text-slate-500 dark:text-muted-foreground">Not specified</p>
             )}
           </div>
 
           {/* Timeline */}
-          <div className="bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 p-6 shadow-sm">
-            <h2 className="font-semibold mb-4 text-slate-900 dark:text-white">Timeline</h2>
+          <div className="bg-card rounded-lg border border-border p-6 shadow-sm">
+            <h2 className="font-semibold mb-4 text-foreground dark:text-primary-foreground">Timeline</h2>
             <div className="space-y-2 text-sm">
               <TimelineItem label="Scraped" date={lead.scrapedAt} />
               <TimelineItem label="Qualified" date={lead.qualifiedAt} />
@@ -401,13 +401,13 @@ export function LeadDetail() {
 
           {/* Tags */}
           {tags.length > 0 && (
-            <div className="bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 p-6 shadow-sm">
-              <h2 className="font-semibold mb-4 text-slate-900 dark:text-white">Tags</h2>
+            <div className="bg-card rounded-lg border border-border p-6 shadow-sm">
+              <h2 className="font-semibold mb-4 text-foreground dark:text-primary-foreground">Tags</h2>
               <div className="flex flex-wrap gap-2">
                 {tags.map((tag: string) => (
                   <span
                     key={tag}
-                    className="px-3 py-1 bg-slate-100 dark:bg-slate-700 rounded-full text-sm text-slate-700 dark:text-slate-300"
+                    className="px-3 py-1 bg-muted dark:bg-card rounded-full text-sm text-foreground dark:text-slate-300"
                   >
                     {tag}
                   </span>
@@ -418,8 +418,8 @@ export function LeadDetail() {
 
           {/* Tasks */}
           {tasks.length > 0 && (
-            <div className="bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 p-6 shadow-sm">
-              <h2 className="font-semibold mb-4 text-slate-900 dark:text-white">Tasks ({tasks.length})</h2>
+            <div className="bg-card rounded-lg border border-border p-6 shadow-sm">
+              <h2 className="font-semibold mb-4 text-foreground dark:text-primary-foreground">Tasks ({tasks.length})</h2>
               <div className="space-y-2">
                 {tasks.map((task) => (
                   <div
@@ -428,11 +428,11 @@ export function LeadDetail() {
                       "p-3 rounded-lg text-sm",
                       task.status === "COMPLETED"
                         ? "bg-emerald-50 dark:bg-emerald-900/30"
-                        : "bg-slate-50 dark:bg-slate-700"
+                        : "bg-background dark:bg-card"
                     )}
                   >
-                    <div className="font-medium text-slate-900 dark:text-white">{task.title}</div>
-                    <div className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                    <div className="font-medium text-foreground dark:text-primary-foreground">{task.title}</div>
+                    <div className="text-xs text-slate-500 dark:text-muted-foreground mt-1">
                       {task.type} • {task.status}
                     </div>
                   </div>
@@ -456,7 +456,7 @@ export function LeadDetail() {
           <DialogFooter>
             <button
               onClick={() => setShowDeleteDialog(false)}
-              className="px-4 py-2 text-sm font-medium text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-600"
+              className="px-4 py-2 text-sm font-medium text-foreground dark:text-slate-300 bg-card border border-border rounded-lg hover:bg-background dark:hover:bg-muted"
               disabled={deleteMutation.isPending}
             >
               Cancel
@@ -467,7 +467,7 @@ export function LeadDetail() {
                 setShowDeleteDialog(false);
               }}
               disabled={deleteMutation.isPending}
-              className="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+              className="px-4 py-2 text-sm font-medium text-primary-foreground bg-red-600 rounded-lg hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
             >
               {deleteMutation.isPending && <Loader2 className="w-4 h-4 animate-spin" />}
               Delete Lead
@@ -498,7 +498,7 @@ function ContactField({
   if (editing && editable) {
     return (
       <div className="flex items-center gap-2">
-        <Icon className="w-4 h-4 text-slate-400 dark:text-slate-500" />
+        <Icon className="w-4 h-4 text-muted-foreground dark:text-slate-500" />
         <input
           type="text"
           value={editValue}
@@ -515,7 +515,7 @@ function ContactField({
             if (e.key === "Escape") setEditing(false);
           }}
           autoFocus
-          className="flex-1 px-2 py-1 border border-slate-200 dark:border-slate-600 rounded bg-white dark:bg-slate-700 text-slate-900 dark:text-white"
+          className="flex-1 px-2 py-1 border border-border rounded bg-card text-foreground dark:text-primary-foreground"
         />
       </div>
     );
@@ -525,13 +525,13 @@ function ContactField({
     <div
       className={cn(
         "flex items-center gap-2",
-        editable && "cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700 -mx-2 px-2 py-1 rounded"
+        editable && "cursor-pointer hover:bg-background dark:hover:bg-card -mx-2 px-2 py-1 rounded"
       )}
       onClick={() => editable && setEditing(true)}
     >
-      <Icon className="w-4 h-4 text-slate-400 dark:text-slate-500" />
-      <span className="text-sm text-slate-500 dark:text-slate-400">{label}:</span>
-      <span className={cn("text-sm text-slate-700 dark:text-slate-200", !value && "text-slate-400 dark:text-slate-500 italic")}>
+      <Icon className="w-4 h-4 text-muted-foreground dark:text-slate-500" />
+      <span className="text-sm text-slate-500 dark:text-muted-foreground">{label}:</span>
+      <span className={cn("text-sm text-foreground dark:text-slate-200", !value && "text-muted-foreground dark:text-slate-500 italic")}>
         {value || (editable ? "Click to add" : "—")}
       </span>
     </div>
@@ -547,9 +547,9 @@ function TimelineItem({ label, date }: { label: string; date?: string | null }) 
           date ? "bg-emerald-500" : "bg-slate-300 dark:bg-slate-600"
         )}
       />
-      <span className="text-slate-500 dark:text-slate-400">{label}</span>
+      <span className="text-slate-500 dark:text-muted-foreground">{label}</span>
       {date && (
-        <span className="ml-auto text-slate-400 dark:text-slate-500">
+        <span className="ml-auto text-muted-foreground dark:text-slate-500">
           {new Date(date).toLocaleDateString()}
         </span>
       )}
@@ -559,12 +559,12 @@ function TimelineItem({ label, date }: { label: string; date?: string | null }) 
 
 function getStatusColor(status: string) {
   const colors: Record<string, string> = {
-    NEW: "bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300",
-    QUALIFIED: "bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300",
+    NEW: "bg-muted dark:bg-card text-foreground dark:text-slate-300",
+    QUALIFIED: "bg-primary/20 dark:bg-primary/40 text-primary dark:text-primary",
     CONTACTED: "bg-purple-100 dark:bg-purple-900/40 text-purple-700 dark:text-purple-300",
-    RESPONDED: "bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-300",
+    RESPONDED: "bg-green-600/20 dark:bg-green-600/40 text-green-600 dark:text-green-500",
     WON: "bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300",
-    LOST: "bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-300",
+    LOST: "bg-destructive/20 dark:bg-destructive/40 text-destructive dark:text-destructive",
   };
-  return colors[status] || "bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300";
+  return colors[status] || "bg-muted dark:bg-card text-foreground dark:text-slate-300";
 }

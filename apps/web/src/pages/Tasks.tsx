@@ -31,16 +31,16 @@ export function Tasks() {
   return (
     <div className="p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6">
       <div>
-        <h1 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white">Tasks</h1>
-        <p className="text-slate-500 dark:text-slate-400 text-sm sm:text-base">
+        <h1 className="text-xl sm:text-2xl font-bold text-foreground dark:text-primary-foreground">Tasks</h1>
+        <p className="text-slate-500 dark:text-muted-foreground text-sm sm:text-base">
           {pending.length} pending • {overdue?.length || 0} overdue
         </p>
       </div>
 
       {/* Overdue Alert */}
       {overdue && overdue.length > 0 && (
-        <div className="bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-700 rounded-lg p-4">
-          <div className="flex items-center gap-2 text-red-700 dark:text-red-300 font-medium mb-2">
+        <div className="bg-destructive/10 dark:bg-destructive/30 border border-destructive dark:border-destructive rounded-lg p-4">
+          <div className="flex items-center gap-2 text-destructive dark:text-destructive font-medium mb-2">
             <AlertTriangle className="w-5 h-5" />
             {overdue.length} overdue task{overdue.length > 1 ? "s" : ""}
           </div>
@@ -59,17 +59,17 @@ export function Tasks() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Pending */}
-        <div className="bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 shadow-sm">
-          <div className="px-4 py-3 border-b border-slate-200 dark:border-slate-700 flex items-center gap-2">
+        <div className="bg-card rounded-lg border border-border shadow-sm">
+          <div className="px-4 py-3 border-b border-border flex items-center gap-2">
             <Clock className="w-5 h-5 text-amber-500" />
-            <span className="font-semibold text-slate-900 dark:text-white">Pending</span>
-            <span className="text-sm text-slate-500 dark:text-slate-400">({pending.length})</span>
+            <span className="font-semibold text-foreground dark:text-primary-foreground">Pending</span>
+            <span className="text-sm text-slate-500 dark:text-muted-foreground">({pending.length})</span>
           </div>
           <div className="p-4 space-y-3">
             {isLoading ? (
-              <p className="text-slate-500 dark:text-slate-400 text-sm">Loading...</p>
+              <p className="text-slate-500 dark:text-muted-foreground text-sm">Loading...</p>
             ) : pending.length === 0 ? (
-              <p className="text-slate-500 dark:text-slate-400 text-sm">No pending tasks</p>
+              <p className="text-slate-500 dark:text-muted-foreground text-sm">No pending tasks</p>
             ) : (
               pending.map((task) => (
                 <TaskCard
@@ -83,15 +83,15 @@ export function Tasks() {
         </div>
 
         {/* In Progress */}
-        <div className="bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 shadow-sm">
-          <div className="px-4 py-3 border-b border-slate-200 dark:border-slate-700 flex items-center gap-2">
+        <div className="bg-card rounded-lg border border-border shadow-sm">
+          <div className="px-4 py-3 border-b border-border flex items-center gap-2">
             <div className="w-5 h-5 rounded-full border-2 border-blue-500 border-t-transparent animate-spin" />
-            <span className="font-semibold text-slate-900 dark:text-white">In Progress</span>
-            <span className="text-sm text-slate-500 dark:text-slate-400">({inProgress.length})</span>
+            <span className="font-semibold text-foreground dark:text-primary-foreground">In Progress</span>
+            <span className="text-sm text-slate-500 dark:text-muted-foreground">({inProgress.length})</span>
           </div>
           <div className="p-4 space-y-3">
             {inProgress.length === 0 ? (
-              <p className="text-slate-500 dark:text-slate-400 text-sm">No tasks in progress</p>
+              <p className="text-slate-500 dark:text-muted-foreground text-sm">No tasks in progress</p>
             ) : (
               inProgress.map((task) => (
                 <TaskCard
@@ -105,15 +105,15 @@ export function Tasks() {
         </div>
 
         {/* Completed */}
-        <div className="bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 shadow-sm">
-          <div className="px-4 py-3 border-b border-slate-200 dark:border-slate-700 flex items-center gap-2">
+        <div className="bg-card rounded-lg border border-border shadow-sm">
+          <div className="px-4 py-3 border-b border-border flex items-center gap-2">
             <Check className="w-5 h-5 text-emerald-500" />
-            <span className="font-semibold text-slate-900 dark:text-white">Completed</span>
-            <span className="text-sm text-slate-500 dark:text-slate-400">(recent)</span>
+            <span className="font-semibold text-foreground dark:text-primary-foreground">Completed</span>
+            <span className="text-sm text-slate-500 dark:text-muted-foreground">(recent)</span>
           </div>
           <div className="p-4 space-y-3">
             {completed.length === 0 ? (
-              <p className="text-slate-500 dark:text-slate-400 text-sm">No completed tasks</p>
+              <p className="text-slate-500 dark:text-muted-foreground text-sm">No completed tasks</p>
             ) : (
               completed.map((task) => (
                 <TaskCard key={task.id} task={task} completed />
@@ -159,10 +159,10 @@ function TaskCard({
         "p-3 rounded-lg border-l-4",
         priorityColors[task.priority],
         completed
-          ? "bg-slate-50 dark:bg-slate-700/50 opacity-60"
+          ? "bg-background dark:bg-card/50 opacity-60"
           : isOverdue
-          ? "bg-red-50 dark:bg-red-900/20"
-          : "bg-slate-50 dark:bg-slate-700"
+          ? "bg-destructive/10 dark:bg-destructive/20"
+          : "bg-background dark:bg-card"
       )}
     >
       <div className="flex items-start gap-3">
@@ -176,13 +176,13 @@ function TaskCard({
         )}
         {completed && (
           <div className="mt-0.5 w-5 h-5 rounded bg-emerald-500 flex items-center justify-center">
-            <Check className="w-3 h-3 text-white" />
+            <Check className="w-3 h-3 text-primary-foreground" />
           </div>
         )}
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
             <span>{typeIcons[task.type]}</span>
-            <span className={cn("font-medium text-sm text-slate-900 dark:text-white", completed && "line-through text-slate-500 dark:text-slate-400")}>
+            <span className={cn("font-medium text-sm text-foreground dark:text-primary-foreground", completed && "line-through text-slate-500 dark:text-muted-foreground")}>
               {task.title}
             </span>
           </div>
@@ -198,7 +198,7 @@ function TaskCard({
           {task.dueAt && (
             <div className={cn(
               "text-xs mt-1",
-              isOverdue ? "text-red-600 dark:text-red-400 font-medium" : "text-slate-500 dark:text-slate-400"
+              isOverdue ? "text-red-600 dark:text-red-400 font-medium" : "text-slate-500 dark:text-muted-foreground"
             )}>
               Due: {new Date(task.dueAt).toLocaleDateString()}
             </div>
@@ -208,10 +208,10 @@ function TaskCard({
           className={cn(
             "text-xs px-2 py-0.5 rounded-full",
             task.priority === "URGENT"
-              ? "bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-300"
+              ? "bg-destructive/20 dark:bg-destructive/40 text-destructive dark:text-destructive"
               : task.priority === "HIGH"
-              ? "bg-orange-100 dark:bg-orange-900/40 text-orange-700 dark:text-orange-300"
-              : "bg-slate-100 dark:bg-slate-600 text-slate-600 dark:text-slate-300"
+              ? "bg-yellow-500/20 dark:bg-yellow-500/40 text-yellow-600 dark:text-yellow-500"
+              : "bg-muted dark:bg-slate-600 text-muted-foreground dark:text-slate-300"
           )}
         >
           {task.priority}
