@@ -18,10 +18,12 @@ import {
 } from "lucide-react";
 import { api } from "../lib/api";
 import { useAuth } from "../lib/auth";
+import { useTheme } from "../components/theme-provider";
 import { cn } from "../lib/utils";
 
 export function Settings() {
   const { user } = useAuth();
+  const { theme, setTheme } = useTheme();
   const queryClient = useQueryClient();
   const [activeTab, setActiveTab] = useState<"profile" | "api" | "notifications" | "appearance">("profile");
   const [copied, setCopied] = useState(false);
@@ -281,9 +283,24 @@ export function Settings() {
                 Theme
               </label>
               <div className="flex gap-3">
-                <ThemeButton icon={Sun} label="Light" active={false} />
-                <ThemeButton icon={Moon} label="Dark" active={true} />
-                <ThemeButton icon={Zap} label="System" active={false} />
+                <ThemeButton 
+                  icon={Sun} 
+                  label="Light" 
+                  active={theme === "light"} 
+                  onClick={() => setTheme("light")}
+                />
+                <ThemeButton 
+                  icon={Moon} 
+                  label="Dark" 
+                  active={theme === "dark"}
+                  onClick={() => setTheme("dark")}
+                />
+                <ThemeButton 
+                  icon={Zap} 
+                  label="System" 
+                  active={theme === "system"}
+                  onClick={() => setTheme("system")}
+                />
               </div>
             </div>
           </div>
@@ -332,13 +349,16 @@ function ThemeButton({
   icon: Icon,
   label,
   active,
+  onClick,
 }: {
   icon: React.ElementType;
   label: string;
   active: boolean;
+  onClick: () => void;
 }) {
   return (
     <button
+      onClick={onClick}
       className={cn(
         "flex flex-col items-center gap-2 p-4 rounded-lg border-2 transition-colors",
         active
