@@ -21,6 +21,8 @@ import { api, type LeadStatus } from "../lib/api";
 import { cn } from "../lib/utils";
 import { OutreachPanel } from "../components/OutreachPanel";
 import { OutreachHistory } from "../components/OutreachHistory";
+// TODO: Re-enable when ManualQualification component is implemented
+// import { ManualQualification } from "../components/ManualQualification";
 import {
   Dialog,
   DialogContent,
@@ -312,6 +314,7 @@ export function LeadDetail() {
           />
 
           {/* Manual Qualification */}
+          {/* TODO: Re-enable when ManualQualification component is implemented
           <ManualQualification
             leadId={lead.id}
             currentScore={lead.score}
@@ -320,6 +323,7 @@ export function LeadDetail() {
             isManuallyScored={lead.scoreReasons?.includes("[Manual]")}
             qualifiedAt={lead.qualifiedAt}
           />
+          */}
 
           {/* Contact Info */}
           <div className="bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 p-6 shadow-sm">
