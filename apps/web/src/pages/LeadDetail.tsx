@@ -21,6 +21,7 @@ import { api, type LeadStatus } from "../lib/api";
 import { cn } from "../lib/utils";
 import { OutreachPanel } from "../components/OutreachPanel";
 import { OutreachHistory } from "../components/OutreachHistory";
+import { ManualQualification } from "../components/ManualQualification";
 import {
   Dialog,
   DialogContent,
