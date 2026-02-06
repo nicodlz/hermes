@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useParams, Link, useNavigate } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import { 
   ArrowLeft, 
   ExternalLink, 
@@ -14,24 +14,13 @@ import {
   Plus,
   AlertCircle,
   Search,
-  Loader2,
-  Trash2
+  Loader2
 } from "lucide-react";
 import { api, type LeadStatus } from "../lib/api";
 import { cn } from "../lib/utils";
 import { OutreachPanel } from "../components/OutreachPanel";
 import { OutreachHistory } from "../components/OutreachHistory";
-// TODO: Re-enable when ManualQualification component is implemented
-// import { ManualQualification } from "../components/ManualQualification";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "../components/ui/dialog";
-import { toast } from "sonner";
+import { ManualQualification } from "../components/ManualQualification";
 
 /**
  * Safely parse JSON string, returning default value on error
@@ -47,10 +36,8 @@ function safeJsonParse<T>(str: string | null | undefined, defaultValue: T): T {
 
 export function LeadDetail() {
   const { id } = useParams<{ id: string }>();
-  const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [newNote, setNewNote] = useState("");
-  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
   const { data: lead, isLoading, error } = useQuery({
     queryKey: ["lead", id],
@@ -87,18 +74,6 @@ export function LeadDetail() {
     },
     onError: (error: Error) => {
       alert(`❌ Error: ${error.message}`);
-    },
-  });
-
-  const deleteMutation = useMutation({
-    mutationFn: () => api.leads.delete(id!),
-    onSuccess: () => {
-      toast.success("Lead deleted successfully");
-      queryClient.invalidateQueries({ queryKey: ["leads"] });
-      navigate("/leads");
-    },
-    onError: (error: Error) => {
-      toast.error(`Failed to delete lead: ${error.message}`);
     },
   });
 
@@ -197,13 +172,6 @@ export function LeadDetail() {
               <option key={s} value={s}>{s.replace(/_/g, " ")}</option>
             ))}
           </select>
-          <button
-            onClick={() => setShowDeleteDialog(true)}
-            className="p-2 rounded-lg text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
-            title="Delete lead"
-          >
-            <Trash2 className="w-5 h-5" />
-          </button>
         </div>
       </div>
 
@@ -314,7 +282,6 @@ export function LeadDetail() {
           />
 
           {/* Manual Qualification */}
-          {/* TODO: Re-enable when ManualQualification component is implemented
           <ManualQualification
             leadId={lead.id}
             currentScore={lead.score}
@@ -323,7 +290,6 @@ export function LeadDetail() {
             isManuallyScored={lead.scoreReasons?.includes("[Manual]")}
             qualifiedAt={lead.qualifiedAt}
           />
-          */}
 
           {/* Contact Info */}
           <div className="bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 p-6 shadow-sm">
@@ -445,39 +411,6 @@ export function LeadDetail() {
           )}
         </div>
       </div>
-
-      {/* Delete Confirmation Dialog */}
-      <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Delete Lead</DialogTitle>
-            <DialogDescription>
-              Are you sure you want to delete this lead? This action cannot be undone.
-              All associated notes, tasks, and messages will also be deleted.
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter>
-            <button
-              onClick={() => setShowDeleteDialog(false)}
-              className="px-4 py-2 text-sm font-medium text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-600"
-              disabled={deleteMutation.isPending}
-            >
-              Cancel
-            </button>
-            <button
-              onClick={() => {
-                deleteMutation.mutate();
-                setShowDeleteDialog(false);
-              }}
-              disabled={deleteMutation.isPending}
-              className="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-            >
-              {deleteMutation.isPending && <Loader2 className="w-4 h-4 animate-spin" />}
-              Delete Lead
-            </button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 }

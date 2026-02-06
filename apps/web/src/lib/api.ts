@@ -192,6 +192,7 @@ export interface CreateLead {
 export interface UpdateLead {
   status?: LeadStatus;
   score?: number;
+  scoreReasons?: string;
   email?: string;
   phone?: string;
   company?: string;
