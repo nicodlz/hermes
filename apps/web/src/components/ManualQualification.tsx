@@ -97,9 +97,9 @@ export function ManualQualification({
     JSON.stringify(scoreReasons) !== JSON.stringify(parseReasons(currentScoreReasons));
 
   return (
-    <div className="bg-card rounded-lg border border-border p-6 shadow-sm">
+    <div className="bg-card rounded-lg border border-border p-6 shadow-card">
       <div className="flex items-center justify-between mb-4">
-        <h2 className="font-semibold text-foreground dark:text-primary-foreground">Manual Qualification</h2>
+        <h2 className="font-semibold text-foreground">Manual Qualification</h2>
         {qualifiedAt && (
           <span className="text-xs text-green-600 dark:text-green-400 flex items-center gap-1">
             <CheckCircle2 className="w-3 h-3" />
@@ -127,7 +127,7 @@ export function ManualQualification({
               setScore(Number(e.target.value));
               setIsEditing(true);
             }}
-            className="w-20 px-3 py-1.5 rounded-lg border border-border bg-card text-foreground dark:text-primary-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+            className="w-20 px-3 py-1.5 rounded-lg border border-border bg-card text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
           />
           <input
             type="range"
@@ -184,7 +184,7 @@ export function ManualQualification({
             onChange={(e) => setNewReason(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && handleAddReason()}
             placeholder="Add reason (e.g., +High budget, -Too vague)"
-            className="flex-1 px-3 py-1.5 rounded-lg border border-border bg-card text-foreground dark:text-primary-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary text-sm"
+            className="flex-1 px-3 py-1.5 rounded-lg border border-border bg-card text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary text-sm"
           />
           <button
             onClick={handleAddReason}
@@ -221,7 +221,7 @@ export function ManualQualification({
       </div>
 
       {isManuallyScored && (
-        <p className="text-xs text-slate-500 dark:text-muted-foreground mt-3 text-center">
+        <p className="text-xs text-secondary mt-3 text-center">
           This lead has been manually scored
         </p>
       )}

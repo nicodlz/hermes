@@ -15,7 +15,7 @@ export function OutreachHistory({ leadId }: OutreachHistoryProps) {
 
   if (isLoading) {
     return (
-      <div className="bg-card rounded-lg border border-border p-6 shadow-sm">
+      <div className="bg-card rounded-lg border border-border p-6 shadow-card">
         <div className="animate-pulse space-y-3">
           <div className="h-4 bg-muted dark:bg-card rounded w-1/3" />
           <div className="h-20 bg-muted dark:bg-card rounded" />
@@ -26,12 +26,12 @@ export function OutreachHistory({ leadId }: OutreachHistoryProps) {
 
   if (!messages || messages.length === 0) {
     return (
-      <div className="bg-card rounded-lg border border-border p-6 shadow-sm">
-        <h2 className="font-semibold mb-4 flex items-center gap-2 text-foreground dark:text-primary-foreground">
+      <div className="bg-card rounded-lg border border-border p-6 shadow-card">
+        <h2 className="font-semibold mb-4 flex items-center gap-2 text-foreground">
           <Mail className="w-5 h-5 text-blue-500" />
           Outreach History
         </h2>
-        <p className="text-sm text-slate-500 dark:text-muted-foreground">
+        <p className="text-sm text-secondary">
           No outreach sent yet. Use the panel above to send your first email.
         </p>
       </div>
@@ -39,8 +39,8 @@ export function OutreachHistory({ leadId }: OutreachHistoryProps) {
   }
 
   return (
-    <div className="bg-card rounded-lg border border-border p-6 shadow-sm">
-      <h2 className="font-semibold mb-4 flex items-center gap-2 text-foreground dark:text-primary-foreground">
+    <div className="bg-card rounded-lg border border-border p-6 shadow-card">
+      <h2 className="font-semibold mb-4 flex items-center gap-2 text-foreground">
         <Mail className="w-5 h-5 text-blue-500" />
         Outreach History ({messages.length})
       </h2>
@@ -53,7 +53,7 @@ export function OutreachHistory({ leadId }: OutreachHistoryProps) {
               "p-4 rounded-lg border",
               message.direction === "OUTBOUND"
                 ? "bg-primary/10 dark:bg-primary/20 border-primary dark:border-primary"
-                : "bg-background dark:bg-card border-border"
+                : "bg-nested border-border"
             )}
           >
             {/* Header */}
@@ -64,14 +64,14 @@ export function OutreachHistory({ leadId }: OutreachHistoryProps) {
                   {getStatusLabel(message.status)}
                 </span>
               </div>
-              <span className="text-xs text-slate-500 dark:text-muted-foreground">
+              <span className="text-xs text-secondary">
                 {message.sentAt ? new Date(message.sentAt).toLocaleString() : "Draft"}
               </span>
             </div>
 
             {/* Subject */}
             {message.subject && (
-              <p className="font-medium text-sm mb-1 text-foreground dark:text-primary-foreground">
+              <p className="font-medium text-sm mb-1 text-foreground">
                 {message.subject}
               </p>
             )}
@@ -82,7 +82,7 @@ export function OutreachHistory({ leadId }: OutreachHistoryProps) {
             </p>
 
             {/* Metadata */}
-            <div className="flex items-center gap-3 mt-2 text-xs text-slate-500 dark:text-muted-foreground">
+            <div className="flex items-center gap-3 mt-2 text-xs text-secondary">
               <span>{message.channel}</span>
               {message.templateId && (
                 <>

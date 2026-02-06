@@ -68,8 +68,8 @@ export function Settings() {
   return (
     <div className="p-4 sm:p-6 lg:p-8 max-w-4xl mx-auto">
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-foreground dark:text-primary-foreground">Settings</h1>
-        <p className="text-slate-500 dark:text-muted-foreground">Manage your account and preferences</p>
+        <h1 className="text-2xl font-bold text-foreground">Settings</h1>
+        <p className="text-secondary">Manage your account and preferences</p>
       </div>
 
       {/* Tabs */}
@@ -84,7 +84,7 @@ export function Settings() {
                 "flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-t-lg transition-colors whitespace-nowrap",
                 activeTab === tab.id
                   ? "bg-card text-blue-600 dark:text-blue-400 border border-border border-b-white dark:border-b-slate-800 -mb-px"
-                  : "text-slate-500 dark:text-muted-foreground hover:text-foreground dark:hover:text-slate-300"
+                  : "text-secondary hover:text-foreground dark:hover:text-slate-300"
               )}
             >
               <Icon className="w-4 h-4" />
@@ -97,7 +97,7 @@ export function Settings() {
       {/* Profile Tab */}
       {activeTab === "profile" && (
         <div className="bg-card rounded-lg border border-border p-6 space-y-6">
-          <h2 className="text-lg font-semibold text-foreground dark:text-primary-foreground flex items-center gap-2">
+          <h2 className="text-lg font-semibold text-foreground flex items-center gap-2">
             <Shield className="w-5 h-5 text-blue-500" />
             Account Information
           </h2>
@@ -111,7 +111,7 @@ export function Settings() {
                 type="email"
                 value={user?.email || ""}
                 disabled
-                className="w-full px-3 py-2 border border-border rounded-lg bg-background dark:bg-card text-slate-500 dark:text-muted-foreground"
+                className="w-full px-3 py-2 border border-border rounded-lg bg-background dark:bg-card text-secondary"
               />
             </div>
             <div>
@@ -122,19 +122,19 @@ export function Settings() {
                 type="text"
                 value={user?.orgName || ""}
                 disabled
-                className="w-full px-3 py-2 border border-border rounded-lg bg-background dark:bg-card text-slate-500 dark:text-muted-foreground"
+                className="w-full px-3 py-2 border border-border rounded-lg bg-background dark:bg-card text-secondary"
               />
             </div>
           </div>
 
           <div className="pt-4 border-t border-border">
-            <h3 className="font-medium text-foreground dark:text-primary-foreground mb-3">Quick Stats</h3>
+            <h3 className="font-medium text-foreground mb-3">Quick Stats</h3>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
               <div className="text-center p-3 bg-background dark:bg-card rounded-lg">
-                <div className="text-2xl font-bold text-foreground dark:text-primary-foreground">
+                <div className="text-2xl font-bold text-foreground">
                   {apiKeys?.length || 0}
                 </div>
-                <div className="text-xs text-slate-500 dark:text-muted-foreground">API Keys</div>
+                <div className="text-xs text-secondary">API Keys</div>
               </div>
             </div>
           </div>
@@ -145,11 +145,11 @@ export function Settings() {
       {activeTab === "api" && (
         <div className="space-y-6">
           <div className="bg-card rounded-lg border border-border p-6">
-            <h2 className="text-lg font-semibold text-foreground dark:text-primary-foreground flex items-center gap-2 mb-4">
+            <h2 className="text-lg font-semibold text-foreground flex items-center gap-2 mb-4">
               <Key className="w-5 h-5 text-amber-500" />
               API Keys
             </h2>
-            <p className="text-sm text-slate-500 dark:text-muted-foreground mb-4">
+            <p className="text-sm text-secondary mb-4">
               Use API keys to integrate Hermes with your tools and scripts.
             </p>
 
@@ -160,7 +160,7 @@ export function Settings() {
                 value={newKeyName}
                 onChange={(e) => setNewKeyName(e.target.value)}
                 placeholder="Key name (e.g., 'Scraper Bot')"
-                className="flex-1 px-3 py-2 border border-border rounded-lg bg-card text-foreground dark:text-primary-foreground placeholder:text-muted-foreground"
+                className="flex-1 px-3 py-2 border border-border rounded-lg bg-card text-foreground placeholder:text-muted-foreground"
               />
               <button
                 onClick={() => createKeyMutation.mutate(newKeyName)}
@@ -179,7 +179,7 @@ export function Settings() {
                   ⚠️ Copy your API key now — you won't see it again!
                 </p>
                 <div className="flex items-center gap-2">
-                  <code className="flex-1 px-3 py-2 bg-card rounded border border-amber-200 dark:border-amber-600 text-sm font-mono text-foreground dark:text-primary-foreground">
+                  <code className="flex-1 px-3 py-2 bg-card rounded border border-amber-200 dark:border-amber-600 text-sm font-mono text-foreground">
                     {createdKey}
                   </code>
                   <button
@@ -195,9 +195,9 @@ export function Settings() {
             {/* Existing keys */}
             <div className="space-y-3">
               {keysLoading ? (
-                <div className="animate-pulse h-16 bg-muted dark:bg-card rounded-lg" />
+                <div className="animate-pulse h-16 bg-nested rounded-lg" />
               ) : apiKeys?.length === 0 ? (
-                <p className="text-slate-500 dark:text-muted-foreground text-center py-8">
+                <p className="text-secondary text-center py-8">
                   No API keys yet. Create one to get started.
                 </p>
               ) : (
@@ -207,8 +207,8 @@ export function Settings() {
                     className="flex items-center justify-between p-4 bg-background dark:bg-card rounded-lg"
                   >
                     <div>
-                      <p className="font-medium text-foreground dark:text-primary-foreground">{key.name}</p>
-                      <p className="text-xs text-slate-500 dark:text-muted-foreground">
+                      <p className="font-medium text-foreground">{key.name}</p>
+                      <p className="text-xs text-secondary">
                         Created {new Date(key.createdAt).toLocaleDateString()}
                         {key.lastUsedAt && ` • Last used ${new Date(key.lastUsedAt).toLocaleDateString()}`}
                       </p>
@@ -227,7 +227,7 @@ export function Settings() {
 
           {/* API Usage Example */}
           <div className="bg-card rounded-lg border border-border p-6">
-            <h3 className="font-semibold text-foreground dark:text-primary-foreground mb-3">Usage Example</h3>
+            <h3 className="font-semibold text-foreground mb-3">Usage Example</h3>
             <pre className="p-4 bg-background rounded-lg text-sm text-green-400 overflow-x-auto">
 {`curl -X GET https://hermes.ndlz.net/api/leads \\
   -H "X-API-Key: hms_your_api_key_here"`}
@@ -239,7 +239,7 @@ export function Settings() {
       {/* Notifications Tab */}
       {activeTab === "notifications" && (
         <div className="bg-card rounded-lg border border-border p-6">
-          <h2 className="text-lg font-semibold text-foreground dark:text-primary-foreground flex items-center gap-2 mb-4">
+          <h2 className="text-lg font-semibold text-foreground flex items-center gap-2 mb-4">
             <Bell className="w-5 h-5 text-purple-500" />
             Notification Preferences
           </h2>
@@ -272,7 +272,7 @@ export function Settings() {
       {/* Appearance Tab */}
       {activeTab === "appearance" && (
         <div className="bg-card rounded-lg border border-border p-6">
-          <h2 className="text-lg font-semibold text-foreground dark:text-primary-foreground flex items-center gap-2 mb-4">
+          <h2 className="text-lg font-semibold text-foreground flex items-center gap-2 mb-4">
             <Palette className="w-5 h-5 text-pink-500" />
             Appearance
           </h2>
@@ -324,8 +324,8 @@ function NotificationToggle({
   return (
     <div className="flex items-center justify-between p-4 bg-background dark:bg-card rounded-lg">
       <div>
-        <p className="font-medium text-foreground dark:text-primary-foreground">{label}</p>
-        <p className="text-sm text-slate-500 dark:text-muted-foreground">{description}</p>
+        <p className="font-medium text-foreground">{label}</p>
+        <p className="text-sm text-secondary">{description}</p>
       </div>
       <button
         onClick={() => setEnabled(!enabled)}
