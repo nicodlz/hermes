@@ -20,6 +20,7 @@ import { api, type LeadStatus } from "../lib/api";
 import { cn } from "../lib/utils";
 import { OutreachPanel } from "../components/OutreachPanel";
 import { OutreachHistory } from "../components/OutreachHistory";
+import { ManualQualification } from "../components/ManualQualification";
 
 /**
  * Safely parse JSON string, returning default value on error
@@ -278,6 +279,16 @@ export function LeadDetail() {
             leadId={lead.id} 
             leadEmail={lead.email}
             onEmailSent={() => queryClient.invalidateQueries({ queryKey: ["lead", id] })}
+          />
+
+          {/* Manual Qualification */}
+          <ManualQualification
+            leadId={lead.id}
+            currentScore={lead.score}
+            currentStatus={lead.status}
+            currentScoreReasons={lead.scoreReasons}
+            isManuallyScored={lead.scoreReasons?.includes("[Manual]")}
+            qualifiedAt={lead.qualifiedAt}
           />
 
           {/* Contact Info */}
