@@ -104,18 +104,18 @@ export function Analytics() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
+          <h1 className="text-2xl font-bold text-foreground dark:text-primary-foreground flex items-center gap-2">
             <BarChart3 className="w-7 h-7 text-blue-500" />
             Analytics Dashboard
           </h1>
-          <p className="text-slate-500 dark:text-slate-400 mt-1">
+          <p className="text-slate-500 dark:text-muted-foreground mt-1">
             Performance metrics and conversion insights
           </p>
         </div>
 
         {/* Date Range Filters */}
         <div className="flex items-center gap-3">
-          <div className="flex items-center gap-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-1">
+          <div className="flex items-center gap-2 bg-card border border-border rounded-lg p-1">
             {["7d", "30d", "90d", "all"].map((range) => (
               <button
                 key={range}
@@ -123,8 +123,8 @@ export function Analytics() {
                 className={cn(
                   "px-3 py-1.5 text-sm font-medium rounded-md transition-colors",
                   dateRange === range
-                    ? "bg-blue-500 text-white"
-                    : "text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700"
+                    ? "bg-primary text-primary-foreground"
+                    : "text-muted-foreground hover:bg-muted dark:hover:bg-card"
                 )}
               >
                 {range === "all" ? "All time" : range}
@@ -134,7 +134,7 @@ export function Analytics() {
 
           <button
             onClick={() => handleExport("timeline")}
-            className="flex items-center gap-2 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg text-sm font-medium transition-colors"
+            className="flex items-center gap-2 px-4 py-2 bg-primary hover:bg-primary text-primary-foreground rounded-lg text-sm font-medium transition-colors"
           >
             <Download className="w-4 h-4" />
             Export CSV
@@ -182,8 +182,8 @@ export function Analytics() {
             className={cn(
               "px-3 py-1 text-sm rounded-md",
               timelineGroupBy === "day"
-                ? "bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300"
-                : "text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700"
+                ? "bg-primary/20 dark:bg-primary/40 text-primary dark:text-primary"
+                : "text-muted-foreground hover:bg-muted dark:hover:bg-card"
             )}
           >
             Daily
@@ -193,8 +193,8 @@ export function Analytics() {
             className={cn(
               "px-3 py-1 text-sm rounded-md",
               timelineGroupBy === "week"
-                ? "bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300"
-                : "text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700"
+                ? "bg-primary/20 dark:bg-primary/40 text-primary dark:text-primary"
+                : "text-muted-foreground hover:bg-muted dark:hover:bg-card"
             )}
           >
             Weekly
@@ -262,11 +262,11 @@ export function Analytics() {
           <div className="mt-4 space-y-2">
             {funnel?.slice(1).map((step, i) => (
               <div key={step.stage} className="flex items-center justify-between text-sm">
-                <span className="text-slate-600 dark:text-slate-400">{step.label}</span>
+                <span className="text-muted-foreground">{step.label}</span>
                 <div className="flex items-center gap-2">
-                  <div className="w-24 h-2 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+                  <div className="w-24 h-2 bg-muted dark:bg-card rounded-full overflow-hidden">
                     <div 
-                      className={cn("h-full rounded-full", step.rate >= 50 ? "bg-green-500" : step.rate >= 25 ? "bg-yellow-500" : "bg-red-500")}
+                      className={cn("h-full rounded-full", step.rate >= 50 ? "bg-green-600" : step.rate >= 25 ? "bg-yellow-500" : "bg-red-500")}
                       style={{ width: `${step.rate}%` }}
                     />
                   </div>
@@ -307,10 +307,10 @@ export function Analytics() {
           </ResponsiveContainer>
 
           <div className="mt-4 text-center">
-            <div className="text-3xl font-bold text-slate-900 dark:text-white">
+            <div className="text-3xl font-bold text-foreground dark:text-primary-foreground">
               {conversionTime?.totalAvg || 0} days
             </div>
-            <div className="text-sm text-slate-500 dark:text-slate-400">
+            <div className="text-sm text-slate-500 dark:text-muted-foreground">
               Average total cycle time
             </div>
           </div>
@@ -351,17 +351,17 @@ export function Analytics() {
           {/* Source details */}
           <div className="mt-4 space-y-2">
             {sources?.slice(0, 5).map((source, i) => (
-              <div key={source.source} className="flex items-center justify-between p-2 bg-slate-50 dark:bg-slate-700/50 rounded">
+              <div key={source.source} className="flex items-center justify-between p-2 bg-background dark:bg-card/50 rounded">
                 <div className="flex items-center gap-2">
                   <div 
                     className="w-3 h-3 rounded-full" 
                     style={{ backgroundColor: PIE_COLORS[i % PIE_COLORS.length] }}
                   />
-                  <span className="text-sm font-medium text-slate-900 dark:text-white">
+                  <span className="text-sm font-medium text-foreground dark:text-primary-foreground">
                     {source.source}
                   </span>
                 </div>
-                <div className="flex items-center gap-4 text-xs text-slate-500 dark:text-slate-400">
+                <div className="flex items-center gap-4 text-xs text-slate-500 dark:text-muted-foreground">
                   <span>{source.total} leads</span>
                   <span className="font-medium text-green-600 dark:text-green-400">
                     {source.conversionRate}% won
@@ -402,7 +402,7 @@ export function Analytics() {
           {/* Template stats table */}
           <div className="mt-4 overflow-x-auto">
             <table className="w-full text-sm">
-              <thead className="text-left text-slate-500 dark:text-slate-400 border-b border-slate-200 dark:border-slate-700">
+              <thead className="text-left text-slate-500 dark:text-muted-foreground border-b border-border">
                 <tr>
                   <th className="pb-2 font-medium">Template</th>
                   <th className="pb-2 font-medium text-center">Sent</th>
@@ -412,16 +412,16 @@ export function Analytics() {
               </thead>
               <tbody className="divide-y divide-slate-100 dark:divide-slate-700">
                 {templates?.slice(0, 5).map((template) => (
-                  <tr key={template.id} className="text-slate-700 dark:text-slate-300">
+                  <tr key={template.id} className="text-foreground dark:text-slate-300">
                     <td className="py-2 max-w-[200px] truncate">{template.name}</td>
                     <td className="py-2 text-center">{template.sent}</td>
                     <td className="py-2 text-center">{template.replied}</td>
                     <td className="py-2 text-center">
                       <span className={cn(
                         "px-2 py-0.5 rounded-full text-xs font-medium",
-                        template.replyRate >= 25 ? "bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-300" :
-                        template.replyRate >= 15 ? "bg-yellow-100 dark:bg-yellow-900/40 text-yellow-700 dark:text-yellow-300" :
-                        "bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-300"
+                        template.replyRate >= 25 ? "bg-green-600/20 dark:bg-green-600/40 text-green-600 dark:text-green-500" :
+                        template.replyRate >= 15 ? "bg-yellow-500/20 dark:bg-yellow-900/40 text-yellow-700 dark:text-yellow-300" :
+                        "bg-destructive/20 dark:bg-destructive/40 text-destructive dark:text-destructive"
                       )}>
                         {template.replyRate}%
                       </span>
@@ -440,8 +440,8 @@ export function Analytics() {
 // Helper Components
 function Card({ title, icon: Icon, children }: { title: string; icon: React.ElementType; children: React.ReactNode }) {
   return (
-    <div className="bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 p-6 shadow-sm">
-      <h2 className="font-semibold mb-6 flex items-center gap-2 text-slate-900 dark:text-white">
+    <div className="bg-card rounded-lg border border-border p-6 shadow-sm">
+      <h2 className="font-semibold mb-6 flex items-center gap-2 text-foreground dark:text-primary-foreground">
         <Icon className="w-5 h-5 text-blue-500" />
         {title}
       </h2>
@@ -464,26 +464,26 @@ function KPICard({
   color: keyof typeof COLORS;
 }) {
   const colorClasses = {
-    blue: "bg-blue-50 dark:bg-blue-900/30 border-blue-200 dark:border-blue-700 text-blue-600 dark:text-blue-400",
-    green: "bg-green-50 dark:bg-green-900/30 border-green-200 dark:border-green-700 text-green-600 dark:text-green-400",
+    blue: "bg-primary/10 dark:bg-blue-900/30 border-primary dark:border-primary text-blue-600 dark:text-blue-400",
+    green: "bg-green-600/10 dark:bg-green-900/30 border-green-600 dark:border-green-700 text-green-600 dark:text-green-400",
     purple: "bg-purple-50 dark:bg-purple-900/30 border-purple-200 dark:border-purple-700 text-purple-600 dark:text-purple-400",
     orange: "bg-orange-50 dark:bg-orange-900/30 border-orange-200 dark:border-orange-700 text-orange-600 dark:text-orange-400",
     cyan: "bg-cyan-50 dark:bg-cyan-900/30 border-cyan-200 dark:border-cyan-700 text-cyan-600 dark:text-cyan-400",
-    primary: "bg-slate-50 dark:bg-slate-700/30 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400",
-    success: "bg-green-50 dark:bg-green-900/30 border-green-200 dark:border-green-700 text-green-600 dark:text-green-400",
+    primary: "bg-background dark:bg-card/30 border-border text-muted-foreground",
+    success: "bg-green-600/10 dark:bg-green-900/30 border-green-600 dark:border-green-700 text-green-600 dark:text-green-400",
     warning: "bg-orange-50 dark:bg-orange-900/30 border-orange-200 dark:border-orange-700 text-orange-600 dark:text-orange-400",
-    danger: "bg-red-50 dark:bg-red-900/30 border-red-200 dark:border-red-700 text-red-600 dark:text-red-400",
+    danger: "bg-destructive/10 dark:bg-destructive/30 border-destructive dark:border-destructive text-red-600 dark:text-red-400",
     indigo: "bg-indigo-50 dark:bg-indigo-900/30 border-indigo-200 dark:border-indigo-700 text-indigo-600 dark:text-indigo-400",
   };
 
   return (
     <div className={cn("p-6 rounded-lg border shadow-sm", colorClasses[color])}>
       <div className="flex items-center justify-between mb-4">
-        <span className="text-sm font-medium text-slate-600 dark:text-slate-300">{title}</span>
+        <span className="text-sm font-medium text-muted-foreground dark:text-slate-300">{title}</span>
         <Icon className="w-5 h-5" />
       </div>
-      <div className="text-3xl font-bold text-slate-900 dark:text-white">{value}</div>
-      <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">{subtitle}</p>
+      <div className="text-3xl font-bold text-foreground dark:text-primary-foreground">{value}</div>
+      <p className="text-sm text-slate-500 dark:text-muted-foreground mt-1">{subtitle}</p>
     </div>
   );
 }

@@ -15,10 +15,10 @@ export function OutreachHistory({ leadId }: OutreachHistoryProps) {
 
   if (isLoading) {
     return (
-      <div className="bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 p-6 shadow-sm">
+      <div className="bg-card rounded-lg border border-border p-6 shadow-sm">
         <div className="animate-pulse space-y-3">
-          <div className="h-4 bg-slate-200 dark:bg-slate-700 rounded w-1/3" />
-          <div className="h-20 bg-slate-200 dark:bg-slate-700 rounded" />
+          <div className="h-4 bg-muted dark:bg-card rounded w-1/3" />
+          <div className="h-20 bg-muted dark:bg-card rounded" />
         </div>
       </div>
     );
@@ -26,12 +26,12 @@ export function OutreachHistory({ leadId }: OutreachHistoryProps) {
 
   if (!messages || messages.length === 0) {
     return (
-      <div className="bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 p-6 shadow-sm">
-        <h2 className="font-semibold mb-4 flex items-center gap-2 text-slate-900 dark:text-white">
+      <div className="bg-card rounded-lg border border-border p-6 shadow-sm">
+        <h2 className="font-semibold mb-4 flex items-center gap-2 text-foreground dark:text-primary-foreground">
           <Mail className="w-5 h-5 text-blue-500" />
           Outreach History
         </h2>
-        <p className="text-sm text-slate-500 dark:text-slate-400">
+        <p className="text-sm text-slate-500 dark:text-muted-foreground">
           No outreach sent yet. Use the panel above to send your first email.
         </p>
       </div>
@@ -39,8 +39,8 @@ export function OutreachHistory({ leadId }: OutreachHistoryProps) {
   }
 
   return (
-    <div className="bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 p-6 shadow-sm">
-      <h2 className="font-semibold mb-4 flex items-center gap-2 text-slate-900 dark:text-white">
+    <div className="bg-card rounded-lg border border-border p-6 shadow-sm">
+      <h2 className="font-semibold mb-4 flex items-center gap-2 text-foreground dark:text-primary-foreground">
         <Mail className="w-5 h-5 text-blue-500" />
         Outreach History ({messages.length})
       </h2>
@@ -52,37 +52,37 @@ export function OutreachHistory({ leadId }: OutreachHistoryProps) {
             className={cn(
               "p-4 rounded-lg border",
               message.direction === "OUTBOUND"
-                ? "bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-700"
-                : "bg-slate-50 dark:bg-slate-700 border-slate-200 dark:border-slate-600"
+                ? "bg-primary/10 dark:bg-primary/20 border-primary dark:border-primary"
+                : "bg-background dark:bg-card border-border"
             )}
           >
             {/* Header */}
             <div className="flex items-start justify-between mb-2">
               <div className="flex items-center gap-2">
                 <StatusIcon status={message.status} />
-                <span className="text-xs font-medium text-slate-600 dark:text-slate-300">
+                <span className="text-xs font-medium text-muted-foreground dark:text-slate-300">
                   {getStatusLabel(message.status)}
                 </span>
               </div>
-              <span className="text-xs text-slate-500 dark:text-slate-400">
+              <span className="text-xs text-slate-500 dark:text-muted-foreground">
                 {message.sentAt ? new Date(message.sentAt).toLocaleString() : "Draft"}
               </span>
             </div>
 
             {/* Subject */}
             {message.subject && (
-              <p className="font-medium text-sm mb-1 text-slate-900 dark:text-white">
+              <p className="font-medium text-sm mb-1 text-foreground dark:text-primary-foreground">
                 {message.subject}
               </p>
             )}
 
             {/* Content preview */}
-            <p className="text-xs text-slate-600 dark:text-slate-300 line-clamp-2">
+            <p className="text-xs text-muted-foreground dark:text-slate-300 line-clamp-2">
               {message.content}
             </p>
 
             {/* Metadata */}
-            <div className="flex items-center gap-3 mt-2 text-xs text-slate-500 dark:text-slate-400">
+            <div className="flex items-center gap-3 mt-2 text-xs text-slate-500 dark:text-muted-foreground">
               <span>{message.channel}</span>
               {message.templateId && (
                 <>
@@ -117,9 +117,9 @@ function StatusIcon({ status }: { status: string }) {
       return <XCircle className="w-4 h-4 text-red-600" />;
     case "DRAFT":
     case "SCHEDULED":
-      return <Clock className="w-4 h-4 text-slate-400" />;
+      return <Clock className="w-4 h-4 text-muted-foreground" />;
     default:
-      return <Mail className="w-4 h-4 text-slate-400" />;
+      return <Mail className="w-4 h-4 text-muted-foreground" />;
   }
 }
 

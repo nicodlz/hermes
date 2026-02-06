@@ -35,7 +35,7 @@ export function AppSidebar() {
       {/* Header */}
       <div className="flex h-16 items-center gap-3 border-b px-6">
         <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-amber-400 to-orange-500">
-          <Zap className="h-6 w-6 text-white" />
+          <Zap className="h-6 w-6 text-primary-foreground" />
         </div>
         <div>
           <h1 className="text-lg font-bold">Hermes</h1>

@@ -100,15 +100,15 @@ export function Leads() {
     <div className="p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white">Leads</h1>
-          <p className="text-slate-500 dark:text-slate-400 text-sm sm:text-base">
+          <h1 className="text-xl sm:text-2xl font-bold text-foreground dark:text-primary-foreground">Leads</h1>
+          <p className="text-slate-500 dark:text-muted-foreground text-sm sm:text-base">
             {data?.total || 0} leads {hasActiveFilters ? "filtered" : "total"}
           </p>
         </div>
         {hasActiveFilters && (
           <button
             onClick={clearFilters}
-            className="flex items-center gap-2 px-3 py-2 text-sm text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg transition-colors"
+            className="flex items-center gap-2 px-3 py-2 text-sm text-muted-foreground hover:text-foreground dark:hover:text-primary-foreground hover:bg-muted dark:hover:bg-card rounded-lg transition-colors"
           >
             <X className="w-4 h-4" />
             Clear filters
@@ -117,16 +117,16 @@ export function Leads() {
       </div>
 
       {/* Filters */}
-      <div className="bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 p-4 shadow-sm space-y-4">
+      <div className="bg-card rounded-lg border border-border p-4 shadow-sm space-y-4">
         {/* Search Bar */}
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <input
             type="text"
             placeholder="Search by title, company, or description..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full pl-10 pr-4 py-2 rounded-lg border border-border bg-card text-foreground dark:text-primary-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
           />
         </div>
 
@@ -135,7 +135,7 @@ export function Leads() {
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value as LeadStatus | "")}
-            className="px-4 py-2 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+            className="px-4 py-2 rounded-lg border border-border bg-card text-foreground dark:text-primary-foreground focus:outline-none focus:ring-2 focus:ring-primary text-sm"
           >
             <option value="">All statuses</option>
             {STATUS_OPTIONS.map((s) => (
@@ -146,7 +146,7 @@ export function Leads() {
           <select
             value={sourceFilter}
             onChange={(e) => setSourceFilter(e.target.value)}
-            className="px-4 py-2 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+            className="px-4 py-2 rounded-lg border border-border bg-card text-foreground dark:text-primary-foreground focus:outline-none focus:ring-2 focus:ring-primary text-sm"
           >
             <option value="">All sources</option>
             {sources.map((source) => (
@@ -157,7 +157,7 @@ export function Leads() {
           <select
             value={minScore}
             onChange={(e) => setMinScore(e.target.value)}
-            className="px-4 py-2 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+            className="px-4 py-2 rounded-lg border border-border bg-card text-foreground dark:text-primary-foreground focus:outline-none focus:ring-2 focus:ring-primary text-sm"
           >
             <option value="">Any score</option>
             <option value="15">Score ≥ 15</option>
@@ -166,43 +166,43 @@ export function Leads() {
           </select>
 
           <div className="flex items-center gap-2">
-            <Calendar className="w-4 h-4 text-slate-400" />
+            <Calendar className="w-4 h-4 text-muted-foreground" />
             <input
               type="date"
               value={dateFrom}
               onChange={(e) => setDateFrom(e.target.value)}
               placeholder="From date"
-              className="px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+              className="px-3 py-2 rounded-lg border border-border bg-card text-foreground dark:text-primary-foreground focus:outline-none focus:ring-2 focus:ring-primary text-sm"
             />
-            <span className="text-slate-400 text-sm">to</span>
+            <span className="text-muted-foreground text-sm">to</span>
             <input
               type="date"
               value={dateTo}
               onChange={(e) => setDateTo(e.target.value)}
               placeholder="To date"
-              className="px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+              className="px-3 py-2 rounded-lg border border-border bg-card text-foreground dark:text-primary-foreground focus:outline-none focus:ring-2 focus:ring-primary text-sm"
             />
           </div>
         </div>
       </div>
 
       {/* Leads Table */}
-      <div className="bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 overflow-hidden shadow-sm">
+      <div className="bg-card rounded-lg border border-border overflow-hidden shadow-sm">
         {isLoading ? (
-          <div className="p-8 text-center text-slate-500 dark:text-slate-400">Loading...</div>
+          <div className="p-8 text-center text-slate-500 dark:text-muted-foreground">Loading...</div>
         ) : !data?.leads.length ? (
-          <div className="p-8 text-center text-slate-500 dark:text-slate-400">No leads found</div>
+          <div className="p-8 text-center text-slate-500 dark:text-muted-foreground">No leads found</div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full min-w-[640px]">
-              <thead className="bg-slate-50 dark:bg-slate-700/50 text-left">
+              <thead className="bg-background dark:bg-card/50 text-left">
                 <tr>
-                  <th className="px-4 py-3 text-sm font-medium text-slate-500 dark:text-slate-400">Lead</th>
-                  <th className="px-4 py-3 text-sm font-medium text-slate-500 dark:text-slate-400">Source</th>
-                  <th className="px-4 py-3 text-sm font-medium text-slate-500 dark:text-slate-400">Score</th>
-                  <th className="px-4 py-3 text-sm font-medium text-slate-500 dark:text-slate-400">Status</th>
-                  <th className="px-4 py-3 text-sm font-medium text-slate-500 dark:text-slate-400">Date</th>
-                  <th className="px-4 py-3 text-sm font-medium text-slate-500 dark:text-slate-400"></th>
+                  <th className="px-4 py-3 text-sm font-medium text-slate-500 dark:text-muted-foreground">Lead</th>
+                  <th className="px-4 py-3 text-sm font-medium text-slate-500 dark:text-muted-foreground">Source</th>
+                  <th className="px-4 py-3 text-sm font-medium text-slate-500 dark:text-muted-foreground">Score</th>
+                  <th className="px-4 py-3 text-sm font-medium text-slate-500 dark:text-muted-foreground">Status</th>
+                  <th className="px-4 py-3 text-sm font-medium text-slate-500 dark:text-muted-foreground">Date</th>
+                  <th className="px-4 py-3 text-sm font-medium text-slate-500 dark:text-muted-foreground"></th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 dark:divide-slate-700">
@@ -234,28 +234,28 @@ function LeadRow({
   const [showStatusMenu, setShowStatusMenu] = useState(false);
 
   return (
-    <tr className="hover:bg-slate-50 dark:hover:bg-slate-700/50">
+    <tr className="hover:bg-background dark:hover:bg-card/50">
       <td className="px-4 py-3">
         <Link
           to={`/leads/${lead.id}`}
           className="block group"
         >
-          <div className="font-medium text-slate-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 line-clamp-1">
+          <div className="font-medium text-foreground dark:text-primary-foreground group-hover:text-blue-600 dark:group-hover:text-blue-400 line-clamp-1">
             {lead.title}
           </div>
           {lead.author && (
-            <div className="text-sm text-slate-500 dark:text-slate-400">{lead.author}</div>
+            <div className="text-sm text-slate-500 dark:text-muted-foreground">{lead.author}</div>
           )}
         </Link>
       </td>
       <td className="px-4 py-3">
         <div className="flex items-center gap-2">
-          <span className="text-sm text-slate-600 dark:text-slate-300">{lead.source}</span>
+          <span className="text-sm text-muted-foreground dark:text-slate-300">{lead.source}</span>
           <a
             href={lead.sourceUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-slate-400 dark:text-slate-500 hover:text-blue-500"
+            className="text-muted-foreground dark:text-slate-500 hover:text-blue-500"
           >
             <ExternalLink className="w-4 h-4" />
           </a>
@@ -266,12 +266,12 @@ function LeadRow({
           <Star className={cn(
             "w-4 h-4",
             lead.score >= 30 ? "text-yellow-500 fill-yellow-500" :
-            lead.score >= 15 ? "text-yellow-500" : "text-slate-300 dark:text-slate-600"
+            lead.score >= 15 ? "text-yellow-500" : "text-slate-300 dark:text-muted-foreground"
           )} />
           <span className={cn(
             "font-medium",
             lead.score >= 30 ? "text-emerald-600 dark:text-emerald-400" :
-            lead.score >= 15 ? "text-blue-600 dark:text-blue-400" : "text-slate-500 dark:text-slate-400"
+            lead.score >= 15 ? "text-blue-600 dark:text-blue-400" : "text-slate-500 dark:text-muted-foreground"
           )}>
             {lead.score}
           </span>
@@ -294,7 +294,7 @@ function LeadRow({
               className="fixed inset-0 z-10"
               onClick={() => setShowStatusMenu(false)}
             />
-            <div className="absolute top-full left-0 mt-1 z-20 bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-600 shadow-lg py-1 min-w-[140px]">
+            <div className="absolute top-full left-0 mt-1 z-20 bg-card rounded-lg border border-border shadow-lg py-1 min-w-[140px]">
               {STATUS_OPTIONS.map((status) => (
                 <button
                   key={status}
@@ -303,8 +303,8 @@ function LeadRow({
                     setShowStatusMenu(false);
                   }}
                   className={cn(
-                    "w-full px-3 py-1.5 text-left text-sm text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700",
-                    lead.status === status && "font-medium bg-slate-50 dark:bg-slate-700"
+                    "w-full px-3 py-1.5 text-left text-sm text-foreground dark:text-slate-200 hover:bg-muted dark:hover:bg-card",
+                    lead.status === status && "font-medium bg-background dark:bg-card"
                   )}
                 >
                   {status.replace(/_/g, " ")}
@@ -314,15 +314,15 @@ function LeadRow({
           </>
         )}
       </td>
-      <td className="px-4 py-3 text-sm text-slate-500 dark:text-slate-400">
+      <td className="px-4 py-3 text-sm text-slate-500 dark:text-muted-foreground">
         {new Date(lead.scrapedAt).toLocaleDateString()}
       </td>
       <td className="px-4 py-3">
         <Link
           to={`/leads/${lead.id}`}
-          className="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700"
+          className="p-2 rounded-lg hover:bg-muted dark:hover:bg-card"
         >
-          <MoreHorizontal className="w-4 h-4 text-slate-400 dark:text-slate-500" />
+          <MoreHorizontal className="w-4 h-4 text-muted-foreground dark:text-slate-500" />
         </Link>
       </td>
     </tr>
@@ -331,19 +331,19 @@ function LeadRow({
 
 function getStatusColor(status: string) {
   const colors: Record<string, string> = {
-    NEW: "bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300",
-    QUALIFIED: "bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300",
+    NEW: "bg-muted dark:bg-card text-foreground dark:text-slate-300",
+    QUALIFIED: "bg-primary/20 dark:bg-primary/40 text-primary dark:text-primary",
     CONTACTED: "bg-purple-100 dark:bg-purple-900/40 text-purple-700 dark:text-purple-300",
-    FOLLOWUP_1: "bg-orange-100 dark:bg-orange-900/40 text-orange-700 dark:text-orange-300",
-    FOLLOWUP_2: "bg-orange-100 dark:bg-orange-900/40 text-orange-700 dark:text-orange-300",
-    RESPONDED: "bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-300",
+    FOLLOWUP_1: "bg-yellow-500/20 dark:bg-yellow-500/40 text-yellow-600 dark:text-yellow-500",
+    FOLLOWUP_2: "bg-yellow-500/20 dark:bg-yellow-500/40 text-yellow-600 dark:text-yellow-500",
+    RESPONDED: "bg-green-600/20 dark:bg-green-600/40 text-green-600 dark:text-green-500",
     CALL_SCHEDULED: "bg-cyan-100 dark:bg-cyan-900/40 text-cyan-700 dark:text-cyan-300",
     CALL_DONE: "bg-cyan-100 dark:bg-cyan-900/40 text-cyan-700 dark:text-cyan-300",
     PROPOSAL_SENT: "bg-indigo-100 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300",
-    NEGOTIATING: "bg-yellow-100 dark:bg-yellow-900/40 text-yellow-700 dark:text-yellow-300",
+    NEGOTIATING: "bg-yellow-500/20 dark:bg-yellow-900/40 text-yellow-700 dark:text-yellow-300",
     WON: "bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300",
-    LOST: "bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-300",
-    ARCHIVED: "bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400",
+    LOST: "bg-destructive/20 dark:bg-destructive/40 text-destructive dark:text-destructive",
+    ARCHIVED: "bg-muted dark:bg-card text-slate-500 dark:text-muted-foreground",
   };
-  return colors[status] || "bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300";
+  return colors[status] || "bg-muted dark:bg-card text-foreground dark:text-slate-300";
 }

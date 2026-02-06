@@ -31,8 +31,8 @@ export function Stats() {
   return (
     <div className="p-4 sm:p-6 lg:p-8 space-y-6 sm:space-y-8">
       <div>
-        <h1 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white">Analytics</h1>
-        <p className="text-slate-500 dark:text-slate-400 text-sm sm:text-base">Performance metrics and conversion data</p>
+        <h1 className="text-xl sm:text-2xl font-bold text-foreground dark:text-primary-foreground">Analytics</h1>
+        <p className="text-slate-500 dark:text-muted-foreground text-sm sm:text-base">Performance metrics and conversion data</p>
       </div>
 
       {/* Key Metrics */}
@@ -69,34 +69,34 @@ export function Stats() {
       </div>
 
       {/* Conversion Funnel */}
-      <div className="bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 p-4 sm:p-6 shadow-sm">
-        <h2 className="font-semibold mb-4 sm:mb-6 flex items-center gap-2 text-slate-900 dark:text-white">
+      <div className="bg-card rounded-lg border border-border p-4 sm:p-6 shadow-sm">
+        <h2 className="font-semibold mb-4 sm:mb-6 flex items-center gap-2 text-foreground dark:text-primary-foreground">
           <TrendingUp className="w-5 h-5 text-blue-500" />
           Conversion Funnel
         </h2>
         <div className="space-y-3 sm:space-y-4">
           {funnel && funnel.map((step, i) => (
             <div key={step.stage} className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
-              <div className="w-full sm:w-28 text-sm font-medium text-slate-600 dark:text-slate-300">
+              <div className="w-full sm:w-28 text-sm font-medium text-muted-foreground dark:text-slate-300">
                 {step.label}
               </div>
               <div className="flex-1">
-                <div className="h-10 bg-slate-100 dark:bg-slate-700 rounded-lg overflow-hidden relative">
+                <div className="h-10 bg-muted dark:bg-card rounded-lg overflow-hidden relative">
                   <div
                     className={cn(
                       "h-full rounded-lg transition-all duration-500",
-                      i === 0 ? "bg-blue-500" :
+                      i === 0 ? "bg-primary" :
                       i === funnel.length - 1 ? "bg-emerald-500" :
-                      "bg-blue-400"
+                      "bg-primary"
                     )}
                     style={{ width: `${Math.max(step.rate, 3)}%` }}
                   />
                   <div className="absolute inset-0 flex items-center justify-between px-4">
-                    <span className="font-bold text-white mix-blend-difference">
+                    <span className="font-bold text-primary-foreground mix-blend-difference">
                       {step.count}
                     </span>
                     {i > 0 && (
-                      <span className="text-sm font-medium text-slate-500 dark:text-slate-400">
+                      <span className="text-sm font-medium text-slate-500 dark:text-muted-foreground">
                         {step.rate}% from previous
                       </span>
                     )}
@@ -126,12 +126,12 @@ export function Stats() {
       </div>
 
       {/* Daily Activity */}
-      <div className="bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 p-4 sm:p-6 shadow-sm">
-        <h2 className="font-semibold mb-4 sm:mb-6 text-slate-900 dark:text-white">Daily Activity (Last 30 Days)</h2>
+      <div className="bg-card rounded-lg border border-border p-4 sm:p-6 shadow-sm">
+        <h2 className="font-semibold mb-4 sm:mb-6 text-foreground dark:text-primary-foreground">Daily Activity (Last 30 Days)</h2>
         <div className="overflow-x-auto -mx-4 sm:mx-0 px-4 sm:px-0">
           <table className="w-full text-sm min-w-[500px]">
             <thead>
-              <tr className="text-left text-slate-500 dark:text-slate-400">
+              <tr className="text-left text-slate-500 dark:text-muted-foreground">
                 <th className="pb-3">Date</th>
                 <th className="pb-3 text-center">Scraped</th>
                 <th className="pb-3 text-center">Qualified</th>
@@ -142,15 +142,15 @@ export function Stats() {
             </thead>
             <tbody className="divide-y divide-slate-100 dark:divide-slate-700">
               {dailyStats?.slice(-14).reverse().map((day) => (
-                <tr key={day.date} className="hover:bg-slate-50 dark:hover:bg-slate-700/50 text-slate-700 dark:text-slate-300">
+                <tr key={day.date} className="hover:bg-background dark:hover:bg-card/50 text-foreground dark:text-slate-300">
                   <td className="py-2">{new Date(day.date).toLocaleDateString()}</td>
                   <td className="py-2 text-center">
-                    <span className="px-2 py-0.5 bg-slate-100 dark:bg-slate-700 rounded text-slate-700 dark:text-slate-300">
+                    <span className="px-2 py-0.5 bg-muted dark:bg-card rounded text-foreground dark:text-slate-300">
                       {day.leadsScraped}
                     </span>
                   </td>
                   <td className="py-2 text-center">
-                    <span className="px-2 py-0.5 bg-blue-100 dark:bg-blue-900/40 rounded text-blue-700 dark:text-blue-300">
+                    <span className="px-2 py-0.5 bg-primary/20 dark:bg-primary/40 rounded text-primary dark:text-primary">
                       {day.leadsQualified}
                     </span>
                   </td>
@@ -160,7 +160,7 @@ export function Stats() {
                     </span>
                   </td>
                   <td className="py-2 text-center">
-                    <span className="px-2 py-0.5 bg-green-100 dark:bg-green-900/40 rounded text-green-700 dark:text-green-300">
+                    <span className="px-2 py-0.5 bg-green-600/20 dark:bg-green-600/40 rounded text-green-600 dark:text-green-500">
                       {day.leadsResponded}
                     </span>
                   </td>
@@ -170,7 +170,7 @@ export function Stats() {
                         🎉 {day.dealsWon}
                       </span>
                     ) : (
-                      <span className="text-slate-300 dark:text-slate-600">-</span>
+                      <span className="text-slate-300 dark:text-muted-foreground">-</span>
                     )}
                   </td>
                 </tr>
@@ -181,16 +181,16 @@ export function Stats() {
       </div>
 
       {/* Pipeline Breakdown */}
-      <div className="bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 p-4 sm:p-6 shadow-sm">
-        <h2 className="font-semibold mb-4 text-slate-900 dark:text-white">Pipeline Breakdown</h2>
+      <div className="bg-card rounded-lg border border-border p-4 sm:p-6 shadow-sm">
+        <h2 className="font-semibold mb-4 text-foreground dark:text-primary-foreground">Pipeline Breakdown</h2>
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 sm:gap-4">
           {Object.entries(dashboard?.pipeline || {}).map(([status, count]) => (
             <div
               key={status}
-              className="p-4 rounded-lg bg-slate-50 dark:bg-slate-700 text-center"
+              className="p-4 rounded-lg bg-background dark:bg-card text-center"
             >
-              <div className="text-2xl font-bold text-slate-900 dark:text-white">{count}</div>
-              <div className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+              <div className="text-2xl font-bold text-foreground dark:text-primary-foreground">{count}</div>
+              <div className="text-xs text-slate-500 dark:text-muted-foreground mt-1">
                 {status.replace(/_/g, " ")}
               </div>
             </div>
@@ -224,17 +224,17 @@ function MetricCard({
         "p-6 rounded-lg border shadow-sm",
         highlight
           ? "bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-900/30 dark:to-teal-900/30 border-emerald-200 dark:border-emerald-700"
-          : "bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700"
+          : "bg-card border-border"
       )}
     >
       <div className="flex items-center justify-between mb-4">
-        <span className="text-sm font-medium text-slate-500 dark:text-slate-400">{title}</span>
-        <Icon className={cn("w-5 h-5", highlight ? "text-emerald-600 dark:text-emerald-400" : "text-slate-400 dark:text-slate-500")} />
+        <span className="text-sm font-medium text-slate-500 dark:text-muted-foreground">{title}</span>
+        <Icon className={cn("w-5 h-5", highlight ? "text-emerald-600 dark:text-emerald-400" : "text-muted-foreground dark:text-slate-500")} />
       </div>
-      <div className="text-3xl font-bold text-slate-900 dark:text-white">{value}</div>
+      <div className="text-3xl font-bold text-foreground dark:text-primary-foreground">{value}</div>
       {target !== undefined && (
         <div className="flex items-center gap-2 mt-2">
-          <div className="flex-1 h-2 bg-slate-200 dark:bg-slate-600 rounded-full overflow-hidden">
+          <div className="flex-1 h-2 bg-muted dark:bg-slate-600 rounded-full overflow-hidden">
             <div
               className={cn(
                 "h-full rounded-full transition-all",
@@ -243,7 +243,7 @@ function MetricCard({
               style={{ width: `${Math.min((current || 0) / target * 100, 100)}%` }}
             />
           </div>
-          <span className="text-xs text-slate-500 dark:text-slate-400">/{target}%</span>
+          <span className="text-xs text-slate-500 dark:text-muted-foreground">/{target}%</span>
         </div>
       )}
     </div>

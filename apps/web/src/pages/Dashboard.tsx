@@ -31,10 +31,10 @@ export function Dashboard() {
     return (
       <div className="p-8">
         <div className="animate-pulse space-y-4">
-          <div className="h-8 w-48 bg-slate-200 dark:bg-slate-700 rounded" />
+          <div className="h-8 w-48 bg-muted dark:bg-card rounded" />
           <div className="grid grid-cols-4 gap-4">
             {[1, 2, 3, 4].map((i) => (
-              <div key={i} className="h-32 bg-slate-200 dark:bg-slate-700 rounded-lg" />
+              <div key={i} className="h-32 bg-muted dark:bg-card rounded-lg" />
             ))}
           </div>
         </div>
@@ -47,8 +47,8 @@ export function Dashboard() {
   return (
     <div className="p-4 sm:p-6 lg:p-8 space-y-6 sm:space-y-8">
       <div>
-        <h1 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white">Dashboard</h1>
-        <p className="text-slate-500 dark:text-slate-400 text-sm sm:text-base">SDR performance overview</p>
+        <h1 className="text-xl sm:text-2xl font-bold text-foreground dark:text-primary-foreground">Dashboard</h1>
+        <p className="text-slate-500 dark:text-muted-foreground text-sm sm:text-base">SDR performance overview</p>
       </div>
 
       {/* KPI Cards */}
@@ -91,8 +91,8 @@ export function Dashboard() {
       {/* Main Content */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Funnel */}
-        <div className="lg:col-span-2 bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 p-6 shadow-sm">
-          <h2 className="font-semibold mb-4 flex items-center gap-2 text-slate-900 dark:text-white">
+        <div className="lg:col-span-2 bg-card rounded-lg border border-border p-6 shadow-sm">
+          <h2 className="font-semibold mb-4 flex items-center gap-2 text-foreground dark:text-primary-foreground">
             <TrendingUp className="w-5 h-5 text-blue-500" />
             Conversion Funnel
           </h2>
@@ -110,12 +110,12 @@ export function Dashboard() {
         </div>
 
         {/* Pending Tasks */}
-        <div className="bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 p-6 shadow-sm">
-          <h2 className="font-semibold mb-4 flex items-center gap-2 text-slate-900 dark:text-white">
+        <div className="bg-card rounded-lg border border-border p-6 shadow-sm">
+          <h2 className="font-semibold mb-4 flex items-center gap-2 text-foreground dark:text-primary-foreground">
             <Clock className="w-5 h-5 text-amber-500" />
             Pending Tasks
             {stats?.tasks.overdue ? (
-              <span className="ml-auto text-xs bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-300 px-2 py-0.5 rounded-full">
+              <span className="ml-auto text-xs bg-destructive/20 dark:bg-destructive/40 text-destructive dark:text-destructive px-2 py-0.5 rounded-full">
                 {stats.tasks.overdue} overdue
               </span>
             ) : null}
@@ -125,15 +125,15 @@ export function Dashboard() {
               <TaskItem key={task.id} task={task} />
             ))}
             {!pendingTasks?.length && (
-              <p className="text-slate-500 dark:text-slate-400 text-sm">No pending tasks</p>
+              <p className="text-slate-500 dark:text-muted-foreground text-sm">No pending tasks</p>
             )}
           </div>
         </div>
       </div>
 
       {/* Pipeline Overview */}
-      <div className="bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 p-6 shadow-sm">
-        <h2 className="font-semibold mb-4 text-slate-900 dark:text-white">Pipeline Status</h2>
+      <div className="bg-card rounded-lg border border-border p-6 shadow-sm">
+        <h2 className="font-semibold mb-4 text-foreground dark:text-primary-foreground">Pipeline Status</h2>
         <div className="flex flex-wrap gap-3">
           {Object.entries(stats?.pipeline || {}).map(([status, count]) => (
             <div
@@ -177,24 +177,24 @@ function StatCard({
         "p-6 rounded-lg border shadow-sm",
         highlight
           ? "bg-emerald-50 dark:bg-emerald-900/30 border-emerald-200 dark:border-emerald-700"
-          : "bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700"
+          : "bg-card border-border"
       )}
     >
       <div className="flex items-center justify-between mb-4">
-        <span className="text-sm font-medium text-slate-500 dark:text-slate-400">{title}</span>
-        <Icon className={cn("w-5 h-5", highlight ? "text-emerald-600 dark:text-emerald-400" : "text-slate-400 dark:text-slate-500")} />
+        <span className="text-sm font-medium text-slate-500 dark:text-muted-foreground">{title}</span>
+        <Icon className={cn("w-5 h-5", highlight ? "text-emerald-600 dark:text-emerald-400" : "text-muted-foreground dark:text-slate-500")} />
       </div>
-      <div className="text-3xl font-bold text-slate-900 dark:text-white">{value.toLocaleString()}</div>
-      <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">{subtitle}</p>
+      <div className="text-3xl font-bold text-foreground dark:text-primary-foreground">{value.toLocaleString()}</div>
+      <p className="text-sm text-slate-500 dark:text-muted-foreground mt-1">{subtitle}</p>
       {trend !== undefined && trendLabel && (
         <div className="flex items-center gap-1 mt-2">
           <TrendingUp
             className={cn(
               "w-4 h-4",
-              trendUp ? "text-emerald-500" : "text-slate-400 dark:text-slate-500"
+              trendUp ? "text-emerald-500" : "text-muted-foreground dark:text-slate-500"
             )}
           />
-          <span className="text-xs text-slate-500 dark:text-slate-400">
+          <span className="text-xs text-slate-500 dark:text-muted-foreground">
             {trend}% {trendLabel}
           </span>
         </div>
@@ -216,18 +216,18 @@ function FunnelStep({
 }) {
   return (
     <div className="flex items-center gap-4">
-      <div className="w-24 text-sm font-medium text-slate-600 dark:text-slate-300">{stage}</div>
+      <div className="w-24 text-sm font-medium text-muted-foreground dark:text-slate-300">{stage}</div>
       <div className="flex-1">
-        <div className="h-8 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
+        <div className="h-8 bg-muted dark:bg-card rounded-full overflow-hidden">
           <div
-            className="h-full bg-blue-500 rounded-full flex items-center justify-end pr-3"
+            className="h-full bg-primary rounded-full flex items-center justify-end pr-3"
             style={{ width: `${Math.max(rate, 5)}%` }}
           >
-            <span className="text-xs font-medium text-white">{count}</span>
+            <span className="text-xs font-medium text-primary-foreground">{count}</span>
           </div>
         </div>
       </div>
-      <div className="w-16 text-right text-sm text-slate-500 dark:text-slate-400">
+      <div className="w-16 text-right text-sm text-slate-500 dark:text-muted-foreground">
         {isFirst ? "" : `${rate}%`}
       </div>
     </div>
@@ -236,14 +236,14 @@ function FunnelStep({
 
 function TaskItem({ task }: { task: any }) {
   const priorityColors = {
-    URGENT: "bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-300",
-    HIGH: "bg-orange-100 dark:bg-orange-900/40 text-orange-700 dark:text-orange-300",
-    MEDIUM: "bg-yellow-100 dark:bg-yellow-900/40 text-yellow-700 dark:text-yellow-300",
-    LOW: "bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300",
+    URGENT: "bg-destructive/20 dark:bg-destructive/40 text-destructive dark:text-destructive",
+    HIGH: "bg-yellow-500/20 dark:bg-yellow-500/40 text-yellow-600 dark:text-yellow-500",
+    MEDIUM: "bg-yellow-500/20 dark:bg-yellow-900/40 text-yellow-700 dark:text-yellow-300",
+    LOW: "bg-muted dark:bg-card text-foreground dark:text-slate-300",
   };
 
   return (
-    <div className="flex items-center gap-3 p-3 rounded-lg bg-slate-50 dark:bg-slate-700/50">
+    <div className="flex items-center gap-3 p-3 rounded-lg bg-background dark:bg-card/50">
       <div
         className={cn(
           "w-2 h-2 rounded-full",
@@ -255,9 +255,9 @@ function TaskItem({ task }: { task: any }) {
         )}
       />
       <div className="flex-1 min-w-0">
-        <p className="text-sm font-medium truncate text-slate-900 dark:text-white">{task.title}</p>
+        <p className="text-sm font-medium truncate text-foreground dark:text-primary-foreground">{task.title}</p>
         {task.lead && (
-          <p className="text-xs text-slate-500 dark:text-slate-400 truncate">{task.lead.title}</p>
+          <p className="text-xs text-slate-500 dark:text-muted-foreground truncate">{task.lead.title}</p>
         )}
       </div>
       <span
@@ -274,19 +274,19 @@ function TaskItem({ task }: { task: any }) {
 
 function getStatusColor(status: string) {
   const colors: Record<string, string> = {
-    NEW: "bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300",
-    QUALIFIED: "bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300",
+    NEW: "bg-muted dark:bg-card text-foreground dark:text-slate-300",
+    QUALIFIED: "bg-primary/20 dark:bg-primary/40 text-primary dark:text-primary",
     CONTACTED: "bg-purple-100 dark:bg-purple-900/40 text-purple-700 dark:text-purple-300",
-    FOLLOWUP_1: "bg-orange-100 dark:bg-orange-900/40 text-orange-700 dark:text-orange-300",
-    FOLLOWUP_2: "bg-orange-100 dark:bg-orange-900/40 text-orange-700 dark:text-orange-300",
-    RESPONDED: "bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-300",
+    FOLLOWUP_1: "bg-yellow-500/20 dark:bg-yellow-500/40 text-yellow-600 dark:text-yellow-500",
+    FOLLOWUP_2: "bg-yellow-500/20 dark:bg-yellow-500/40 text-yellow-600 dark:text-yellow-500",
+    RESPONDED: "bg-green-600/20 dark:bg-green-600/40 text-green-600 dark:text-green-500",
     CALL_SCHEDULED: "bg-cyan-100 dark:bg-cyan-900/40 text-cyan-700 dark:text-cyan-300",
     CALL_DONE: "bg-cyan-100 dark:bg-cyan-900/40 text-cyan-700 dark:text-cyan-300",
     PROPOSAL_SENT: "bg-indigo-100 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300",
-    NEGOTIATING: "bg-yellow-100 dark:bg-yellow-900/40 text-yellow-700 dark:text-yellow-300",
+    NEGOTIATING: "bg-yellow-500/20 dark:bg-yellow-900/40 text-yellow-700 dark:text-yellow-300",
     WON: "bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300",
-    LOST: "bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-300",
-    ARCHIVED: "bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400",
+    LOST: "bg-destructive/20 dark:bg-destructive/40 text-destructive dark:text-destructive",
+    ARCHIVED: "bg-muted dark:bg-card text-slate-500 dark:text-muted-foreground",
   };
-  return colors[status] || "bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300";
+  return colors[status] || "bg-muted dark:bg-card text-foreground dark:text-slate-300";
 }

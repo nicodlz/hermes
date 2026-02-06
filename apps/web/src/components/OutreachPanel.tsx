@@ -86,7 +86,7 @@ export function OutreachPanel({ leadId, leadEmail, onEmailSent }: OutreachPanelP
 
   if (draftLoading) {
     return (
-      <div className="bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 p-6 shadow-sm">
+      <div className="bg-card rounded-lg border border-border p-6 shadow-sm">
         <div className="flex items-center gap-2 text-slate-500">
           <RefreshCw className="w-4 h-4 animate-spin" />
           <span>Génération de l'email...</span>
@@ -96,9 +96,9 @@ export function OutreachPanel({ leadId, leadEmail, onEmailSent }: OutreachPanelP
   }
 
   return (
-    <div className="bg-white dark:bg-slate-800 rounded-lg border border-blue-200 dark:border-blue-700 p-6 shadow-sm">
+    <div className="bg-card rounded-lg border border-primary dark:border-primary p-6 shadow-sm">
       <div className="flex items-center justify-between mb-4">
-        <h2 className="font-semibold flex items-center gap-2 text-slate-900 dark:text-white">
+        <h2 className="font-semibold flex items-center gap-2 text-foreground dark:text-primary-foreground">
           <Mail className="w-5 h-5 text-blue-500" />
           Cold Outreach
         </h2>
@@ -107,7 +107,7 @@ export function OutreachPanel({ leadId, leadEmail, onEmailSent }: OutreachPanelP
             <select
               value={selectedTemplate || "auto"}
               onChange={(e) => handleTemplateChange(e.target.value)}
-              className="text-sm px-2 py-1 rounded border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white"
+              className="text-sm px-2 py-1 rounded border border-border bg-card text-foreground dark:text-primary-foreground"
             >
               <option value="auto">Auto-detect</option>
               {templates.map(t => (
@@ -117,7 +117,7 @@ export function OutreachPanel({ leadId, leadEmail, onEmailSent }: OutreachPanelP
           )}
           <button
             onClick={() => refetchDraft()}
-            className="p-1.5 rounded hover:bg-slate-100 dark:hover:bg-slate-700"
+            className="p-1.5 rounded hover:bg-muted dark:hover:bg-card"
             title="Régénérer"
           >
             <RefreshCw className="w-4 h-4 text-slate-500" />
@@ -127,7 +127,7 @@ export function OutreachPanel({ leadId, leadEmail, onEmailSent }: OutreachPanelP
 
       {/* Recipient Email */}
       <div className="mb-4">
-        <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+        <label className="block text-sm font-medium text-foreground dark:text-slate-300 mb-1">
           Email destinataire
         </label>
         <input
@@ -135,7 +135,7 @@ export function OutreachPanel({ leadId, leadEmail, onEmailSent }: OutreachPanelP
           value={recipientEmail}
           onChange={(e) => setRecipientEmail(e.target.value)}
           placeholder="contact@company.com"
-          className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full px-3 py-2 rounded-lg border border-border bg-card text-foreground dark:text-primary-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
         />
       </div>
 
@@ -148,27 +148,27 @@ export function OutreachPanel({ leadId, leadEmail, onEmailSent }: OutreachPanelP
               value={editedSubject}
               onChange={(e) => setEditedSubject(e.target.value)}
               placeholder="Sujet"
-              className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white font-medium focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 rounded-lg border border-border bg-card text-foreground dark:text-primary-foreground font-medium focus:outline-none focus:ring-2 focus:ring-primary"
             />
             <textarea
               value={editedBody}
               onChange={(e) => setEditedBody(e.target.value)}
               rows={10}
-              className="w-full px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 rounded-lg border border-border bg-card text-foreground dark:text-primary-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary"
             />
           </>
         ) : (
           <div 
             onClick={() => setIsEditing(true)}
-            className="cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700/50 rounded-lg p-3 border border-slate-200 dark:border-slate-600"
+            className="cursor-pointer hover:bg-background dark:hover:bg-card/50 rounded-lg p-3 border border-border"
           >
             <div className="flex items-center justify-between mb-2">
-              <span className="font-medium text-slate-900 dark:text-white">
+              <span className="font-medium text-foreground dark:text-primary-foreground">
                 {editedSubject || draft?.subject || "Sans sujet"}
               </span>
-              <Edit2 className="w-4 h-4 text-slate-400" />
+              <Edit2 className="w-4 h-4 text-muted-foreground" />
             </div>
-            <p className="text-sm text-slate-600 dark:text-slate-300 whitespace-pre-wrap line-clamp-6">
+            <p className="text-sm text-muted-foreground dark:text-slate-300 whitespace-pre-wrap line-clamp-6">
               {editedBody || draft?.body}
             </p>
           </div>
@@ -182,13 +182,13 @@ export function OutreachPanel({ leadId, leadEmail, onEmailSent }: OutreachPanelP
             <button
               onClick={() => saveDraftMutation.mutate()}
               disabled={saveDraftMutation.isPending}
-              className="flex-1 px-4 py-2 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-600 disabled:opacity-50"
+              className="flex-1 px-4 py-2 bg-muted dark:bg-card text-foreground dark:text-slate-300 rounded-lg hover:bg-muted disabled:opacity-50"
             >
               Sauvegarder draft
             </button>
             <button
               onClick={() => setIsEditing(false)}
-              className="px-4 py-2 text-slate-500 hover:text-slate-700"
+              className="px-4 py-2 text-slate-500 hover:text-foreground"
             >
               Annuler
             </button>
@@ -197,7 +197,7 @@ export function OutreachPanel({ leadId, leadEmail, onEmailSent }: OutreachPanelP
           <>
             <button
               onClick={() => setIsEditing(true)}
-              className="px-4 py-2 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-600"
+              className="px-4 py-2 bg-muted dark:bg-card text-foreground dark:text-slate-300 rounded-lg hover:bg-muted"
             >
               <Edit2 className="w-4 h-4 inline mr-1" />
               Modifier
@@ -208,10 +208,10 @@ export function OutreachPanel({ leadId, leadEmail, onEmailSent }: OutreachPanelP
               className={cn(
                 "flex-1 px-4 py-2 rounded-lg font-medium flex items-center justify-center gap-2",
                 sendMutation.isPending
-                  ? "bg-blue-400 text-white"
+                  ? "bg-primary text-primary-foreground"
                   : sendMutation.isSuccess
-                  ? "bg-green-500 text-white"
-                  : "bg-blue-600 text-white hover:bg-blue-700",
+                  ? "bg-green-600 text-primary-foreground"
+                  : "bg-primary text-primary-foreground hover:bg-primary",
                 (!recipientEmail || sendMutation.isPending) && "opacity-50 cursor-not-allowed"
               )}
             >
@@ -230,7 +230,7 @@ export function OutreachPanel({ leadId, leadEmail, onEmailSent }: OutreachPanelP
 
       {/* Error display */}
       {sendMutation.isError && (
-        <div className="mt-3 p-3 bg-red-50 dark:bg-red-900/30 rounded-lg flex items-center gap-2 text-red-700 dark:text-red-300 text-sm">
+        <div className="mt-3 p-3 bg-destructive/10 dark:bg-destructive/30 rounded-lg flex items-center gap-2 text-destructive dark:text-destructive text-sm">
           <AlertCircle className="w-4 h-4" />
           <span>{(sendMutation.error as Error).message}</span>
         </div>
@@ -238,7 +238,7 @@ export function OutreachPanel({ leadId, leadEmail, onEmailSent }: OutreachPanelP
 
       {/* Template hint */}
       {draft?.templateName && (
-        <p className="text-xs text-slate-500 dark:text-slate-400 mt-3">
+        <p className="text-xs text-slate-500 dark:text-muted-foreground mt-3">
           Template: {draft.templateName}
         </p>
       )}
