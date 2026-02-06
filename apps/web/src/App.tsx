@@ -17,7 +17,7 @@ import { AppHeader } from "./components/app-header";
 
 function MainLayout() {
   return (
-    <div className="flex h-screen overflow-hidden bg-background">
+    <div className="flex h-screen overflow-hidden bg-slate-50 dark:bg-slate-900">
       {/* Desktop Sidebar */}
       <aside className="hidden lg:block">
         <AppSidebar />
