@@ -1,61 +1,109 @@
 @import "tailwindcss";
 
-/* Light mode - Discord inspired palette */
+/* Light mode - Discord + Material Design hierarchy */
 :root {
-  --background: 210 13% 96%;        /* Discord light gray background #F2F3F5 */
-  --foreground: 210 10% 13%;        /* Dark text for light mode */
-  --card: 0 0% 100%;                /* White cards */
-  --card-foreground: 210 10% 13%;   
+  /* Surfaces - 3 niveaux distincts */
+  --background: 210 13% 96%;        /* Background principal #F2F3F5 */
+  --card: 0 0% 100%;                /* Cards/Panels blanc pur #FFFFFF */
+  --nested: 210 20% 99%;            /* Nested surfaces #FAFBFC */
+  
+  /* Text hierarchy - WCAG AA compliant */
+  --foreground: 217 33% 17%;        /* Texte principal #1F2937 (presque noir) */
+  --foreground-secondary: 215 16% 34%; /* Texte secondaire #4B5563 */
+  --foreground-tertiary: 217 11% 46%;  /* Texte tertiaire #6B7280 */
+  
+  /* Card text (same as foreground for consistency) */
+  --card-foreground: 217 33% 17%;   
+  
+  /* Popovers */
   --popover: 0 0% 100%;             
-  --popover-foreground: 210 10% 13%;
-  --primary: 235 86% 65%;           /* Discord Blurple #5865F2 */
+  --popover-foreground: 217 33% 17%;
+  
+  /* Primary action - Discord Blurple */
+  --primary: 235 86% 65%;           /* #5865F2 */
   --primary-foreground: 0 0% 100%;  
-  --secondary: 235 86% 65%;         /* Blurple with reduced opacity */
-  --secondary-foreground: 0 0% 100%;
-  --muted: 210 13% 93%;             
-  --muted-foreground: 215 4% 40%;   
+  
+  /* Secondary */
+  --secondary: 210 13% 93%;         /* Subtle gray */
+  --secondary-foreground: 217 33% 17%;
+  
+  /* Muted */
+  --muted: 210 20% 99%;             /* Nested surface color */
+  --muted-foreground: 217 11% 46%;  /* Tertiary text */
+  
+  /* Accent */
   --accent: 235 86% 65%;            /* Blurple accent */
   --accent-foreground: 0 0% 100%;   
+  
+  /* Status colors */
   --success: 145 47% 45%;           /* Discord green #3BA55D */
-  --warning: 37 95% 55%;            /* Discord orange/yellow #FAA81A */
+  --warning: 37 95% 55%;            /* Discord yellow #FAA81A */
   --destructive: 359 82% 59%;       /* Discord red #ED4245 */
   --destructive-foreground: 0 0% 100%;
-  --border: 210 13% 87%;            
-  --input: 210 13% 91%;             
+  
+  /* Borders - visible mais subtiles */
+  --border: 210 11% 90%;            /* #E3E5E8 */
+  --input: 210 11% 90%;             
+  
+  /* Ring */
   --ring: 235 86% 65%;              /* Blurple ring */
   --radius: 0.5rem;
   
   /* Additional Discord colors for Tailwind utilities */
-  --green-500: 145 47% 45%;         /* Discord green base */
-  --green-600: 145 47% 40%;         /* Discord green darker */
-  --green-700: 145 47% 35%;         /* Discord green darkest */
-  --yellow-500: 37 95% 55%;         /* Discord orange/yellow base */
-  --yellow-600: 37 95% 50%;         /* Discord orange/yellow darker */
+  --green-500: 145 47% 45%;         
+  --green-600: 145 47% 40%;         
+  --green-700: 145 47% 35%;         
+  --yellow-500: 37 95% 55%;         
+  --yellow-600: 37 95% 50%;         
 }
 
-/* Dark mode - Discord inspired palette */
+/* Dark mode - Discord hierarchy */
 .dark {
-  --background: 215 8% 23%;         /* Discord dark background #36393F */
-  --foreground: 210 9% 87%;         /* Discord light text #DCDDDE */
-  --card: 225 7% 20%;               /* Discord surface dark #2F3136 */
-  --card-foreground: 210 9% 87%;    
+  /* Surfaces - 3 niveaux distincts */
+  --background: 215 8% 23%;         /* Background principal #36393F */
+  --card: 225 7% 20%;               /* Cards/Panels #2F3136 */
+  --nested: 225 9% 17%;             /* Nested surfaces #292B2F */
+  
+  /* Text hierarchy - WCAG AA compliant */
+  --foreground: 0 0% 100%;          /* Texte principal blanc pur #FFFFFF */
+  --foreground-secondary: 228 6% 73%; /* Texte secondaire #B9BBBE */
+  --foreground-tertiary: 220 6% 57%;  /* Texte tertiaire #8E9297 */
+  
+  /* Card text */
+  --card-foreground: 0 0% 100%;     
+  
+  /* Popovers */
   --popover: 225 7% 20%;            
-  --popover-foreground: 210 9% 87%; 
-  --primary: 235 86% 65%;           /* Discord Blurple #5865F2 */
+  --popover-foreground: 0 0% 100%; 
+  
+  /* Primary action - Discord Blurple plus clair pour dark mode */
+  --primary: 227 58% 65%;           /* #7289DA - meilleur contraste */
   --primary-foreground: 0 0% 100%;  
-  --secondary: 235 51% 52%;         /* Blurple variant */
-  --secondary-foreground: 210 9% 87%;
-  --muted: 225 7% 18%;              
-  --muted-foreground: 215 4% 73%;   /* Discord secondary text #B9BBBE */
-  --accent: 235 86% 65%;            /* Blurple accent */
+  
+  /* Secondary */
+  --secondary: 225 9% 17%;          /* Nested surface */
+  --secondary-foreground: 228 6% 73%;
+  
+  /* Muted */
+  --muted: 225 9% 17%;              /* Nested surface color */
+  --muted-foreground: 220 6% 57%;   /* Tertiary text */
+  
+  /* Accent */
+  --accent: 227 58% 65%;            /* Blurple accent (lighter) */
   --accent-foreground: 0 0% 100%;   
-  --success: 145 47% 45%;           /* Discord green #3BA55D */
-  --warning: 37 95% 55%;            /* Discord orange/yellow #FAA81A */
-  --destructive: 359 82% 59%;       /* Discord red #ED4245 */
+  
+  /* Status colors */
+  --success: 145 47% 45%;           /* Discord green */
+  --warning: 37 95% 55%;            /* Discord yellow */
+  --destructive: 359 82% 59%;       /* Discord red */
   --destructive-foreground: 0 0% 100%;
-  --border: 210 10% 13%;            /* Discord border dark #202225 */
+  
+  /* Borders - visibles mais subtiles */
+  --border: 210 10% 13%;            /* #202225 (presque noir) */
   --input: 210 10% 15%;             
-  --ring: 235 86% 65%;              /* Blurple ring */
+  
+  /* Ring */
+  --ring: 227 58% 65%;              /* Blurple ring (lighter) */
 }
 
 * {
@@ -66,4 +114,34 @@ body {
   background-color: hsl(var(--background));
   color: hsl(var(--foreground));
   font-family: system-ui, -apple-system, sans-serif;
+}
+
+/* Utility classes pour la hiérarchie visuelle */
+.bg-nested {
+  background-color: hsl(var(--nested));
+}
+
+.text-secondary {
+  color: hsl(var(--foreground-secondary));
+}
+
+.text-tertiary {
+  color: hsl(var(--foreground-tertiary));
+}
+
+/* Shadows améliorées pour meilleure hiérarchie */
+.shadow-card {
+  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+}
+
+.shadow-card-hover {
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+}
+
+.dark .shadow-card {
+  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.3), 0 1px 2px -1px rgb(0 0 0 / 0.3);
+}
+
+.dark .shadow-card-hover {
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.3), 0 2px 4px -2px rgb(0 0 0 / 0.3);
 }

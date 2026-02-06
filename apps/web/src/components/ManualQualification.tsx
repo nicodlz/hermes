@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Star, Plus, X, CheckCircle2 } from "lucide-react";
 import { api, type LeadStatus } from "../lib/api";
@@ -39,11 +39,23 @@ export function ManualQualification({
   const [newReason, setNewReason] = useState("");
   const [isEditing, setIsEditing] = useState(false);
 
+  // Sync local state with prop changes (when lead data is refetched)
+  useEffect(() => {
+    setScore(currentScore);
+    setScoreReasons(parseReasons(currentScoreReasons));
+  }, [currentScore, currentScoreReasons]);
+
   const updateMutation = useMutation({
     mutationFn: (data: { score?: number; scoreReasons?: string; status?: LeadStatus }) =>
       api.leads.update(leadId, data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["lead", leadId] });
+    onSuccess: async () => {
+      // Invalidate and refetch both the individual lead and the leads list
+      await queryClient.invalidateQueries({ queryKey: ["lead", leadId] });
+      await queryClient.invalidateQueries({ queryKey: ["leads"] });
+      
+      // Force immediate refetch to update the UI
+      await queryClient.refetchQueries({ queryKey: ["lead", leadId] });
+      
       toast.success("Lead updated successfully");
       setIsEditing(false);
     },
