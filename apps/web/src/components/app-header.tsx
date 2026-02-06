@@ -3,6 +3,7 @@ import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
 import { AppSidebar } from "./app-sidebar";
+import { ModeToggle } from "./mode-toggle";
 
 export function AppHeader() {
   return (
@@ -39,6 +40,9 @@ export function AppHeader() {
           />
         </div>
       </div>
+
+      {/* Theme Toggle */}
+      <ModeToggle />
     </header>
   );
 }
