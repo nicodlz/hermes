@@ -12,14 +12,47 @@ Use when the user asks about:
 - "CRM", "pipeline", "prospects"
 - Any sales development / SDR related tasks
 
-## Quick Commands
+## Access Methods
 
+### 🎯 **Recommended: MCP Server** (Primary)
+
+The Hermes MCP server provides structured access to the CRM and codebase.
+
+**Resources:**
+- `hermes://db/schema` - Complete Prisma database schema
+- `hermes://api/routes` - All API route handlers
+- `hermes://project/structure` - Project structure
+- `hermes://docs/deployment` - Deployment documentation
+
+**Tools:**
+- `list_leads` - List leads with optional filtering
+- `get_lead` - Get lead details by ID
+- `create_lead` - Create new lead
+- `read_api_route` - Read API route source
+- `read_prisma_model` - Extract Prisma model definition
+- `search_code` - Search codebase for patterns
+- `exec_command` - Run project commands
+
+**MCP Wrapper Script:**
 ```bash
-# CLI wrapper (recommended)
+# Use the MCP wrapper for common operations
+./scripts/hermes-mcp.sh leads              # List 20 recent leads
+./scripts/hermes-mcp.sh leads 10 linkedin  # Filter by source
+./scripts/hermes-mcp.sh lead <id>          # Get lead details
+./scripts/hermes-mcp.sh create reddit "https://..." "Title"
+./scripts/hermes-mcp.sh schema             # Show DB schema
+./scripts/hermes-mcp.sh model Lead         # Show Lead model
+./scripts/hermes-mcp.sh route routes/leads.ts
+./scripts/hermes-mcp.sh search "score"
+./scripts/hermes-mcp.sh structure
+```
+
+### 📡 Direct API Access (Legacy)
+
+For operations not yet in MCP (digest, qualify, outreach):
+```bash
 ./scripts/hermes-cli.sh digest      # Daily digest
 ./scripts/hermes-cli.sh actions     # What needs attention now
-./scripts/hermes-cli.sh leads       # List all leads
-./scripts/hermes-cli.sh leads NEW   # Filter by status
 ./scripts/hermes-cli.sh stats       # Dashboard stats
 ./scripts/hermes-cli.sh funnel      # Conversion funnel
 ./scripts/hermes-cli.sh tasks       # Pending tasks
@@ -27,14 +60,87 @@ Use when the user asks about:
 
 ## Configuration
 
-API URL (default: https://hermes.ndlz.net):
+**MCP Server:**
 ```bash
 export HERMES_API_URL="https://hermes.ndlz.net"
+export HERMES_API_KEY="hms_821540f1e0971977622484d04492bb2cede73445"
+```
+
+MCP server auto-configured with these env vars.
+
+## Usage Examples
+
+### List Recent Leads (MCP)
+
+```bash
+./scripts/hermes-mcp.sh leads 10
+```
+
+Returns:
+```json
+{
+  "leads": [
+    {
+      "id": "cml8ai9p7...",
+      "source": "linkedin",
+      "title": "CTO at StartupX",
+      "score": 13,
+      "status": "NEW"
+    }
+  ],
+  "total": 127
+}
+```
+
+### Get Lead Details (MCP)
+
+```bash
+./scripts/hermes-mcp.sh lead cml8ai9p70005mw01j0jrnp44
+```
+
+Returns full lead with notes, tasks, messages.
+
+### Create Lead (MCP)
+
+```bash
+./scripts/hermes-mcp.sh create \
+  "reddit" \
+  "https://reddit.com/r/forhire/..." \
+  "React developer needed for crypto project"
+```
+
+### Read Database Schema (MCP)
+
+```bash
+./scripts/hermes-mcp.sh schema | head -50
+```
+
+Shows Prisma schema with all models.
+
+### Search Codebase (MCP)
+
+```bash
+./scripts/hermes-mcp.sh search "scoreReasons"
+```
+
+Finds all occurrences in TypeScript files.
+
+### Direct API (Legacy)
+
+```bash
+# Daily digest (not in MCP yet)
+./scripts/hermes-cli.sh digest
+
+# Get next actions (AI-specific endpoint)
+./scripts/hermes-cli.sh actions
+
+# Dashboard stats
+./scripts/hermes-cli.sh stats
 ```
 
 ## API Endpoints
 
-### AI Agent Endpoints (Primary)
+### AI Agent Endpoints (Direct API)
 
 | Endpoint | Method | Description |
 |----------|--------|-------------|
@@ -42,125 +148,33 @@ export HERMES_API_URL="https://hermes.ndlz.net"
 | `/api/ai/next-actions` | GET | What needs attention now |
 | `/api/ai/qualify/:id` | POST | Score a lead with AI analysis |
 | `/api/ai/outreach/:id` | POST | Generate outreach message from template |
-| `/api/ai/message/:id/sent` | POST | Mark message as sent |
-| `/api/ai/lead/:id/response` | POST | Record response received |
 
-### Lead Management
+### Lead Management (via MCP)
 
-| Endpoint | Method | Description |
-|----------|--------|-------------|
-| `/api/leads` | GET | List leads (filters: status, minScore, source, search) |
-| `/api/leads/:id` | GET | Get lead with notes, tasks, messages |
-| `/api/leads` | POST | Create new lead |
-| `/api/leads/:id` | PATCH | Update lead (status, contact info, etc.) |
-| `/api/leads/:id/notes` | POST | Add note to lead |
-| `/api/leads/stats/pipeline` | GET | Pipeline status counts |
+| MCP Tool | Equivalent Endpoint | Description |
+|----------|---------------------|-------------|
+| `list_leads` | `GET /api/leads` | List leads with filters |
+| `get_lead` | `GET /api/leads/:id` | Get lead with relations |
+| `create_lead` | `POST /api/leads` | Create new lead |
 
-### Tasks
+### Code Access (via MCP)
 
-| Endpoint | Method | Description |
-|----------|--------|-------------|
-| `/api/tasks` | GET | List tasks |
-| `/api/tasks/pending` | GET | Pending tasks (for agent) |
-| `/api/tasks/overdue` | GET | Overdue tasks |
-| `/api/tasks/:id/complete` | POST | Mark task complete |
-
-### Templates
-
-| Endpoint | Method | Description |
-|----------|--------|-------------|
-| `/api/templates` | GET | List templates |
-| `/api/templates/:id/render` | POST | Render template with variables |
-
-### Stats
-
-| Endpoint | Method | Description |
-|----------|--------|-------------|
-| `/api/stats/dashboard` | GET | Overview metrics |
-| `/api/stats/funnel` | GET | Conversion funnel |
-| `/api/stats/daily` | GET | Daily activity (last N days) |
-
-## Usage Examples
-
-### Daily Check-in
-
-```bash
-# Get today's digest
-curl -s "$HERMES_API_URL/api/ai/digest" | jq
-
-# Response:
-# {
-#   "date": "2026-02-03",
-#   "summary": {
-#     "newLeads": 5,
-#     "qualifiedToday": 2,
-#     "responsesToday": 1,
-#     "pendingFollowups": 3,
-#     "upcomingCalls": 0
-#   },
-#   "actions": {
-#     "qualifyNew": true,
-#     "sendFollowups": true,
-#     "prepareCalls": false
-#   }
-# }
-```
-
-### Qualify a Lead
-
-```bash
-curl -X POST "$HERMES_API_URL/api/ai/qualify/lead123" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "score": 35,
-    "reasons": ["+hiring_tag", "+budget $1k", "+stack_match(react)"],
-    "analysis": "Strong lead - explicit budget, matching stack, remote friendly",
-    "aiModel": "claude-opus-4"
-  }'
-```
-
-### Generate Outreach Message
-
-```bash
-curl -X POST "$HERMES_API_URL/api/ai/outreach/lead123" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "templateId": "reddit-initial-outreach",
-    "channel": "REDDIT_DM",
-    "variables": {
-      "author": "TechStartupCEO",
-      "title": "Looking for React developer",
-      "stack": "React, TypeScript, Node.js",
-      "personalized_insight": "Your mention of real-time features aligns with my WebSocket experience"
-    }
-  }'
-```
-
-### Add Lead from Scraper
-
-```bash
-curl -X POST "$HERMES_API_URL/api/leads" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "source": "reddit-forhire",
-    "sourceUrl": "https://reddit.com/r/forhire/comments/abc123",
-    "title": "[Hiring] React Developer for MVP",
-    "description": "Looking for experienced React dev...",
-    "author": "startup_founder",
-    "score": 0
-  }'
-```
+| MCP Tool | Description |
+|----------|-------------|
+| `read_api_route` | Read route handler source |
+| `read_prisma_model` | Extract model from schema |
+| `search_code` | Grep codebase |
 
 ## Workflow
 
 ### Morning Routine
 
-1. **Check digest**: `GET /api/ai/digest`
-2. **Qualify new leads**: For each in `toQualify`, call `/api/ai/qualify/:id`
-3. **Send follow-ups**: For leads in `toFollowUp`, generate and send messages
-4. **Update pipeline**: Review responded leads, schedule calls
+1. **Check digest**: `./scripts/hermes-cli.sh digest`
+2. **List new leads**: `./scripts/hermes-mcp.sh leads 20`
+3. **Review qualified leads**: Filter by score ≥15
+4. **Send follow-ups**: For leads in `CONTACTED` status
 
-### Lead Processing
+### Lead Processing Flow
 
 ```
 SCRAPED → QUALIFIED → CONTACTED → RESPONDED → CALL → PROPOSAL → WON/LOST
@@ -186,6 +200,22 @@ Scoring:
 
 ## Integration with OpenClaw
 
+### Using MCP in Agent Tasks
+
+When OpenClaw supports MCP, you can call tools directly:
+```json
+{
+  "mcp_call": {
+    "server": "hermes",
+    "tool": "list_leads",
+    "arguments": {
+      "limit": 10,
+      "source": "linkedin"
+    }
+  }
+}
+```
+
 ### Cron Jobs
 
 ```yaml
@@ -200,7 +230,7 @@ Scoring:
 - schedule: { kind: "every", everyMs: 14400000 }
   payload:
     kind: agentTurn
-    message: "Run lead scraper and add new leads to Hermes"
+    message: "Run lead scraper and add new leads to Hermes via MCP"
   sessionTarget: isolated
 ```
 
@@ -210,12 +240,29 @@ Add to HEARTBEAT.md:
 ```markdown
 ## 📊 Hermes CRM Check
 Every few heartbeats, check:
-- `GET /api/ai/next-actions` for pending work
+- `./scripts/hermes-mcp.sh leads 10` for recent leads
+- `./scripts/hermes-cli.sh actions` for pending work
 - Process any high-priority items
 ```
 
 ## Files
 
-- `scripts/import-leads.sh` — Import leads from JSON
-- `scripts/export-leads.sh` — Export leads to CSV
-- `scripts/sync-crm.sh` — Sync with external CRM (if configured)
+- `scripts/hermes-mcp.sh` — **MCP wrapper (recommended)**
+- `scripts/hermes-cli.sh` — Direct API wrapper (legacy)
+- `../../mcp-server/` — MCP server implementation
+
+## Migration Notes
+
+**MCP covers:**
+- ✅ Lead listing, creation, retrieval
+- ✅ Database schema access
+- ✅ Code search and inspection
+- ✅ Project structure
+
+**Still needs direct API:**
+- ⏳ AI digest, next-actions
+- ⏳ Lead qualification (POST /api/ai/qualify)
+- ⏳ Outreach generation
+- ⏳ Dashboard stats, funnel
+
+**Future:** Add AI-specific tools to MCP server.
