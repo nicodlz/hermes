@@ -118,8 +118,8 @@ export function LeadDetail() {
         <div className="flex flex-col items-center gap-4">
           <AlertCircle className="w-12 h-12 text-red-500" />
           <p className="text-foreground dark:text-slate-300">Error loading lead</p>
-          <p className="text-sm text-slate-500 dark:text-muted-foreground">{error.message}</p>
-          <Link to="/leads" className="text-blue-600 dark:text-blue-400 hover:underline">
+          <p className="text-sm text-secondary">{error.message}</p>
+          <Link to="/leads" className="text-primary hover:underline">
             ← Back to leads
           </Link>
         </div>
@@ -130,8 +130,8 @@ export function LeadDetail() {
   if (!lead) {
     return (
       <div className="p-4 sm:p-6 lg:p-8 text-center">
-        <p className="text-slate-500 dark:text-muted-foreground">Lead not found</p>
-        <Link to="/leads" className="text-blue-600 dark:text-blue-400 hover:underline mt-2 inline-block">
+        <p className="text-secondary">Lead not found</p>
+        <Link to="/leads" className="text-primary hover:underline mt-2 inline-block">
           ← Back to leads
         </Link>
       </div>
@@ -153,19 +153,19 @@ export function LeadDetail() {
       <div className="flex flex-col sm:flex-row sm:items-start gap-4">
         <Link
           to="/leads"
-          className="p-2 rounded-lg hover:bg-muted dark:hover:bg-card self-start"
+          className="p-2 rounded-lg hover:bg-nested self-start"
         >
           <ArrowLeft className="w-5 h-5 text-muted-foreground dark:text-slate-300" />
         </Link>
         <div className="flex-1 min-w-0">
-          <h1 className="text-xl sm:text-2xl font-bold break-words text-foreground dark:text-primary-foreground">{lead.title}</h1>
-          <div className="flex flex-wrap items-center gap-2 sm:gap-4 mt-2 text-sm text-slate-500 dark:text-muted-foreground">
+          <h1 className="text-xl sm:text-2xl font-bold break-words text-foreground">{lead.title}</h1>
+          <div className="flex flex-wrap items-center gap-2 sm:gap-4 mt-2 text-sm text-secondary">
             <span>{lead.source}</span>
             <a
               href={lead.sourceUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-1 text-blue-600 dark:text-blue-400 hover:underline"
+              className="flex items-center gap-1 text-primary hover:underline"
             >
               View source <ExternalLink className="w-3 h-3" />
             </a>
@@ -180,7 +180,7 @@ export function LeadDetail() {
               "w-4 h-4",
               lead.score >= 30 ? "text-yellow-500 fill-yellow-500" : "text-muted-foreground dark:text-slate-500"
             )} />
-            <span className="font-bold text-foreground dark:text-primary-foreground">{lead.score}</span>
+            <span className="font-bold text-foreground">{lead.score}</span>
           </div>
           <select
             value={lead.status}
@@ -211,8 +211,8 @@ export function LeadDetail() {
         <div className="lg:col-span-2 space-y-6">
           {/* Description */}
           {lead.description && (
-            <div className="bg-card rounded-lg border border-border p-6 shadow-sm">
-              <h2 className="font-semibold mb-3 text-foreground dark:text-primary-foreground">Description</h2>
+            <div className="bg-card rounded-lg border border-border p-6 shadow-card">
+              <h2 className="font-semibold mb-3 text-foreground">Description</h2>
               <p className="text-muted-foreground dark:text-slate-300 whitespace-pre-wrap">
                 {lead.description}
               </p>
@@ -221,8 +221,8 @@ export function LeadDetail() {
 
           {/* Score Reasons */}
           {scoreReasons.length > 0 && (
-            <div className="bg-card rounded-lg border border-border p-6 shadow-sm">
-              <h2 className="font-semibold mb-3 text-foreground dark:text-primary-foreground">Qualification Reasons</h2>
+            <div className="bg-card rounded-lg border border-border p-6 shadow-card">
+              <h2 className="font-semibold mb-3 text-foreground">Qualification Reasons</h2>
               <div className="flex flex-wrap gap-2">
                 {scoreReasons.map((reason: string, i: number) => (
                   <span
@@ -242,8 +242,8 @@ export function LeadDetail() {
           )}
 
           {/* Notes */}
-          <div className="bg-card rounded-lg border border-border p-6 shadow-sm">
-            <h2 className="font-semibold mb-4 text-foreground dark:text-primary-foreground">Notes</h2>
+          <div className="bg-card rounded-lg border border-border p-6 shadow-card">
+            <h2 className="font-semibold mb-4 text-foreground">Notes</h2>
             
             {/* Add note form */}
             <div className="mb-4">
@@ -252,7 +252,7 @@ export function LeadDetail() {
                 onChange={(e) => setNewNote(e.target.value)}
                 placeholder="Add a note..."
                 rows={3}
-                className="w-full px-3 py-2 rounded-lg border border-border bg-card text-foreground dark:text-primary-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                className="w-full px-3 py-2 rounded-lg border border-border bg-card text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
               />
               <button
                 onClick={() => addNoteMutation.mutate(newNote)}
@@ -272,10 +272,10 @@ export function LeadDetail() {
                     "p-4 rounded-lg",
                     note.type === "AI_ANALYSIS"
                       ? "bg-purple-50 dark:bg-purple-900/30 border border-purple-200 dark:border-purple-700"
-                      : "bg-background dark:bg-card"
+                      : "bg-nested"
                   )}
                 >
-                  <div className="flex items-center gap-2 mb-2 text-xs text-slate-500 dark:text-muted-foreground">
+                  <div className="flex items-center gap-2 mb-2 text-xs text-secondary">
                     <span className="font-medium">
                       {note.type === "AI_ANALYSIS" ? "🤖 AI Analysis" :
                        note.type === "AI_RESEARCH" ? "🔬 AI Research" :
@@ -294,7 +294,7 @@ export function LeadDetail() {
                 </div>
               ))}
               {!notes.length && (
-                <p className="text-slate-500 dark:text-muted-foreground text-sm">No notes yet</p>
+                <p className="text-secondary text-sm">No notes yet</p>
               )}
             </div>
           </div>
@@ -323,9 +323,9 @@ export function LeadDetail() {
           />
 
           {/* Contact Info */}
-          <div className="bg-card rounded-lg border border-border p-6 shadow-sm">
+          <div className="bg-card rounded-lg border border-border p-6 shadow-card">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="font-semibold text-foreground dark:text-primary-foreground">Contact Info</h2>
+              <h2 className="font-semibold text-foreground">Contact Info</h2>
               {!lead.email && (
                 <button
                   onClick={() => enrichMutation.mutate()}
@@ -352,7 +352,7 @@ export function LeadDetail() {
                   onSave={(v) => updateMutation.mutate({ email: v })}
                 />
                 {lead.emailSource && (
-                  <p className="text-xs text-slate-500 dark:text-muted-foreground mt-1 ml-6">
+                  <p className="text-xs text-secondary mt-1 ml-6">
                     Source: {lead.emailSource}
                     {lead.emailEnrichedAt && ` • ${new Date(lead.emailEnrichedAt).toLocaleDateString()}`}
                   </p>
@@ -376,20 +376,20 @@ export function LeadDetail() {
           </div>
 
           {/* Budget */}
-          <div className="bg-card rounded-lg border border-border p-6 shadow-sm">
-            <h2 className="font-semibold mb-4 text-foreground dark:text-primary-foreground">Budget</h2>
+          <div className="bg-card rounded-lg border border-border p-6 shadow-card">
+            <h2 className="font-semibold mb-4 text-foreground">Budget</h2>
             {lead.budgetMin || lead.budgetMax ? (
-              <p className="text-2xl font-bold text-foreground dark:text-primary-foreground">
+              <p className="text-2xl font-bold text-foreground">
                 ${lead.budgetMin?.toLocaleString() || "?"} - ${lead.budgetMax?.toLocaleString() || "?"}
               </p>
             ) : (
-              <p className="text-slate-500 dark:text-muted-foreground">Not specified</p>
+              <p className="text-secondary">Not specified</p>
             )}
           </div>
 
           {/* Timeline */}
-          <div className="bg-card rounded-lg border border-border p-6 shadow-sm">
-            <h2 className="font-semibold mb-4 text-foreground dark:text-primary-foreground">Timeline</h2>
+          <div className="bg-card rounded-lg border border-border p-6 shadow-card">
+            <h2 className="font-semibold mb-4 text-foreground">Timeline</h2>
             <div className="space-y-2 text-sm">
               <TimelineItem label="Scraped" date={lead.scrapedAt} />
               <TimelineItem label="Qualified" date={lead.qualifiedAt} />
@@ -401,8 +401,8 @@ export function LeadDetail() {
 
           {/* Tags */}
           {tags.length > 0 && (
-            <div className="bg-card rounded-lg border border-border p-6 shadow-sm">
-              <h2 className="font-semibold mb-4 text-foreground dark:text-primary-foreground">Tags</h2>
+            <div className="bg-card rounded-lg border border-border p-6 shadow-card">
+              <h2 className="font-semibold mb-4 text-foreground">Tags</h2>
               <div className="flex flex-wrap gap-2">
                 {tags.map((tag: string) => (
                   <span
@@ -418,8 +418,8 @@ export function LeadDetail() {
 
           {/* Tasks */}
           {tasks.length > 0 && (
-            <div className="bg-card rounded-lg border border-border p-6 shadow-sm">
-              <h2 className="font-semibold mb-4 text-foreground dark:text-primary-foreground">Tasks ({tasks.length})</h2>
+            <div className="bg-card rounded-lg border border-border p-6 shadow-card">
+              <h2 className="font-semibold mb-4 text-foreground">Tasks ({tasks.length})</h2>
               <div className="space-y-2">
                 {tasks.map((task) => (
                   <div
@@ -428,11 +428,11 @@ export function LeadDetail() {
                       "p-3 rounded-lg text-sm",
                       task.status === "COMPLETED"
                         ? "bg-emerald-50 dark:bg-emerald-900/30"
-                        : "bg-background dark:bg-card"
+                        : "bg-nested"
                     )}
                   >
-                    <div className="font-medium text-foreground dark:text-primary-foreground">{task.title}</div>
-                    <div className="text-xs text-slate-500 dark:text-muted-foreground mt-1">
+                    <div className="font-medium text-foreground">{task.title}</div>
+                    <div className="text-xs text-secondary mt-1">
                       {task.type} • {task.status}
                     </div>
                   </div>
@@ -515,7 +515,7 @@ function ContactField({
             if (e.key === "Escape") setEditing(false);
           }}
           autoFocus
-          className="flex-1 px-2 py-1 border border-border rounded bg-card text-foreground dark:text-primary-foreground"
+          className="flex-1 px-2 py-1 border border-border rounded bg-card text-foreground"
         />
       </div>
     );
@@ -530,7 +530,7 @@ function ContactField({
       onClick={() => editable && setEditing(true)}
     >
       <Icon className="w-4 h-4 text-muted-foreground dark:text-slate-500" />
-      <span className="text-sm text-slate-500 dark:text-muted-foreground">{label}:</span>
+      <span className="text-sm text-secondary">{label}:</span>
       <span className={cn("text-sm text-foreground dark:text-slate-200", !value && "text-muted-foreground dark:text-slate-500 italic")}>
         {value || (editable ? "Click to add" : "—")}
       </span>
@@ -547,7 +547,7 @@ function TimelineItem({ label, date }: { label: string; date?: string | null }) 
           date ? "bg-emerald-500" : "bg-slate-300 dark:bg-slate-600"
         )}
       />
-      <span className="text-slate-500 dark:text-muted-foreground">{label}</span>
+      <span className="text-secondary">{label}</span>
       {date && (
         <span className="ml-auto text-muted-foreground dark:text-slate-500">
           {new Date(date).toLocaleDateString()}

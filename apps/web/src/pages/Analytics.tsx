@@ -104,11 +104,11 @@ export function Analytics() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-foreground dark:text-primary-foreground flex items-center gap-2">
+          <h1 className="text-2xl font-bold text-foreground flex items-center gap-2">
             <BarChart3 className="w-7 h-7 text-blue-500" />
             Analytics Dashboard
           </h1>
-          <p className="text-slate-500 dark:text-muted-foreground mt-1">
+          <p className="text-secondary mt-1">
             Performance metrics and conversion insights
           </p>
         </div>
@@ -264,7 +264,7 @@ export function Analytics() {
               <div key={step.stage} className="flex items-center justify-between text-sm">
                 <span className="text-muted-foreground">{step.label}</span>
                 <div className="flex items-center gap-2">
-                  <div className="w-24 h-2 bg-muted dark:bg-card rounded-full overflow-hidden">
+                  <div className="w-24 h-2 bg-nested rounded-full overflow-hidden">
                     <div 
                       className={cn("h-full rounded-full", step.rate >= 50 ? "bg-green-600" : step.rate >= 25 ? "bg-yellow-500" : "bg-red-500")}
                       style={{ width: `${step.rate}%` }}
@@ -307,10 +307,10 @@ export function Analytics() {
           </ResponsiveContainer>
 
           <div className="mt-4 text-center">
-            <div className="text-3xl font-bold text-foreground dark:text-primary-foreground">
+            <div className="text-3xl font-bold text-foreground">
               {conversionTime?.totalAvg || 0} days
             </div>
-            <div className="text-sm text-slate-500 dark:text-muted-foreground">
+            <div className="text-sm text-secondary">
               Average total cycle time
             </div>
           </div>
@@ -357,11 +357,11 @@ export function Analytics() {
                     className="w-3 h-3 rounded-full" 
                     style={{ backgroundColor: PIE_COLORS[i % PIE_COLORS.length] }}
                   />
-                  <span className="text-sm font-medium text-foreground dark:text-primary-foreground">
+                  <span className="text-sm font-medium text-foreground">
                     {source.source}
                   </span>
                 </div>
-                <div className="flex items-center gap-4 text-xs text-slate-500 dark:text-muted-foreground">
+                <div className="flex items-center gap-4 text-xs text-secondary">
                   <span>{source.total} leads</span>
                   <span className="font-medium text-green-600 dark:text-green-400">
                     {source.conversionRate}% won
@@ -402,7 +402,7 @@ export function Analytics() {
           {/* Template stats table */}
           <div className="mt-4 overflow-x-auto">
             <table className="w-full text-sm">
-              <thead className="text-left text-slate-500 dark:text-muted-foreground border-b border-border">
+              <thead className="text-left text-secondary border-b border-border">
                 <tr>
                   <th className="pb-2 font-medium">Template</th>
                   <th className="pb-2 font-medium text-center">Sent</th>
@@ -440,8 +440,8 @@ export function Analytics() {
 // Helper Components
 function Card({ title, icon: Icon, children }: { title: string; icon: React.ElementType; children: React.ReactNode }) {
   return (
-    <div className="bg-card rounded-lg border border-border p-6 shadow-sm">
-      <h2 className="font-semibold mb-6 flex items-center gap-2 text-foreground dark:text-primary-foreground">
+    <div className="bg-card rounded-lg border border-border p-6 shadow-card">
+      <h2 className="font-semibold mb-6 flex items-center gap-2 text-foreground">
         <Icon className="w-5 h-5 text-blue-500" />
         {title}
       </h2>
@@ -477,13 +477,13 @@ function KPICard({
   };
 
   return (
-    <div className={cn("p-6 rounded-lg border shadow-sm", colorClasses[color])}>
+    <div className={cn("p-6 rounded-lg border shadow-card", colorClasses[color])}>
       <div className="flex items-center justify-between mb-4">
         <span className="text-sm font-medium text-muted-foreground dark:text-slate-300">{title}</span>
         <Icon className="w-5 h-5" />
       </div>
-      <div className="text-3xl font-bold text-foreground dark:text-primary-foreground">{value}</div>
-      <p className="text-sm text-slate-500 dark:text-muted-foreground mt-1">{subtitle}</p>
+      <div className="text-3xl font-bold text-foreground">{value}</div>
+      <p className="text-sm text-secondary mt-1">{subtitle}</p>
     </div>
   );
 }

@@ -86,7 +86,7 @@ export function OutreachPanel({ leadId, leadEmail, onEmailSent }: OutreachPanelP
 
   if (draftLoading) {
     return (
-      <div className="bg-card rounded-lg border border-border p-6 shadow-sm">
+      <div className="bg-card rounded-lg border border-border p-6 shadow-card">
         <div className="flex items-center gap-2 text-slate-500">
           <RefreshCw className="w-4 h-4 animate-spin" />
           <span>Génération de l'email...</span>
@@ -96,9 +96,9 @@ export function OutreachPanel({ leadId, leadEmail, onEmailSent }: OutreachPanelP
   }
 
   return (
-    <div className="bg-card rounded-lg border border-primary dark:border-primary p-6 shadow-sm">
+    <div className="bg-card rounded-lg border border-primary dark:border-primary p-6 shadow-card">
       <div className="flex items-center justify-between mb-4">
-        <h2 className="font-semibold flex items-center gap-2 text-foreground dark:text-primary-foreground">
+        <h2 className="font-semibold flex items-center gap-2 text-foreground">
           <Mail className="w-5 h-5 text-blue-500" />
           Cold Outreach
         </h2>
@@ -107,7 +107,7 @@ export function OutreachPanel({ leadId, leadEmail, onEmailSent }: OutreachPanelP
             <select
               value={selectedTemplate || "auto"}
               onChange={(e) => handleTemplateChange(e.target.value)}
-              className="text-sm px-2 py-1 rounded border border-border bg-card text-foreground dark:text-primary-foreground"
+              className="text-sm px-2 py-1 rounded border border-border bg-card text-foreground"
             >
               <option value="auto">Auto-detect</option>
               {templates.map(t => (
@@ -117,7 +117,7 @@ export function OutreachPanel({ leadId, leadEmail, onEmailSent }: OutreachPanelP
           )}
           <button
             onClick={() => refetchDraft()}
-            className="p-1.5 rounded hover:bg-muted dark:hover:bg-card"
+            className="p-1.5 rounded hover:bg-nested"
             title="Régénérer"
           >
             <RefreshCw className="w-4 h-4 text-slate-500" />
@@ -135,7 +135,7 @@ export function OutreachPanel({ leadId, leadEmail, onEmailSent }: OutreachPanelP
           value={recipientEmail}
           onChange={(e) => setRecipientEmail(e.target.value)}
           placeholder="contact@company.com"
-          className="w-full px-3 py-2 rounded-lg border border-border bg-card text-foreground dark:text-primary-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+          className="w-full px-3 py-2 rounded-lg border border-border bg-card text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
         />
       </div>
 
@@ -148,13 +148,13 @@ export function OutreachPanel({ leadId, leadEmail, onEmailSent }: OutreachPanelP
               value={editedSubject}
               onChange={(e) => setEditedSubject(e.target.value)}
               placeholder="Sujet"
-              className="w-full px-3 py-2 rounded-lg border border-border bg-card text-foreground dark:text-primary-foreground font-medium focus:outline-none focus:ring-2 focus:ring-primary"
+              className="w-full px-3 py-2 rounded-lg border border-border bg-card text-foreground font-medium focus:outline-none focus:ring-2 focus:ring-primary"
             />
             <textarea
               value={editedBody}
               onChange={(e) => setEditedBody(e.target.value)}
               rows={10}
-              className="w-full px-3 py-2 rounded-lg border border-border bg-card text-foreground dark:text-primary-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+              className="w-full px-3 py-2 rounded-lg border border-border bg-card text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary"
             />
           </>
         ) : (
@@ -163,7 +163,7 @@ export function OutreachPanel({ leadId, leadEmail, onEmailSent }: OutreachPanelP
             className="cursor-pointer hover:bg-background dark:hover:bg-card/50 rounded-lg p-3 border border-border"
           >
             <div className="flex items-center justify-between mb-2">
-              <span className="font-medium text-foreground dark:text-primary-foreground">
+              <span className="font-medium text-foreground">
                 {editedSubject || draft?.subject || "Sans sujet"}
               </span>
               <Edit2 className="w-4 h-4 text-muted-foreground" />
@@ -238,7 +238,7 @@ export function OutreachPanel({ leadId, leadEmail, onEmailSent }: OutreachPanelP
 
       {/* Template hint */}
       {draft?.templateName && (
-        <p className="text-xs text-slate-500 dark:text-muted-foreground mt-3">
+        <p className="text-xs text-secondary mt-3">
           Template: {draft.templateName}
         </p>
       )}
