@@ -1,13 +1,15 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { 
   Search, 
   Filter, 
   ExternalLink, 
   Star, 
   MoreHorizontal,
-  ChevronDown
+  ChevronDown,
+  Calendar,
+  X
 } from "lucide-react";
 import { api, type Lead, type LeadStatus } from "../lib/api";
 import { cn } from "../lib/utils";
@@ -20,16 +22,50 @@ const STATUS_OPTIONS: LeadStatus[] = [
 
 export function Leads() {
   const queryClient = useQueryClient();
-  const [search, setSearch] = useState("");
-  const [statusFilter, setStatusFilter] = useState<LeadStatus | "">("");
-  const [minScore, setMinScore] = useState("");
+  const [searchParams, setSearchParams] = useSearchParams();
+  
+  // Initialize filters from URL params
+  const [search, setSearch] = useState(searchParams.get("search") || "");
+  const [debouncedSearch, setDebouncedSearch] = useState(search);
+  const [statusFilter, setStatusFilter] = useState<LeadStatus | "">(
+    (searchParams.get("status") as LeadStatus) || ""
+  );
+  const [sourceFilter, setSourceFilter] = useState(searchParams.get("source") || "");
+  const [minScore, setMinScore] = useState(searchParams.get("minScore") || "");
+  const [dateFrom, setDateFrom] = useState(searchParams.get("dateFrom") || "");
+  const [dateTo, setDateTo] = useState(searchParams.get("dateTo") || "");
+
+  // Debounce search input (500ms delay)
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(search);
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [search]);
+
+  // Update URL params when filters change
+  useEffect(() => {
+    const params: Record<string, string> = {};
+    if (debouncedSearch) params.search = debouncedSearch;
+    if (statusFilter) params.status = statusFilter;
+    if (sourceFilter) params.source = sourceFilter;
+    if (minScore) params.minScore = minScore;
+    if (dateFrom) params.dateFrom = dateFrom;
+    if (dateTo) params.dateTo = dateTo;
+    
+    setSearchParams(params, { replace: true });
+  }, [debouncedSearch, statusFilter, sourceFilter, minScore, dateFrom, dateTo, setSearchParams]);
 
   const { data, isLoading } = useQuery({
-    queryKey: ["leads", statusFilter, minScore, search],
+    queryKey: ["leads", statusFilter, minScore, sourceFilter, debouncedSearch, dateFrom, dateTo],
     queryFn: () => api.leads.list({
       ...(statusFilter && { status: statusFilter }),
       ...(minScore && { minScore }),
-      ...(search && { search }),
+      ...(sourceFilter && { source: sourceFilter }),
+      ...(debouncedSearch && { search: debouncedSearch }),
+      ...(dateFrom && { dateFrom }),
+      ...(dateTo && { dateTo }),
     }),
   });
 
@@ -41,53 +77,113 @@ export function Leads() {
     },
   });
 
+  // Get unique sources from leads for filter dropdown
+  const sources = data?.leads 
+    ? Array.from(new Set(data.leads.map(lead => lead.source))).sort()
+    : [];
+
+  // Check if any filters are active
+  const hasActiveFilters = !!(search || statusFilter || sourceFilter || minScore || dateFrom || dateTo);
+
+  // Clear all filters
+  const clearFilters = () => {
+    setSearch("");
+    setDebouncedSearch("");
+    setStatusFilter("");
+    setSourceFilter("");
+    setMinScore("");
+    setDateFrom("");
+    setDateTo("");
+  };
+
   return (
     <div className="p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white">Leads</h1>
           <p className="text-slate-500 dark:text-slate-400 text-sm sm:text-base">
-            {data?.total || 0} leads total
+            {data?.total || 0} leads {hasActiveFilters ? "filtered" : "total"}
           </p>
         </div>
+        {hasActiveFilters && (
+          <button
+            onClick={clearFilters}
+            className="flex items-center gap-2 px-3 py-2 text-sm text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg transition-colors"
+          >
+            <X className="w-4 h-4" />
+            Clear filters
+          </button>
+        )}
       </div>
 
       {/* Filters */}
-      <div className="flex flex-wrap gap-4 bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 p-4 shadow-sm">
-        <div className="flex-1 min-w-[200px]">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+      <div className="bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 p-4 shadow-sm space-y-4">
+        {/* Search Bar */}
+        <div className="relative">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+          <input
+            type="text"
+            placeholder="Search by title, company, or description..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="w-full pl-10 pr-4 py-2 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+        </div>
+
+        {/* Filter Row */}
+        <div className="flex flex-wrap gap-3">
+          <select
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value as LeadStatus | "")}
+            className="px-4 py-2 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+          >
+            <option value="">All statuses</option>
+            {STATUS_OPTIONS.map((s) => (
+              <option key={s} value={s}>{s.replace(/_/g, " ")}</option>
+            ))}
+          </select>
+
+          <select
+            value={sourceFilter}
+            onChange={(e) => setSourceFilter(e.target.value)}
+            className="px-4 py-2 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+          >
+            <option value="">All sources</option>
+            {sources.map((source) => (
+              <option key={source} value={source}>{source}</option>
+            ))}
+          </select>
+
+          <select
+            value={minScore}
+            onChange={(e) => setMinScore(e.target.value)}
+            className="px-4 py-2 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+          >
+            <option value="">Any score</option>
+            <option value="15">Score ≥ 15</option>
+            <option value="25">Score ≥ 25</option>
+            <option value="35">Score ≥ 35</option>
+          </select>
+
+          <div className="flex items-center gap-2">
+            <Calendar className="w-4 h-4 text-slate-400" />
             <input
-              type="text"
-              placeholder="Search leads..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              type="date"
+              value={dateFrom}
+              onChange={(e) => setDateFrom(e.target.value)}
+              placeholder="From date"
+              className="px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+            />
+            <span className="text-slate-400 text-sm">to</span>
+            <input
+              type="date"
+              value={dateTo}
+              onChange={(e) => setDateTo(e.target.value)}
+              placeholder="To date"
+              className="px-3 py-2 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
             />
           </div>
         </div>
-        
-        <select
-          value={statusFilter}
-          onChange={(e) => setStatusFilter(e.target.value as LeadStatus | "")}
-          className="px-4 py-2 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-        >
-          <option value="">All statuses</option>
-          {STATUS_OPTIONS.map((s) => (
-            <option key={s} value={s}>{s.replace(/_/g, " ")}</option>
-          ))}
-        </select>
-
-        <select
-          value={minScore}
-          onChange={(e) => setMinScore(e.target.value)}
-          className="px-4 py-2 rounded-lg border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-        >
-          <option value="">Any score</option>
-          <option value="15">Score ≥ 15</option>
-          <option value="25">Score ≥ 25</option>
-          <option value="35">Score ≥ 35</option>
-        </select>
       </div>
 
       {/* Leads Table */}
