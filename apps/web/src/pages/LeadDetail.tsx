@@ -19,6 +19,7 @@ import {
 import { api, type LeadStatus } from "../lib/api";
 import { cn } from "../lib/utils";
 import { OutreachPanel } from "../components/OutreachPanel";
+import { OutreachHistory } from "../components/OutreachHistory";
 
 /**
  * Safely parse JSON string, returning default value on error
@@ -266,40 +267,8 @@ export function LeadDetail() {
             </div>
           </div>
 
-          {/* Messages */}
-          {messages.length > 0 && (
-            <div className="bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 p-6 shadow-sm">
-              <h2 className="font-semibold mb-4 flex items-center gap-2 text-slate-900 dark:text-white">
-                <MessageSquare className="w-5 h-5 text-blue-500" />
-                Messages ({messages.length})
-              </h2>
-              <div className="space-y-3">
-                {messages.map((msg) => (
-                  <div
-                    key={msg.id}
-                    className={cn(
-                      "p-4 rounded-lg",
-                      msg.direction === "OUTBOUND"
-                        ? "bg-blue-50 dark:bg-blue-900/30 ml-8"
-                        : "bg-slate-50 dark:bg-slate-700 mr-8"
-                    )}
-                  >
-                    <div className="flex items-center gap-2 mb-2 text-xs text-slate-500 dark:text-slate-400">
-                      <span>{msg.direction === "OUTBOUND" ? "→ Sent" : "← Received"}</span>
-                      <span>•</span>
-                      <span>{msg.channel}</span>
-                      <span>•</span>
-                      <span>{msg.sentAt ? new Date(msg.sentAt).toLocaleString() : "Draft"}</span>
-                    </div>
-                    {msg.subject && (
-                      <p className="font-medium mb-1 text-slate-900 dark:text-white">{msg.subject}</p>
-                    )}
-                    <p className="text-sm whitespace-pre-wrap text-slate-700 dark:text-slate-200">{msg.content}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
+          {/* Outreach History */}
+          <OutreachHistory leadId={lead.id} />
         </div>
 
         {/* Sidebar */}

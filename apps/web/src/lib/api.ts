@@ -130,9 +130,9 @@ export const api = {
       const qs = template ? `?template=${template}` : "";
       return fetcher<EmailDraft>(`/api/outreach/leads/${leadId}/draft${qs}`);
     },
-    saveDraft: (leadId: string, data: { subject: string; body: string; recipientEmail?: string }) =>
+    saveDraft: (leadId: string, data: { subject: string; body: string; recipientEmail?: string; templateId?: string }) =>
       fetcher<Message>(`/api/outreach/leads/${leadId}/draft`, { method: "POST", body: JSON.stringify(data) }),
-    sendEmail: (leadId: string, data: { subject: string; body: string; recipientEmail: string; recipientName?: string }) =>
+    sendEmail: (leadId: string, data: { subject: string; body: string; recipientEmail: string; recipientName?: string; templateId?: string }) =>
       fetcher<{ success: boolean; messageId: string; resendId: string }>(`/api/outreach/leads/${leadId}/send`, { method: "POST", body: JSON.stringify(data) }),
     getMessages: (leadId: string) => fetcher<Message[]>(`/api/outreach/leads/${leadId}/messages`),
     getTemplates: () => fetcher<OutreachTemplate[]>("/api/outreach/templates"),
@@ -243,6 +243,9 @@ export interface Message {
   status: string;
   sentAt?: string;
   createdAt: string;
+  templateId?: string;
+  template?: Template;
+  externalId?: string;
 }
 
 export interface Proposal {
@@ -383,7 +386,8 @@ export interface EmailDraft {
   id?: string;
   subject: string;
   body: string;
-  templateType: string | null;
+  templateId?: string;
+  templateName?: string;
   recipientEmail?: string;
   recipientName?: string;
   isExisting: boolean;
@@ -392,8 +396,12 @@ export interface EmailDraft {
 export interface OutreachTemplate {
   id: string;
   name: string;
-  subject: string;
+  description?: string;
+  type: string;
+  subject: string | null;
   preview: string;
+  usageCount: number;
+  replyRate: number | null;
 }
 
 export interface EnrichmentResult {
